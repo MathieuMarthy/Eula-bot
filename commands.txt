@@ -1,0 +1,28 @@
+
+"""
+@client.command()
+async def message_timer(ctx, Date, Heure, *, msg):
+    if len(Date) != 10 or Date.count("/") != 2:
+        try:
+            await ctx.send("format non valide !\nen attente d'un nouveau message")
+            Date = await client.wait_for("message", check = lambda message : message.author.id == ctx.author.id and message.channel.id == ctx.channel.id, timeout = 90)
+            while len(Date.content) != 10 or Date.content.count("/") != 2:
+                await ctx.send("format non valide !\nen attente d'un nouveau message, format (jour/mois/année) exemple °01/12/2023")
+                Date = await client.wait_for("message", check = lambda message : message.author.id == ctx.author.id and message.channel.id == ctx.channel.id, timeout = 90)
+        except asyncio.TimeoutError:
+            await ctx.send("temps écoulé !")      
+        Date = Date.content
+
+    if len(Heure) != 5 or Heure.count("h") != 1 or not Heure.replace("h", "").isdigit():
+        try:
+            await ctx.send("format non valide !\nen attente d'un nouveau message, format (heure/minutes) exemple: 07h12")
+            Heure = await client.wait_for("message", check = lambda message : message.author.id == ctx.author.id and message.channel.id == ctx.channel.id, timeout = 90)
+            while len(Heure.content) != 5 or Heure.content.count("h") != 1 or not Heure.content.replace("h", "").isdigit():
+                await ctx.send("format non valide !\nen attente d'un nouveau message, format (heure/minutes) exemple: 07h12")
+                Heure = await client.wait_for("message", check = lambda message : message.author.id == ctx.author.id and message.channel.id == ctx.channel.id, timeout = 90)
+        except asyncio.TimeoutError:
+            await ctx.send("temps écoulé !")
+        Heure = Heure.content
+
+    await ctx.send(f"Le message \"{msg}\" est enregistrer pour le {Date} à {Heure}")
+"""
