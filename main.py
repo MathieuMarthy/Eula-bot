@@ -67,8 +67,8 @@ async def hentai(ctx, category = "help", nbr = "1"):
     if nbr > 20:
         await ctx.send("Le nombre maximum d'image est de 20")
         nbr = 20
-        
-    if not ctx.channel.is_nsfw():
+
+    if not ctx.channel.is_nsfw() and not ctx.author.guild_permissions.administrator:
         await ctx.send("Il faut que le salon soit nsfw pour que la commande fonctionne")
         return
 
@@ -118,7 +118,7 @@ async def help(ctx):
     embed.set_author(name="help - Eula", icon_url="https://media.discordapp.net/attachments/836943322580516904/917794030694318172/padoru_eula___genshin_impact_by_dekunyart_devgso1-fullview.png?width=614&height=614")
     embed.add_field(name="contact", value="Si vous avez des retours à faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
     if ctx.author.guild_permissions.administrator:
-        embed.add_field(name=f"\n{prefix}enable_logs - _admin_", value="active les logs", inline=False)
+        embed.add_field(name=f"\n{prefix}enable_logs <salon> - _admin_", value="active les logs", inline=False)
         embed.add_field(name=f"{prefix}disable_logs - _admin_", value="désactive les logs", inline=False)
         embed.add_field(name=f"{prefix}clear <nbr/texte> - _admin_", value="supprime le nombres de messages,\nsupprime les messages jusqu'au texte donné", inline=False)
         embed.add_field(name=f"{prefix}nuck <salon> - _admin_", value="enleve tous les messages d'un salon", inline=False)
@@ -128,6 +128,7 @@ async def help(ctx):
         embed.add_field(name=f"{prefix}auto_role_off - _admin_", value="désactive l'auto_role", inline=False)
         embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
         embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les reactions donnés, les reaction doivent être coller", inline=False)
+    embed.add_field(name="commande normales", value="-------------", inline=False)
     embed.add_field(name=f"{prefix}8ball", value="Boule magique", inline=False)
     embed.add_field(name=f"{prefix}random", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
     embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
@@ -326,21 +327,18 @@ async def role_vocal_off(ctx):
 
 @client.command()
 @has_permissions(administrator=True)
-async def enable_logs(ctx, salon):
+async def enable_logs(ctx, channel):
     if dico[ctx.guild.id]["logs"] is not None:
         await ctx.send("Les logs sont déjà activé")
     else:
-        await ctx.send("dans quel salon ?")
-        try:
-            reponse = await client.wait_for("message", check = lambda message: message.author.id == ctx.author.id, timeout = 30)
-            while not reponse.content.replace("<", "").replace(">", "").replace("#", "").isdigit():
-                reponse = await client.wait_for("message", check = lambda message: message.author.id == ctx.author.id, timeout = 30)
-        except asyncio.TimeoutError:
-            await ctx.send("délai dépassé")
+        if not channel.isdigit():
+            channel = channel.replace("<", "").replace("#", "").replace(">", "")
+
+        channel = client.get_channel(int(channel))
+        if channel is None:
+            await ctx.send("salon non trouvé")
             return
-        channel_id = reponse.content.replace("<", "").replace(">", "").replace("#", "")
-        channel = client.get_channel(int(channel_id))
-        await ctx.send(f"Le salon est bien {channel.mention} ? (oui/non)")
+        await ctx.send(f"voulez-vous vraiment activés les logs dans {channel.mention} ?")
         try:
             reponse = await client.wait_for("message", check = lambda message: message.author.id == ctx.author.id, timeout = 30)
         except asyncio.TimeoutError:
