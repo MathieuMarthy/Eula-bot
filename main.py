@@ -40,19 +40,17 @@ async def on_ready():
 def channel_send(id):
     return client.get_channel(id)
 
+
 def get_time():
     time_ = str(time.strftime("%d/%m/%Y - %H:%M:%S", time.localtime()))
     hour = time.strftime("%H", time.localtime())
     return time_.replace(hour, str(int(hour) + decalage_horaire))
 
 
-
-@client.event
-async def on_message(message):
-    if message.content.endswith("quoi ?"):
-        await message.channel.send("feur")
-
-    await client.process_commands(message)
+def replaces(string, *args):
+    for i in range(0, len(args), 2):
+        string = string.replace(args[i], args[i + 1])
+    return string
 
 
 # --- commands
@@ -72,7 +70,7 @@ async def hentai(ctx, category = "help", nbr = "1"):
         await ctx.send("Il faut que le salon soit nsfw pour que la commande fonctionne")
         return
 
-    if category in ["ass","bdsm","cum","creampie","manga","femdom","hentai","incest","masturbation","public","ero","orgy","elves","yuri","pantsu","glasses","cuckold","blowjob","boobjob","foot","thighs","vagina","ahegao","uniform","gangbang","tentacles","gif","neko","nsfwMobileWallpaper","zettaiRyouiki"]:
+    if category in ["ass", "bdsm", "cum", "creampie", "manga", "femdom", "hentai", "incest", "masturbation", "public", "ero", "orgy", "elves", "yuri", "pantsu", "glasses", "cuckold", "blowjob", "boobjob", "foot", "thighs", "vagina", "ahegao", "uniform", "gangbang", "tentacles", "gif", "neko", "nsfwMobileWallpaper", "zettaiRyouiki"]:
         for _ in range(nbr):
             response = requests.get(f"https://hmtai.herokuapp.com/nsfw/{category}")
             link = ast.literal_eval(response.text)
@@ -87,6 +85,7 @@ async def aleatoire(ctx, nbr):
         await ctx.send("Le nombre doit être plus grand que 0")
     else:
         await ctx.send(random.randint(0, int(nbr)))
+
 
 @aleatoire.error
 async def on_message_error(ctx, error):
@@ -118,17 +117,15 @@ async def help(ctx):
     embed.set_author(name="help - Eula", icon_url="https://media.discordapp.net/attachments/836943322580516904/917794030694318172/padoru_eula___genshin_impact_by_dekunyart_devgso1-fullview.png?width=614&height=614")
     embed.add_field(name="contact", value="Si vous avez des retours à faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
     if ctx.author.guild_permissions.administrator:
-        embed.add_field(name=f"\n{prefix}enable_logs <salon> - _admin_", value="active les logs", inline=False)
-        embed.add_field(name=f"{prefix}disable_logs - _admin_", value="désactive les logs", inline=False)
+        embed.add_field(name=f"{prefix}toggle_autorole <role> - _admin_", value="active/desactive le fait de donner un role à tous les nouveaux arrivant", inline=False)
+        embed.add_field(name=f"{prefix}toggle_rolevocal - _admin_", value="active/desactive le fait de donner un role à chaque fois qu'un membre rejoint un salon vocal ", inline=False)  
+        embed.add_field(name=f"\n{prefix}toggle_logs - _admin_", value="active/désactive les logs", inline=False)
         embed.add_field(name=f"{prefix}clear <nbr/texte> - _admin_", value="supprime le nombres de messages,\nsupprime les messages jusqu'au texte donné", inline=False)
         embed.add_field(name=f"{prefix}nuck <salon> - _admin_", value="enleve tous les messages d'un salon", inline=False)
-        embed.add_field(name=f"{prefix}role_vocal_on <role> - _admin_", value="donne un role à chaque fois qu'un membre rejoint un salon vocal ", inline=False)
-        embed.add_field(name=f"{prefix}role_vocal_off - _admin_", value="desactive la commande role_vocal_on", inline=False)
-        embed.add_field(name=f"{prefix}auto_role_on <role> - _admin_", value="donne un role à tous les nouveaux arrivant", inline=False)
-        embed.add_field(name=f"{prefix}auto_role_off - _admin_", value="désactive l'auto_role", inline=False)
+              
         embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
         embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les reactions donnés, les reaction doivent être coller", inline=False)
-    embed.add_field(name="commande normales", value="-------------", inline=False)
+    embed.add_field(name="commandes normales", value="----------------------------", inline=False)
     embed.add_field(name=f"{prefix}8ball", value="Boule magique", inline=False)
     embed.add_field(name=f"{prefix}random", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
     embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
@@ -199,7 +196,7 @@ async def jeu_reaction(ctx):
 @has_permissions(administrator=True)
 async def reaction(ctx, channel, id, *, react):
     if not channel.isdigit():
-        channel = channel.replace("<", "").replace("#", "").replace(">", "")
+        channel = replaces(channel, "<#", "", ">", "")
 
     channel = client.get_channel(int(channel))
     if channel is None:
@@ -219,17 +216,17 @@ async def reaction(ctx, channel, id, *, react):
             await msg.add_reaction(e)
         await ctx.message.add_reaction("✅")
 
-@reaction.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("L'id correspond à auncun message ou le bot ne peux pas mettre la reaction saisie")
+# @reaction.error
+# async def on_message_error(ctx, error):
+#     if isinstance(error, commands.CommandInvokeError):
+#         await ctx.send("L'id correspond à auncun message ou le bot ne peux pas mettre la reaction saisie")
 
 
 @client.command()
 @has_permissions(administrator=True)
 async def say(ctx, channel, *, message):
     if not channel.isdigit():
-        channel = channel.replace("<", "").replace("#", "").replace(">", "")
+        channel = replaces(channel, "<#", "", ">", "")
 
     channel = client.get_channel(int(channel))
     if channel is None:
@@ -243,19 +240,27 @@ async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque le salon ! syntaxe: {prefix}say <salon> <message>")
 
-@client.command()
-@has_permissions(administrator=True)
-async def auto_role_on(ctx, role: discord.Role):
-    dico[ctx.guild.id]["autorole"] = role.id
-    open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
-    await ctx.send(f"Le role {role.mention} est maintenant donné à tous les nouveaux arrivant !")
 
 @client.command()
 @has_permissions(administrator=True)
-async def auto_role_off(ctx):
-    dico[ctx.guild.id]["autorole"] = None
-    open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
-    await ctx.send("La fonction d'autorole est maintenant désactiver")
+async def toggle_autorole(ctx, role : discord.Role = None):
+    if dico[ctx.guild.id]["autorole"] == None:
+        if role == None:
+            await ctx.send("quelle role voulez vous mettre ?")
+            response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+            if "<@&" not in response.content.lower():
+                await ctx.send(f"\"{response.content}\" n'est pas un rôle")
+                return
+            id = replaces(response.content, "<@&", "", ">", "")
+            role = discord.utils.get(ctx.author.guild.roles, id=int(id))
+        dico[ctx.guild.id]["autorole"] = role.id
+        open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+        await ctx.send(f"Le role {role.mention} est maintenant donné à tous les nouveaux arrivant !")
+    else:
+        dico[ctx.guild.id]["autorole"] = None
+        open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+        await ctx.send("La fonction d'autorole est maintenant désactiver")
+
 
 @client.command(aliases=["c"])
 @has_permissions(administrator=True)
@@ -280,7 +285,7 @@ async def clear(ctx, *, arg = "1"):
 @has_permissions(administrator=True)
 async def nuck(ctx, channel):
     if not channel.isdigit():
-        channel = channel.replace("<", "").replace("#", "").replace(">", "")
+        channel = replaces(channel, "<#", "", ">", "")
 
     channel = client.get_channel(int(channel))
     if channel is None:
@@ -289,7 +294,7 @@ async def nuck(ctx, channel):
     
     await ctx.send(f"Voulez-vous vraiment nuck le salon {channel.mention} ?")
     try:
-        reponse = await client.wait_for("message", check = lambda message: message.author.id == ctx.author.id, timeout = 30)
+        reponse = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout = 30)
     except asyncio.TimeoutError:
         await ctx.send("délai dépassé")
         return
@@ -303,64 +308,51 @@ async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque le salon ! syntaxe: {prefix}nuck <salon>")
 
-
 @client.command()
 @has_permissions(administrator=True)
-async def role_vocal_on(ctx, role: discord.Role):
-    await ctx.send(f"Le role {role.mention} est maintenant donné à toutes les personnes qui rentre dans un salon vocal !")
-    dico[ctx.author.guild.id]["voc"] = role.id
-    open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
-
-@role_vocal_on.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque le role ! syntaxe: {prefix}role_vocal_on <role>")
-
-
-@client.command()
-@has_permissions(administrator=True)
-async def role_vocal_off(ctx):
-    await ctx.send("Plus aucun role ne sera donner quand quelqu'un rejoint un salon vocal")
-    dico[ctx.author.guild.id]["voc"] = None
-    open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
-
-
-@client.command()
-@has_permissions(administrator=True)
-async def enable_logs(ctx, channel):
-    if dico[ctx.guild.id]["logs"] is not None:
-        await ctx.send("Les logs sont déjà activé")
+async def toggle_rolevocal(ctx, role: discord.Role):
+    if dico[ctx.author.guild.id]["voc"] == None:
+        if role == None:
+            await ctx.send("quelle role voulez vous mettre ?")
+            response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+            if "<@&" not in response.content.lower():
+                await ctx.send(f"\"{response.content}\" n'est pas un rôle")
+                return
+            id = replaces(response.content, "<@&", "", ">", "")
+            role = discord.utils.get(ctx.author.guild.roles, id=int(id))
+        dico[ctx.guild.id]["autorole"] = role.id
+        open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+        await ctx.send(f"Le role {role.mention} est maintenant donné à toutes les personnes qui rentre dans un salon vocal !")
     else:
-        if not channel.isdigit():
-            channel = channel.replace("<", "").replace("#", "").replace(">", "")
-
-        channel = client.get_channel(int(channel))
-        if channel is None:
-            await ctx.send("salon non trouvé")
-            return
-        await ctx.send(f"voulez-vous vraiment activés les logs dans {channel.mention} ?")
-        try:
-            reponse = await client.wait_for("message", check = lambda message: message.author.id == ctx.author.id, timeout = 30)
-        except asyncio.TimeoutError:
-            await ctx.send("délai dépassé")
-            return
-        if reponse.content.lower() in ["yes", "y", "o", "oui"]:
-            dico[ctx.guild.id]["logs"] = channel.id
-            open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
-            await ctx.send(f"Les logs sont maintenant activés dans {channel.mention} !")
+        dico[ctx.author.guild.id]["voc"] = None
+        open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+        await ctx.send("Plus aucun role ne sera donner quand quelqu'un rejoint un salon vocal")
 
 
 @client.command()
 @has_permissions(administrator=True)
-async def disable_logs(ctx):
-    dico[ctx.guild.id]["logs"] = None
-    await ctx.send("Les logs sont maintenant désactivé !")
-    open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+async def toggle_logs(ctx, channel = None):
+    if dico[ctx.author.guild.id]["logs"] == None:
+        if channel == None:
+            await ctx.send("Dans quel salon voulez-vous activés les logs ?")
+            response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+            if "<#" not in response.content.lower():
+                await ctx.send(f"\"{response.content}\" n'est pas un salon")
+                return
+            id = replaces(response.content, "<#", "", ">", "")
+            channel = client.get_channel(int(id))
+        dico[ctx.guild.id]["logs"] = channel.id
+        open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+        await ctx.send(f"Les logs sont maintenant activés dans {channel.mention} !")
+    else:
+        dico[ctx.guild.id]["logs"] = None
+        open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+        await ctx.send("Les logs sont maintenant désactivé !")
 
 
 @client.command()
 async def view(ctx):
-    reponse = await client.wait_for("message", check = lambda message: message.author.id == ctx.author.id, timeout = 30)
+    reponse = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout = 30)
     print(reponse.content)
 
 
