@@ -126,8 +126,8 @@ async def help(ctx):
         embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
         embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les reactions donnés, les reaction doivent être coller", inline=False)
     embed.add_field(name="commandes normales", value="----------------------------", inline=False)
-    embed.add_field(name=f"{prefix}8ball", value="Boule magique", inline=False)
-    embed.add_field(name=f"{prefix}random", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
+    embed.add_field(name=f"{prefix}8ball <message>", value="Boule magique", inline=False)
+    embed.add_field(name=f"{prefix}random <nombre>", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
     embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
     embed.add_field(name=f"{prefix}hentai <categorie> <nbr d'images>", value="si le salon est NSFW envoie des images hentai", inline=False)
     await ctx.send(embed=embed)
@@ -136,7 +136,11 @@ async def help(ctx):
 
 # - jeu
 @client.command(aliases=["10fastfinger", "10ff"])
-async def jeu_reaction(ctx):
+async def jeu_reaction(ctx, limit = 5):
+    if str(limit).isdigit():
+        limit = int(limit)
+    else:
+        limit = 5
     msg = await ctx.send("**Partie de 10fastfinger lancée !**\npour participer réagissez avec 🖐️")
     await msg.add_reaction("🖐️")
     time.sleep(15)
@@ -156,19 +160,32 @@ async def jeu_reaction(ctx):
         dico_points[i.id] = 0
         str_name += ", " + i.name
     str_name = str_name.replace(", ", "", 1)
-    await ctx.send(f"Liste des participants: {str_name}\nC'est parti pour 5 manches !")
+    await ctx.send(f"Liste des participants: {str_name}\nC'est parti pour {limit} manches !")
     time.sleep(3)
 
     turn = 0
-    list_question = ["Bonjour je m'appelle Nicolas", "Salut ! ça va ?", "Eula c'est vraiment la meilleure waifu de Genshin Impact", "Je mange des carottes", "Un sourd-muet séparera cinq catastrophes et un tendon"]
-    while turn != 5:
+    
+    def get_sentences():
+        a = requests.get("https://enneagon.org/phrases").text
+
+        a = a[a.find('<div class="main">') + 23 : a.find("</div>") - 6]
+        a = a.replace("&nbsp", "").replace(";" , "").replace(" <br>", "")
+
+        return [i.strip() for e in a.split(".") for i in e.split(",") if 70 > len(i) > 20]
+
+
+    list_question = get_sentences()
+    while turn != limit:
         mot = list_question[random.randint(0, len(list_question) - 1)]
         await ctx.send(f"`{mot}`")
         list_question.remove(mot)
+        if len(list_question) == 0:
+            list_question = get_sentences()
         try:
             msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content == mot, timeout=60)
         except asyncio.TimeoutError:
-            await ctx.send("partie fini à cause d'inactivité")
+            await ctx.send("partie finie à cause d'inactivité")
+            return
         dico_points[msg.author.id] += 1
         await ctx.send(f"**{msg.author}** gagne le point ! {dico_points[msg.author.id]} points")
         turn += 1
@@ -216,10 +233,10 @@ async def reaction(ctx, channel, id, *, react):
             await msg.add_reaction(e)
         await ctx.message.add_reaction("✅")
 
-# @reaction.error
-# async def on_message_error(ctx, error):
-#     if isinstance(error, commands.CommandInvokeError):
-#         await ctx.send("L'id correspond à auncun message ou le bot ne peux pas mettre la reaction saisie")
+@reaction.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.CommandInvokeError):
+        await ctx.send("L'id correspond à auncun message ou le bot ne peux pas mettre la reaction saisie")
 
 
 @client.command()
