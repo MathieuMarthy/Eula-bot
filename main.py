@@ -37,6 +37,7 @@ async def on_ready():
     open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
 
 # --- fonctions
+# - all
 def channel_send(id):
     return client.get_channel(id)
 
@@ -52,6 +53,71 @@ def replaces(string, *args):
         string = string.replace(args[i], args[i + 1])
     return string
 
+# - mini jeux
+async def start_game(ctx, limit, name_game):
+    """
+    Args:
+    -----
+        ctx : ctx
+        limit : le nombre de manches dans le jeu
+        name_game : nom du jeu
+
+    return:
+    -------
+        list : liste des participants
+        dict : dictionnaire des points 
+
+    """
+    if str(limit).isdigit():
+        limit = int(limit)
+    else:
+        limit = 5
+    msg = await ctx.send(f"**Partie de {name_game} lancée !**\npour participer réagissez avec 🖐️")
+    await msg.add_reaction("🖐️")
+    time.sleep(15)
+    list_user = []
+    async for e in ctx.channel.history(limit=100):
+        if e.id == msg.id:
+            for reaction in e.reactions:
+                if reaction.emoji == "🖐️":
+                    async for user in reaction.users():
+                        if user.id != client.user.id:
+                            list_user.append(user)
+            break
+
+    str_name = ""
+    dico_points = {}
+    for i in list_user:
+        dico_points[i.id] = 0
+        str_name += ", " + i.name
+    str_name = str_name.replace(", ", "", 1)
+    await ctx.send(f"Liste des participants: {str_name}\nC'est parti pour {limit} manches !")
+    time.sleep(3)
+    return list_user, dico_points
+
+async def end_game(ctx, list_user, dico_points):
+    """
+    Args:
+    -----
+        ctx : ctx
+        list_user : liste de tous les participants
+        dico_points : dictionnaire des points 
+    """
+    n = (list_user[0].id, dico_points[list_user[0].id])
+    for id, point in dico_points.items():
+        if n[1] < point:
+            n = (id, point)
+    list_winner = [id for id, point in dico_points.items() if n[1] == point]
+    if len(list_winner) == 1:
+        username = client.get_user(list_winner[0])
+        await ctx.send(f"󠀮 \n**Partie fini !**\nLe vainqueur est {username.mention} avec {dico_points[username.id]} points !")
+    else:
+        str_winner = ""
+        for i, e in enumerate(list_winner):
+            username = client.get_user(list_winner[i])
+            str_winner += " " + username.mention
+        await ctx.send(f"󠀮 \n**Partie fini !**\nLes vainqueurs sont {str_winner} avec {dico_points[username.id]} points !")
+    
 
 # --- commands
 # - everyone
@@ -137,42 +203,16 @@ async def help(ctx):
 # - jeu
 @client.command(aliases=["10fastfinger", "10ff"])
 async def jeu_reaction(ctx, limit = 5):
-    if str(limit).isdigit():
-        limit = int(limit)
-    else:
-        limit = 5
-    msg = await ctx.send("**Partie de 10fastfinger lancée !**\npour participer réagissez avec 🖐️")
-    await msg.add_reaction("🖐️")
-    time.sleep(15)
-    list_user = []
-    async for e in ctx.channel.history(limit=100):
-        if e.id == msg.id:
-            for reaction in e.reactions:
-                if reaction.emoji == "🖐️":
-                    async for user in reaction.users():
-                        if user.id != client.user.id:
-                            list_user.append(user)
-            break
-
-    str_name = ""
-    dico_points = {}
-    for i in list_user:
-        dico_points[i.id] = 0
-        str_name += ", " + i.name
-    str_name = str_name.replace(", ", "", 1)
-    await ctx.send(f"Liste des participants: {str_name}\nC'est parti pour {limit} manches !")
-    time.sleep(3)
+    list_user, dico_points = await start_game(ctx, limit, "10fastfinger")
 
     turn = 0
-    
     def get_sentences():
         a = requests.get("https://enneagon.org/phrases").text
 
         a = a[a.find('<div class="main">') + 23 : a.find("</div>") - 6]
-        a = a.replace("&nbsp", "").replace(";" , "").replace(" <br>", "")
+        a = replaces(a, "&nbsp", "", ";" , "", " <br>", "")
 
         return [i.strip() for e in a.split(".") for i in e.split(",") if 70 > len(i) > 20]
-
 
     list_question = get_sentences()
     while turn != limit:
@@ -182,31 +222,57 @@ async def jeu_reaction(ctx, limit = 5):
         if len(list_question) == 0:
             list_question = get_sentences()
         try:
-            msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content == mot, timeout=60)
+            msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content in [mot, "exit", "!exit", "leave", "!leave"], timeout=60)
         except asyncio.TimeoutError:
             await ctx.send("partie finie à cause d'inactivité")
+            break
+        if msg.content in ["exit", "!exit", "leave", "!leave"]:
+            await ctx.send("partie annulée !")
             return
         dico_points[msg.author.id] += 1
         await ctx.send(f"**{msg.author}** gagne le point ! {dico_points[msg.author.id]} points")
         turn += 1
         time.sleep(3)
 
-    n = (list_user[0].id, dico_points[list_user[0].id])
-    for id, point in dico_points.items():
-        if n[1] < point:
-            n = (id, point)
-    list_winner = [id for id, point in dico_points.items() if n[1] == point]
-    if len(list_winner) == 1:
-        username = client.get_user(list_winner[0])
-        await ctx.send(f"󠀮 \n**Partie fini !**\nLe vainqueur est {username.mention} avec {dico_points[username.id]} points !")
-    else:
-        str_winner = ""
-        for i, e in enumerate(list_winner):
-            username = client.get_user(list_winner[i])
-            str_winner += " " + username.mention
-        await ctx.send(f"󠀮 \n**Partie fini !**\nLes vainqueurs sont {str_winner} avec {dico_points[username.id]} points !")
+    await end_game(ctx, list_user, dico_points)
 
-            
+
+@client.command()
+async def calcul_mental(ctx, limit = 5):
+    list_user, dico_points = await start_game(ctx, limit, "calcul mental")
+
+    turn = 0
+    operateur = [1, 2]
+    while turn != limit:
+        ope = operateur[random.randint(0, len(operateur) - 1)]
+        if ope == 1:
+            calcul = f"{random.randint(0, 11)} * {random.randint(0, 11)}"
+        elif ope == 2:
+            nbr = random.randint(1, 4)
+            list_ope = ["+", "-"]
+            calcul = ""
+            for i in range(nbr):
+                calcul += " " + list_ope[random.randint(0, 1)] + " "
+                calcul += f"{random.randint(-500, 500)} {list_ope[random.randint(0, 1)]} {random.randint(-500, 500)}"
+            calcul = calcul[3:]
+
+        await ctx.send(calcul)
+        try:
+            msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content in [str(eval(calcul)), "exit", "!exit", "leave", "!leave"], timeout=180)
+        except asyncio.TimeoutError:
+            await ctx.send("partie finie à cause d'inactivité")
+            break
+        if msg.content in ["exit", "!exit", "leave", "!leave"]:
+            await ctx.send("partie annulée !")
+            return
+        dico_points[msg.author.id] += 1
+        await ctx.send(f"**{msg.author}** gagne le point ! {dico_points[msg.author.id]} points")
+        turn += 1
+        time.sleep(3)
+
+    await end_game(ctx, list_user, dico_points)
+
+
 
 # - admin
 @client.command()
@@ -261,8 +327,8 @@ async def on_message_error(ctx, error):
 @client.command()
 @has_permissions(administrator=True)
 async def toggle_autorole(ctx, role : discord.Role = None):
-    if dico[ctx.guild.id]["autorole"] == None:
-        if role == None:
+    if dico[ctx.guild.id]["autorole"] is None:
+        if role is None:
             await ctx.send("quelle role voulez vous mettre ?")
             response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
             if "<@&" not in response.content.lower():
@@ -328,8 +394,8 @@ async def on_message_error(ctx, error):
 @client.command()
 @has_permissions(administrator=True)
 async def toggle_rolevocal(ctx, role: discord.Role):
-    if dico[ctx.author.guild.id]["voc"] == None:
-        if role == None:
+    if dico[ctx.author.guild.id]["voc"] is None:
+        if role is None:
             await ctx.send("quelle role voulez vous mettre ?")
             response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
             if "<@&" not in response.content.lower():
@@ -349,8 +415,8 @@ async def toggle_rolevocal(ctx, role: discord.Role):
 @client.command()
 @has_permissions(administrator=True)
 async def toggle_logs(ctx, channel = None):
-    if dico[ctx.author.guild.id]["logs"] == None:
-        if channel == None:
+    if dico[ctx.author.guild.id]["logs"] is None:
+        if channel is None:
             await ctx.send("Dans quel salon voulez-vous activés les logs ?")
             response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
             if "<#" not in response.content.lower():
@@ -402,7 +468,7 @@ async def on_message_edit(before, after):
         embed.add_field(name="avant", value=before.content, inline=True)
         embed.add_field(name="󠀮salon", value=before.channel.mention, inline=True)
         embed.add_field(name="après", value=after.content, inline=False)
-        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+        embed.add_field(name="󠀮 ", value=f"{get_time()}\n[link]({before.jump_url})", inline=False)
         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
 
@@ -538,12 +604,12 @@ async def on_member_remove(member):
 @client.event
 async def on_member_update(before, after):
     if dico[before.guild.id]["logs"] is not None:
-        if before.name != after.name:
+        if before.display_name != after.display_name:
             embed=discord.Embed(color=0xf0a3ff)
             embed.set_author(name=f"{before.name} à changé de surnom", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
             embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914861144206893076/edit.png")
-            embed.add_field(name="avant", value=before.name, inline=True)
-            embed.add_field(name="après", value=after.name, inline=True)
+            embed.add_field(name="avant", value=before.display_name, inline=True)
+            embed.add_field(name="après", value=after.display_name, inline=True)
             embed.add_field(name="󠀮 ", value=get_time(), inline=False)
             await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
         if before.roles != after.roles:
