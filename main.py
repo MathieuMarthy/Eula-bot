@@ -54,7 +54,7 @@ def replaces(string, *args):
     return string
 
 # - mini jeux
-async def start_game(ctx, limit, name_game):
+async def start_game_multi(ctx, limit, name_game):
     """
     Args:
     -----
@@ -94,6 +94,21 @@ async def start_game(ctx, limit, name_game):
     await ctx.send(f"Liste des participants: {str_name}\nC'est parti pour {limit} manches !")
     time.sleep(3)
     return list_user, dico_points
+
+async def start_game_duo(ctx, member, name_game):
+    await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
+    try:
+        msg = await client.wait_for("message", check=lambda message: message.author.id in [member.id, ctx.author.id] and message.content.lower() in ["y", "o", "n", "yes", "oui", "no", "non"], timeout=180)
+    except asyncio.TimeoutError:
+        await ctx.send(f"{member.name} n'a pas répondu")
+        return False
+
+    if msg.content.lower() in ["n", "non", "no"]:
+        await ctx.send("Partie refusée")
+        return False
+    else:
+        return True
+
 
 async def end_game(ctx, list_user, dico_points):
     """
@@ -193,17 +208,20 @@ async def help(ctx):
         embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les reactions donnés, les reaction doivent être coller", inline=False)
     embed.add_field(name="commandes normales", value="----------------------------", inline=False)
     embed.add_field(name=f"{prefix}8ball <message>", value="Boule magique", inline=False)
+    embed.add_field(name=f"{prefix}10fastfinger", value="jeu multijoueur dans lequel les participants doivent écrire une phrase le plus vite possible", inline=False)
+    embed.add_field(name=f"{prefix}calcul_mental", value="jeu multijoueur dans lequel les participants doivent résoudre des calculs", inline=False)
     embed.add_field(name=f"{prefix}random <nombre>", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
     embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
+    embed.add_field(name=f"{prefix}puissance4 <membre>", value="lance une partie de puissance 4", inline=False)
     embed.add_field(name=f"{prefix}hentai <categorie> <nbr d'images>", value="si le salon est NSFW envoie des images hentai", inline=False)
     await ctx.send(embed=embed)
     # embed.add_field(name=f"{prefix}", value="", inline=False)
 
 
-# - jeu
+# - jeux
 @client.command(aliases=["10fastfinger", "10ff"])
 async def jeu_reaction(ctx, limit = 5):
-    list_user, dico_points = await start_game(ctx, limit, "10fastfinger")
+    list_user, dico_points = await start_game_multi(ctx, limit, "10fastfinger")
 
     turn = 0
     def get_sentences():
@@ -239,7 +257,7 @@ async def jeu_reaction(ctx, limit = 5):
 
 @client.command()
 async def calcul_mental(ctx, limit = 5):
-    list_user, dico_points = await start_game(ctx, limit, "calcul mental")
+    list_user, dico_points = await start_game_multi(ctx, limit, "calcul mental")
 
     turn = 0
     operateur = [1, 2]
@@ -248,7 +266,7 @@ async def calcul_mental(ctx, limit = 5):
         if ope == 1:
             calcul = f"{random.randint(0, 11)} * {random.randint(0, 11)}"
         elif ope == 2:
-            nbr = random.randint(1, 4)
+            nbr = random.randint(1, 2)
             list_ope = ["+", "-"]
             calcul = ""
             for i in range(nbr):
@@ -273,6 +291,123 @@ async def calcul_mental(ctx, limit = 5):
     await end_game(ctx, list_user, dico_points)
 
 
+@client.command(aliases=["p4"])
+async def puissance4(ctx, member: discord.Member):
+    response = await start_game_duo(ctx, member, "puissance 4")
+    if response is False:
+        return
+
+    rond_gris = "⚫"
+    rond_rouge = "🔴"
+    rond_jaune = "🟡"
+
+    if bool(random.getrandbits(1)):
+        dico_p4 = {"rouge": (ctx.author, rond_rouge, 0xdd2e44), "jaune": (member, rond_jaune, 0xfdcB58)}
+    else:
+        dico_p4 = {"jaune": (ctx.author, rond_jaune, 0xfdcB58), "rouge": (member, rond_rouge, 0xdd2e44)}
+
+    plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
+
+    def str_plateau(matrice):
+        msg = ""
+        for i in matrice:
+            for j in i:
+                msg += j
+            msg += "\n"
+        return msg
+
+    couleur = "jaune"
+
+    embed=discord.Embed(color=0x000000, title="Puissance 4")
+    embed.add_field(name="Preparation", value="...", inline=False)
+    embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
+    msg = await ctx.send(embed=embed)
+
+    async def edit_embed():
+        embed=discord.Embed(color=dico_p4[couleur][2], title="Puissance 4")
+        embed.add_field(name="Tour de", value=dico_p4[couleur][0].mention, inline=False)
+        embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=True)
+        await msg.edit(embed=embed)
+
+
+    for e in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄", "❌"]:
+        await msg.add_reaction(e)
+
+    while plateau[0].count(rond_gris) != 0:
+        await edit_embed()
+        
+        try:
+            num, _ = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄", "❌"] and user.id == dico_p4[couleur][0].id, timeout=120)
+        except asyncio.TimeoutError:
+            return
+        if str(num.emoji) == "❌":
+            return
+        elif str(num.emoji) == "🔄":
+            plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
+            await msg.remove_reaction(num.emoji, dico_p4[couleur][0])
+        else:
+            await msg.remove_reaction(num.emoji, dico_p4[couleur][0])
+
+            dict_number = {
+                "1️⃣": 0,
+                "2️⃣": 1,
+                "3️⃣": 2,
+                "4️⃣": 3,
+                "5️⃣": 4,
+                "6️⃣": 5,
+                "7️⃣": 6
+            }
+
+            def place():
+                for i in range(len(plateau)):
+                    if plateau[len(plateau) - i - 1][dict_number[num.emoji]] == rond_gris:
+                        plateau[len(plateau) - i - 1][dict_number[num.emoji]] = dico_p4[couleur][1]
+                        return len(plateau) - i - 1, dict_number[num.emoji]
+                return -1, -1
+
+            positionx, positiony = place()
+
+            if (positionx, positiony) == (-1, -1):
+                await ctx.send("la colonne est pleine")
+            else:
+
+                listex = plateau[positionx]
+                listey = [plateau[i][positiony] for i in range(6)]
+
+                listeDiago1 = [plateau[positionx - i][positiony - i] for i in range(0, 7) if positionx - i >= 0 and positiony - i >= 0]
+                listeDiago1.reverse()
+                listeDiago1 += [plateau[positionx + i][positiony + i] for i in range(1, 7) if positiony + i < 7 and positionx + i < 6]
+                listeDiago1.reverse()
+
+                listeDiago2 = [plateau[positionx - i][positiony + i] for i in range(0, 7) if positionx - i >= 0 and positiony + i <= 6]
+                listeDiago2.reverse()
+                listeDiago2 += [plateau[positionx + i][positiony - i] for i in range(1, 7) if positionx + i < 6 and positiony - i >= 0]
+                listeDiago2.reverse()
+
+                for liste in [listex, listey, listeDiago1, listeDiago2]:
+                    tmp = "".join(liste)
+                    if tmp.count(dico_p4[couleur][1]) != tmp.replace(dico_p4[couleur][1] * 4, "").count(dico_p4[couleur][1]):
+                        embed=discord.Embed(color=dico_p4[couleur][2], title="Puissance 4")
+                        embed.add_field(name="Tour de", value=dico_p4[couleur][0].mention, inline=True)
+                        embed.add_field(name="Vainqueur", value=dico_p4[couleur][0].mention, inline=True)
+                        embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
+                        await msg.edit(embed=embed)
+                        try:
+                            num, user = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) == "🔄" and user.id in [dico_p4["rouge"][0].id, dico_p4["jaune"][0].id], timeout=30)
+                        except asyncio.TimeoutError:
+                            return
+                        plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
+                        await msg.remove_reaction(num.emoji, user)
+
+                if couleur == "jaune":
+                    couleur = "rouge"
+                else:
+                    couleur = "jaune"
+
+@puissance4.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <membre>")
 
 # - admin
 @client.command()
