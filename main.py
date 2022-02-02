@@ -293,7 +293,6 @@ async def calcul_mental(ctx, limit = 5):
 
 @client.command(aliases=["p4"])
 async def puissance4(ctx, member: discord.Member):
-    await ctx.send("en travaux")
     response = await start_game_duo(ctx, member, "puissance 4")
     if response is False:
         return
@@ -324,7 +323,7 @@ async def puissance4(ctx, member: discord.Member):
         embed.add_field(name="Preparation", value="...", inline=False)
         embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
         msg = await ctx.send(embed=embed)
-        for e in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄"]:
+        for e in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄", "⬇️"]:
             await msg.add_reaction(e)
         return msg
 
@@ -352,13 +351,17 @@ async def puissance4(ctx, member: discord.Member):
             await edit_embed()
             
             try:
-                num, _ = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄"] and user.id == dico_p4[couleur][0].id, timeout=180)
+                num, _ = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄", "⬇️"] and user.id == dico_p4[couleur][0].id, timeout=180)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(num.emoji, dico_p4[couleur][0])
-            if str(num.emoji) == "🔄":
+            if str(num.emoji) == "⬇️":
+                await msg.delete()
+                msg = await send()
+            elif str(num.emoji) == "🔄":
                 plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
             else:
+                
 
                 dict_number = {
                     "1️⃣": 0,
