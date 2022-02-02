@@ -24,12 +24,12 @@ default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = prefix, help_command = None, intents = default_intents)
 
-print("connection...", end = "")
+print("connection...")
 
 
 @client.event
 async def on_ready():
-    print("\rconnecté ! ⊂(◉‿◉)つ")
+    print("connecté ! ⊂(◉‿◉)つ")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{prefix}help"))
     for serveur in client.guilds:
         if serveur.id not in dico:
@@ -293,6 +293,7 @@ async def calcul_mental(ctx, limit = 5):
 
 @client.command(aliases=["p4"])
 async def puissance4(ctx, member: discord.Member):
+    await ctx.send("en travaux")
     response = await start_game_duo(ctx, member, "puissance 4")
     if response is False:
         return
@@ -318,96 +319,103 @@ async def puissance4(ctx, member: discord.Member):
 
     couleur = "jaune"
 
-    embed=discord.Embed(color=0x000000, title="Puissance 4")
-    embed.add_field(name="Preparation", value="...", inline=False)
-    embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
-    msg = await ctx.send(embed=embed)
+    async def send():
+        embed=discord.Embed(color=0x000000, title="Puissance 4")
+        embed.add_field(name="Preparation", value="...", inline=False)
+        embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
+        msg = await ctx.send(embed=embed)
+        for e in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄"]:
+            await msg.add_reaction(e)
+        return msg
 
-    async def edit_embed():
+    msg = await send()
+
+    async def edit_embed(title = None, message = None):
         embed=discord.Embed(color=dico_p4[couleur][2], title="Puissance 4")
-        embed.add_field(name="Tour de", value=dico_p4[couleur][0].mention, inline=False)
-        embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=True)
+        embed.add_field(name="Tour de", value=dico_p4[couleur][0].mention, inline=False if title is None else True)
+        if title is not None:
+            embed.add_field(name=title, value=message, inline=True)
+        embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
         await msg.edit(embed=embed)
 
-
-    for e in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄", "❌"]:
-        await msg.add_reaction(e)
-
-    while plateau[0].count(rond_gris) != 0:
-        await edit_embed()
-        
+    async def end():
         try:
-            num, _ = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄", "❌"] and user.id == dico_p4[couleur][0].id, timeout=120)
+            num, user = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) == "🔄" and user.id in [dico_p4["rouge"][0].id, dico_p4["jaune"][0].id], timeout=30)
         except asyncio.TimeoutError:
-            return
-        if str(num.emoji) == "❌":
-            return
-        elif str(num.emoji) == "🔄":
-            plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
+            return None
+        plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
+        await msg.remove_reaction(num.emoji, user)
+        return plateau
+
+    while True:
+        while plateau[0].count(rond_gris) != 0:
+            await edit_embed()
+            
+            try:
+                num, _ = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄"] and user.id == dico_p4[couleur][0].id, timeout=180)
+            except asyncio.TimeoutError:
+                return
             await msg.remove_reaction(num.emoji, dico_p4[couleur][0])
-        else:
-            await msg.remove_reaction(num.emoji, dico_p4[couleur][0])
-
-            dict_number = {
-                "1️⃣": 0,
-                "2️⃣": 1,
-                "3️⃣": 2,
-                "4️⃣": 3,
-                "5️⃣": 4,
-                "6️⃣": 5,
-                "7️⃣": 6
-            }
-
-            def place():
-                for i in range(len(plateau)):
-                    if plateau[len(plateau) - i - 1][dict_number[num.emoji]] == rond_gris:
-                        plateau[len(plateau) - i - 1][dict_number[num.emoji]] = dico_p4[couleur][1]
-                        return len(plateau) - i - 1, dict_number[num.emoji]
-                return -1, -1
-
-            positionx, positiony = place()
-
-            if (positionx, positiony) == (-1, -1):
-                await ctx.send("la colonne est pleine")
+            if str(num.emoji) == "🔄":
+                plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
             else:
 
-                listex = plateau[positionx]
-                listey = [plateau[i][positiony] for i in range(6)]
+                dict_number = {
+                    "1️⃣": 0,
+                    "2️⃣": 1,
+                    "3️⃣": 2,
+                    "4️⃣": 3,
+                    "5️⃣": 4,
+                    "6️⃣": 5,
+                    "7️⃣": 6
+                }
 
-                listeDiago1 = [plateau[positionx - i][positiony - i] for i in range(0, 7) if positionx - i >= 0 and positiony - i >= 0]
-                listeDiago1.reverse()
-                listeDiago1 += [plateau[positionx + i][positiony + i] for i in range(1, 7) if positiony + i < 7 and positionx + i < 6]
-                listeDiago1.reverse()
+                def place():
+                    for i in range(len(plateau)):
+                        if plateau[len(plateau) - i - 1][dict_number[num.emoji]] == rond_gris:
+                            plateau[len(plateau) - i - 1][dict_number[num.emoji]] = dico_p4[couleur][1]
+                            return len(plateau) - i - 1, dict_number[num.emoji]
+                    return -1, -1
 
-                listeDiago2 = [plateau[positionx - i][positiony + i] for i in range(0, 7) if positionx - i >= 0 and positiony + i <= 6]
-                listeDiago2.reverse()
-                listeDiago2 += [plateau[positionx + i][positiony - i] for i in range(1, 7) if positionx + i < 6 and positiony - i >= 0]
-                listeDiago2.reverse()
+                positionx, positiony = place()
 
-                for liste in [listex, listey, listeDiago1, listeDiago2]:
-                    tmp = "".join(liste)
-                    if tmp.count(dico_p4[couleur][1]) != tmp.replace(dico_p4[couleur][1] * 4, "").count(dico_p4[couleur][1]):
-                        embed=discord.Embed(color=dico_p4[couleur][2], title="Puissance 4")
-                        embed.add_field(name="Tour de", value=dico_p4[couleur][0].mention, inline=True)
-                        embed.add_field(name="Vainqueur", value=dico_p4[couleur][0].mention, inline=True)
-                        embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
-                        await msg.edit(embed=embed)
-                        try:
-                            num, user = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) == "🔄" and user.id in [dico_p4["rouge"][0].id, dico_p4["jaune"][0].id], timeout=30)
-                        except asyncio.TimeoutError:
-                            return
-                        plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
-                        await msg.remove_reaction(num.emoji, user)
-
-                if couleur == "jaune":
-                    couleur = "rouge"
+                if (positionx, positiony) == (-1, -1):
+                    await ctx.send("la colonne est pleine")
                 else:
-                    couleur = "jaune"
 
-@puissance4.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <membre>")
+                    listex = plateau[positionx]
+                    listey = [plateau[i][positiony] for i in range(6)]
+
+                    listeDiago1 = [plateau[positionx - i][positiony - i] for i in range(0, 7) if positionx - i >= 0 and positiony - i >= 0]
+                    listeDiago1.reverse()
+                    listeDiago1 += [plateau[positionx + i][positiony + i] for i in range(1, 7) if positiony + i < 7 and positionx + i < 6]
+                    listeDiago1.reverse()
+
+                    listeDiago2 = [plateau[positionx - i][positiony + i] for i in range(0, 7) if positionx - i >= 0 and positiony + i <= 6]
+                    listeDiago2.reverse()
+                    listeDiago2 += [plateau[positionx + i][positiony - i] for i in range(1, 7) if positionx + i < 6 and positiony - i >= 0]
+                    listeDiago2.reverse()
+
+                    for liste in [listex, listey, listeDiago1, listeDiago2]:
+                        tmp = "".join(liste)
+                        if tmp.count(dico_p4[couleur][1]) != tmp.replace(dico_p4[couleur][1] * 4, "").count(dico_p4[couleur][1]):
+                            await edit_embed("Vainqueur", dico_p4[couleur][0].mention)
+                            plateau = await end()
+
+                    if couleur == "jaune":
+                        couleur = "rouge"
+                    else:
+                        couleur = "jaune"
+
+        await edit_embed("Egalité", "󠀮 ")
+        plateau = await end()
+        if plateau is None:
+            return
+
+# @puissance4.error
+# async def on_message_error(ctx, error):
+#     if isinstance(error, commands.MissingRequiredArgument):
+#         await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <membre>")
 
 # - admin
 @client.command()
