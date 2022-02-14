@@ -476,9 +476,14 @@ async def toggle_welcome_message(ctx, msg = None):
         open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
         await ctx.send("le nouveau message de bienvenue est enregistré")
     else:
-        dico[ctx.guild.id]["welcome_msg"] = None
-        open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
-        await ctx.send("La fonction message de bienvenue est désactivée")
+        await ctx.send(f"Le message actuel est \n\n\"{dico[ctx.guild.id]['welcome_msg']}\" \n\nVoulez-vous désactivé le message de bienvenue ?")
+        response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id and message.content.lower() in ["o", "oui", "yes", "y", "no", "n", "non"], timeout=180)
+        if response.content.lower() in ["o", "oui", "yes", "y"]:
+            dico[ctx.guild.id]["welcome_msg"] = None
+            open("/home/runner/Eula-bot/server.txt", "w").write(str(dico))
+            await ctx.send("La fonction message de bienvenue est désactivée")
+        else:
+            await response.add_reaction("✅")
             
 
 
@@ -624,11 +629,11 @@ async def on_message_delete(message):
         return
     if dico[message.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"{message.author.name} à supprimer un message", icon_url=message.author.avatar_url)
+        embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
         embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
         embed.add_field(name="contenu", value=message.content, inline=True)
         embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
-        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+        embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
         await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
 
 
@@ -640,12 +645,12 @@ async def on_message_edit(before, after):
         return
     if dico[before.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"{before.author.name} à modifier un message", icon_url=before.author.avatar_url)
+        embed.set_author(name=f"{before.author.name} à modifié un message", icon_url=before.author.avatar_url)
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914861144206893076/edit.png")
         embed.add_field(name="avant", value=before.content, inline=True)
         embed.add_field(name="󠀮salon", value=before.channel.mention, inline=True)
         embed.add_field(name="après", value=after.content, inline=False)
-        embed.add_field(name="󠀮 ", value=f"{get_time()}\n[link]({before.jump_url})", inline=False)
+        embed.add_field(name="󠀮 ", value=f"{after.author.mention + ' - '  + get_time()} - [link]({before.jump_url})", inline=False)
         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
 
@@ -657,7 +662,7 @@ async def on_guild_channel_create(channel):
         embed.set_author(name=f"channel créé", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918043170259074/plus_1.png")
         embed.add_field(name=f"󠀮salon", value=channel.name, inline=True)
-        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+        embed.add_field(name="󠀮 ", value=channel.mention + " - " + get_time(), inline=False)
         await channel_send(dico[channel.guild.id]["logs"]).send(embed=embed)
 
 
@@ -665,7 +670,7 @@ async def on_guild_channel_create(channel):
 async def on_guild_channel_delete(channel):
     if dico[channel.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"channel supprimer", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
+        embed.set_author(name=f"channel supprimé", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
         embed.add_field(name=f"󠀮salon", value=channel.name, inline=True)
         embed.add_field(name="󠀮 ", value=get_time(), inline=False)
@@ -682,7 +687,7 @@ async def on_guild_channel_update(before , after):
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914861144206893076/edit.png")
         embed.add_field(name="avant", value=before.name, inline=True)
         embed.add_field(name=f"󠀮apres", value=after.name, inline=True)
-        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+        embed.add_field(name="󠀮 ", value=after.mention + " - " + get_time(), inline=False)
         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
 
@@ -694,7 +699,7 @@ async def on_guild_role_create(role):
         embed.set_author(name=f"un nouveau role à été créé", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918043170259074/plus_1.png")
         embed.add_field(name="nom", value=role.name, inline=True)
-        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+        embed.add_field(name="󠀮 ", value=role.mention + " - " + get_time(), inline=False)
         await channel_send(dico[role.guild.id]["logs"]).send(embed=embed)
 
 
@@ -708,7 +713,7 @@ async def on_guild_role_update(before, after):
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914861144206893076/edit.png")
         embed.add_field(name="avant", value=before.name, inline=True)
         embed.add_field(name="après", value=after.name, inline=True)
-        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+        embed.add_field(name="󠀮 ", value=after.mention + " - " + get_time(), inline=False)
         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
 
@@ -737,7 +742,7 @@ async def on_member_ban(guild, member):
         embed=discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} à été banni", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914883218275205160/notifications.png")
-        embed.add_field(name="membre", value=member.name, inline=True)
+        embed.add_field(name="membre", value=member.mention, inline=True)
         embed.add_field(name="󠀮 ", value=get_time(), inline=False)
         await channel_send(dico[guild.id]["logs"]).send(embed=embed)
 
@@ -748,7 +753,7 @@ async def on_member_unban(guild, member):
         embed=discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} à été débanni", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914883218275205160/notifications.png")
-        embed.add_field(name="membre", value=member.name, inline=True)
+        embed.add_field(name="membre", value=member.mention, inline=True)
         embed.add_field(name="󠀮 ", value=get_time(), inline=False)
         await channel_send(dico[guild.id]["logs"]).send(embed=embed)
 
@@ -759,8 +764,8 @@ async def on_member_join(member):
         embed=discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} à rejoint le serveur", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914883218275205160/notifications.png")
-        embed.add_field(name="membre", value=member.name, inline=True)
-        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+        embed.add_field(name="membre", value=member.mention, inline=True)
+        embed.add_field(name="󠀮 ", value=member.mention + " - " + get_time(), inline=False)
         await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
     if dico[member.guild.id]["autorole"] is not None and not member.bot:
         role = discord.utils.get(member.guild.roles, id = dico[member.guild.id]["autorole"])
@@ -775,7 +780,7 @@ async def on_member_remove(member):
         embed=discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} à quitté le serveur", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914883218275205160/notifications.png")
-        embed.add_field(name="membre", value=member.name, inline=True)
+        embed.add_field(name="membre", value=member.mention, inline=True)
         embed.add_field(name="󠀮 ", value=get_time(), inline=False)
         await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
 
@@ -789,7 +794,7 @@ async def on_member_update(before, after):
             embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914861144206893076/edit.png")
             embed.add_field(name="avant", value=before.display_name, inline=True)
             embed.add_field(name="après", value=after.display_name, inline=True)
-            embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+            embed.add_field(name="󠀮 ", value=after.mention + " - " + get_time(), inline=False)
             await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
         if before.roles != after.roles:
             def diff(a, b):
@@ -803,7 +808,7 @@ async def on_member_update(before, after):
                         embed.set_author(name=f"{before.name} à gagner un role", icon_url=before.avatar_url)
                         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918043170259074/plus_1.png")
                         embed.add_field(name="role", value=after.roles[e].mention, inline=True)
-                        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+                        embed.add_field(name="󠀮 ", value=after.mention + " - " + get_time(), inline=False)
                         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
             else:
                 i = diff(before.roles, after.roles)
@@ -813,7 +818,7 @@ async def on_member_update(before, after):
                         embed.set_author(name=f"{before.name} à perdu un role", icon_url=before.avatar_url)
                         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918042981498910/minus.png")
                         embed.add_field(name="role", value=before.roles[e].mention, inline=True)
-                        embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+                        embed.add_field(name="󠀮 ", value=after.mention + " - " + get_time(), inline=False)
                         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
 
@@ -827,7 +832,7 @@ async def on_voice_state_update(member, before, after):
                 embed.set_author(name=f"{member.name} à rejoint un salon vocal", icon_url=member.avatar_url)
                 embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914539760150806528/unknown.png")
                 embed.add_field(name=f"󠀮salon", value=after.channel.mention, inline=True)
-                embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+                embed.add_field(name="󠀮 ", value=member.mention + " - " + get_time(), inline=False)
                 await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
                 if dico[member.guild.id]["voc"] is not None:
                     await member.add_roles(discord.utils.get(member.guild.roles, id = dico[member.guild.id]["voc"]))
@@ -836,7 +841,7 @@ async def on_voice_state_update(member, before, after):
                 embed.set_author(name=f"{member.name} à quitté un salon vocal", icon_url=member.avatar_url)
                 embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914539761794961458/unknown.png")
                 embed.add_field(name=f"󠀮salon", value=before.channel.mention, inline=True)
-                embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+                embed.add_field(name="󠀮 ", value=member.mention + " - " + get_time(), inline=False)
                 await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
                 if dico[member.guild.id]["voc"] is not None:
                     await member.remove_roles(discord.utils.get(member.guild.roles, id = dico[member.guild.id]["voc"]))
@@ -846,7 +851,7 @@ async def on_voice_state_update(member, before, after):
                 embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914922944000577536/shuffle.png")
                 embed.add_field(name=f"󠀮avant", value=before.channel.mention, inline=True)
                 embed.add_field(name=f"󠀮après", value=after.channel.mention, inline=True)
-                embed.add_field(name="󠀮 ", value=get_time(), inline=False)
+                embed.add_field(name="󠀮 ", value=member.mention + " - " + get_time(), inline=False)
                 await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
 
 
