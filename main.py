@@ -98,6 +98,10 @@ async def start_game_multi(ctx, limit, name_game):
     return list_user, dico_points
 
 async def start_game_duo(ctx, member, name_game):
+    if not id.isdigit():
+        id = replaces(id, "<@!", "", ">", "")
+
+    member = client.get_user(int(id))
     await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
     try:
         msg = await client.wait_for("message", check=lambda message: message.author.id in [member.id, ctx.author.id] and message.content.lower() in ["y", "o", "n", "yes", "oui", "no", "non"], timeout=180)
@@ -136,7 +140,7 @@ async def end_game(ctx, list_user, dico_points):
         await ctx.send(f"󠀮 \n**Partie finie !**\nLes vainqueurs sont {str_winner} avec {dico_points[username.id]} points !")
     
 
-# --- commands
+# --- commandes/commands
 # - everyone
 @client.command()
 async def hentai(ctx, category = "help", nbr = "1"):
@@ -160,6 +164,22 @@ async def hentai(ctx, category = "help", nbr = "1"):
             await ctx.send(link["url"])
     else:
         await ctx.send("**Liste des categories:**\nass, bdsm, cum, creampie, manga, femdom, hentai, incest, masturbation, public, ero, orgy, elves, yuri, pantsu, glasses, cuckold, blowjob, boobjob, foot, thighs, vagina, ahegao, uniform, gangbang, tentacles, gif, neko, nsfwMobileWallpaper, zettaiRyouiki")
+
+
+@client.command(aliases=["profile_picture", "pdp"])
+async def pp(ctx, id):
+    if not id.isdigit():
+        id = replaces(id, "<@!", "", ">", "")
+
+    member = client.get_user(int(id))
+    if member is None:
+        await ctx.send("Je ne peux pas trouver l'utilisateur !")
+    filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
+    await member.avatar_url.save(filename)
+    file = discord.File(fp=filename)
+    await ctx.send(file=file)
+    os.remove(filename)
+
 
 
 @client.command(aliases=["random"])
@@ -209,14 +229,16 @@ async def help(ctx):
               
         embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
         embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les reactions donnés, les reaction doivent être coller", inline=False)
+        embed.add_field(name=f"{prefix}dm <id du membre/mention> <message>", value="envoie le message avec le bot",inline=False)
     embed.add_field(name="commandes normales", value="----------------------------", inline=False)
     embed.add_field(name=f"{prefix}8ball <message>", value="Boule magique", inline=False)
     embed.add_field(name=f"{prefix}10fastfinger", value="jeu multijoueur dans lequel les participants doivent écrire une phrase le plus vite possible", inline=False)
     embed.add_field(name=f"{prefix}calcul_mental", value="jeu multijoueur dans lequel les participants doivent résoudre des calculs", inline=False)
     embed.add_field(name=f"{prefix}random <nombre>", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
     embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
-    embed.add_field(name=f"{prefix}puissance4 <membre>", value="lance une partie de puissance 4", inline=False)
-    # embed.add_field(name=f"{prefix}hentai <categorie> <nbr d'images>", value="si le salon est NSFW envoie des images hentai", inline=False)
+    embed.add_field(name=f"{prefix}puissance4 <id du membre/mention>", value="lance une partie de puissance 4", inline=False)
+    embed.add_field(name=f"{prefix}hentai <categorie> <nbr d'images>", value="si le salon est NSFW envoie des images hentai", inline=False)
+    embed.add_field(name=f"{prefix}pp <id du membre/mention>", value="donne la pp du membre", inline=False)
     await ctx.send(embed=embed)
     # embed.add_field(name=f"{prefix}", value="", inline=False)
 
@@ -305,7 +327,7 @@ async def calcul_mental(ctx, limit = 5):
 
 
 @client.command(aliases=["p4"])
-async def puissance4(ctx, member: discord.Member):
+async def puissance4(ctx, member):
     response = await start_game_duo(ctx, member, "puissance 4")
     if response is False:
         return
@@ -428,10 +450,10 @@ async def puissance4(ctx, member: discord.Member):
         if plateau is None:
             return
 
-# @puissance4.error
-# async def on_message_error(ctx, error):
-#     if isinstance(error, commands.MissingRequiredArgument):
-#         await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <membre>")
+@puissance4.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <membre>")
 
 # - admin
 @client.command()
@@ -462,6 +484,25 @@ async def reaction(ctx, channel, id, *, react):
 async def on_message_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
         await ctx.send("L'id correspond à auncun message ou le bot ne peux pas mettre la reaction saisie")
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}reaction <salon> <id du msg> <reactions>")
+
+
+@client.command()
+async def dm(ctx, id, *, msg):
+    if not id.isdigit():
+        id = replaces(id, "<@!", "", ">", "")
+
+    member = client.get_user(int(id))
+    await member.send(msg + f"\n\nmessage envoyé par {ctx.author.name}")
+    await ctx.message.add_reaction("✅")
+
+@dm.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.CommandInvokeError):
+        await ctx.send("Le member n'existe pas")
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
 
 
 @client.command()
@@ -628,20 +669,36 @@ async def on_message_delete(message):
     if message.author.bot:
         return
     if dico[message.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
-        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
-        embed.add_field(name="contenu", value=message.content, inline=True)
-        embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
-        embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
-        await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
-
+        print(message.attachments)
+        if message.attachments == []:
+            embed=discord.Embed(color=0xf0a3ff)
+            embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
+            embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
+            embed.add_field(name="contenu", value=message.content, inline=True)
+            embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
+            embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
+            await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
+        else:
+            files = [attachment.url for attachment in message.attachments]
+            print(files)
+            for file in files:
+                embed=discord.Embed(color=0xf0a3ff)
+                embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
+                embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
+                if message.content == "":
+                    embed.add_field(name="contenu", value="<image>", inline=True)
+                else:
+                    embed.add_field(name="contenu", value=message.content, inline=True)
+                embed.set_image(url=file)
+                embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
+                embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
+                await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
 
 @client.event
 async def on_message_edit(before, after):
     if before.author.bot:
         return
-    elif before.content.startswith("http") and before.content.count(" ") == 0 and before.content == after.content:
+    elif before.content == after.content:
         return
     if dico[before.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
