@@ -98,10 +98,8 @@ async def start_game_multi(ctx, limit, name_game):
     return list_user, dico_points
 
 async def start_game_duo(ctx, member, name_game):
-    print("bjk")
     if not member.isdigit():
         member = replaces(id, "<@", "", ">", "")
-    print(member)
     member = client.get_user(int(member))
     await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
     try:
@@ -329,7 +327,6 @@ async def calcul_mental(ctx, limit = 5):
 
 @client.command(aliases=["p4"])
 async def puissance4(ctx, member):
-    print("sa")
     response = await start_game_duo(ctx, member, "puissance 4")
     if response is False:
         return
@@ -688,15 +685,18 @@ async def on_message_delete(message):
     if message.author.bot:
         return
     if dico[message.guild.id]["logs"] is not None:
-        if message.attachments == []:
-            embed=discord.Embed(color=0xf0a3ff)
-            embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
-            embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
-            embed.add_field(name="contenu", value=message.content, inline=True)
-            embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
-            embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
-            await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
+        embed=discord.Embed(color=0xf0a3ff)
+        embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
+        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
+        if message.content == "":
+            embed.add_field(name="contenu", value="<image>", inline=True)
         else:
+            embed.add_field(name="contenu", value=message.content, inline=True)
+        embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
+        embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
+        msg = await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
+        
+        if len(message.attachments) != 0:
             files = []
             for attachment in message.attachments:
                 await attachment.save(attachment.filename)
@@ -706,15 +706,11 @@ async def on_message_delete(message):
                 embed=discord.Embed(color=0xf0a3ff)
                 embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
                 embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
-                if message.content == "":
-                    embed.add_field(name="contenu", value="<image>", inline=True)
-                else:
-                    embed.add_field(name="contenu", value=message.content, inline=True)
                 embed.set_image(url=f"attachment://{file}")
                 embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
                 embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
                 ds_file = discord.File(file)
-                await channel_send(dico[message.guild.id]["logs"]).send(file=ds_file, embed=embed)
+                await msg.reply(file=ds_file, embed=embed)
                 os.remove(file)
 
 @client.event
