@@ -22,7 +22,7 @@ prefix = "!"
 default_intents = discord.Intents.default()
 decalage_horaire = 1
 default_intents.members = True
-client = commands.Bot(command_prefix = [prefix, "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
+client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>"],  help_command = None, intents = default_intents)
 
 print("connection...")
 
@@ -98,10 +98,11 @@ async def start_game_multi(ctx, limit, name_game):
     return list_user, dico_points
 
 async def start_game_duo(ctx, member, name_game):
-    if not id.isdigit():
-        id = replaces(id, "<@!", "", ">", "")
-
-    member = client.get_user(int(id))
+    print("bjk")
+    if not member.isdigit():
+        member = replaces(id, "<@", "", ">", "")
+    print(member)
+    member = client.get_user(int(member))
     await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
     try:
         msg = await client.wait_for("message", check=lambda message: message.author.id in [member.id, ctx.author.id] and message.content.lower() in ["y", "o", "n", "yes", "oui", "no", "non"], timeout=180)
@@ -169,7 +170,7 @@ async def hentai(ctx, category = "help", nbr = "1"):
 @client.command(aliases=["profile_picture", "pdp"])
 async def pp(ctx, id):
     if not id.isdigit():
-        id = replaces(id, "<@!", "", ">", "")
+        id = replaces(id, "<@", "", ">", "")
 
     member = client.get_user(int(id))
     if member is None:
@@ -328,6 +329,7 @@ async def calcul_mental(ctx, limit = 5):
 
 @client.command(aliases=["p4"])
 async def puissance4(ctx, member):
+    print("sa")
     response = await start_game_duo(ctx, member, "puissance 4")
     if response is False:
         return
@@ -494,13 +496,13 @@ async def dm(ctx, id, *, msg):
         id = replaces(id, "<@!", "", ">", "")
 
     member = client.get_user(int(id))
-    await member.send(msg + f"\n\nmessage envoyé par {ctx.author.name}")
+    await member.send(msg + f"\n\nmessage envoyé par {ctx.author.mention}")
     await ctx.message.add_reaction("✅")
 
 @dm.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("Le member n'existe pas")
+        await ctx.send("Le membre n'existe pas ou est introuvable")
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
 
@@ -662,14 +664,30 @@ async def view(ctx):
     print(reponse.content)
 
 
-# --- logs
+# - moi
+@client.command(aliases=["set_avatar"])
+async def set_pp(ctx):
+    if len(ctx.message.attachments) == 0:
+        await ctx.send("Il faut envoyé une image")
+    elif len(ctx.message.attachments) > 1:
+        await ctx.send("Il faut qu'une image")
+    else:
+        file = ctx.message.attachments[0].filename
+        await ctx.message.attachments[0].save(file)
+        byte_avatar = open(file, "rb").read()
+        await client.user.edit(avatar=byte_avatar)
+        await ctx.message.add_reaction("✅")
+        os.remove(file)
+
+
+        
+# --- logs       
 # - message
 @client.event
 async def on_message_delete(message):
     if message.author.bot:
         return
     if dico[message.guild.id]["logs"] is not None:
-        print(message.attachments)
         if message.attachments == []:
             embed=discord.Embed(color=0xf0a3ff)
             embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
@@ -679,8 +697,11 @@ async def on_message_delete(message):
             embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
             await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
         else:
-            files = [attachment.url for attachment in message.attachments]
-            print(files)
+            files = []
+            for attachment in message.attachments:
+                await attachment.save(attachment.filename)
+                files.append(attachment.filename)
+
             for file in files:
                 embed=discord.Embed(color=0xf0a3ff)
                 embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
@@ -689,10 +710,12 @@ async def on_message_delete(message):
                     embed.add_field(name="contenu", value="<image>", inline=True)
                 else:
                     embed.add_field(name="contenu", value=message.content, inline=True)
-                embed.set_image(url=file)
+                embed.set_image(url=f"attachment://{file}")
                 embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
                 embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
-                await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
+                ds_file = discord.File(file)
+                await channel_send(dico[message.guild.id]["logs"]).send(file=ds_file, embed=embed)
+                os.remove(file)
 
 @client.event
 async def on_message_edit(before, after):
