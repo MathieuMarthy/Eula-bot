@@ -12,9 +12,8 @@ from discord.ext.commands import has_permissions
 from keep_alive import keep_alive
 
 #--- dico
-dico = ast.literal_eval(open("/home/runner/Eula-bot/server.txt", "r").read().replace("'", '"'))
+dico = ast.literal_eval(open("/home/runner/Eula-bot/server.txt", "r").read().replace("f'", '"'))
 # forme:  {id: {"name": str, "logs": int, "voc": int, "autorole": int, "welcome_msg": str}}
-
 
 
 # --- setup
@@ -45,7 +44,9 @@ def channel_send(id):
 def get_time():
     time_ = str(time.strftime("%d/%m/%Y - %H:%M:%S", time.localtime()))
     hour = time.strftime("%H", time.localtime())
-    return time_.replace(hour, str(int(hour) + decalage_horaire))
+    new_h = "0" if str(int(hour) + decalage_horaire) == "24" else str(int(hour) + decalage_horaire)
+    
+    return time_.replace(hour, new_h)
 
 
 def replaces(string, *args):
@@ -53,6 +54,15 @@ def replaces(string, *args):
         string = string.replace(args[i], args[i + 1])
     return string
 
+def get_member(member):
+    if not member.isdigit():
+        if "!" in member:
+            member = replaces(member, "<@!", "", ">", "")
+        else:
+            member = replaces(member, "<@", "", ">", "")
+    return client.get_user(int(member))
+    
+    
 # - mini jeux
 async def start_game_multi(ctx, limit, name_game):
     """
@@ -97,22 +107,22 @@ async def start_game_multi(ctx, limit, name_game):
     await asyncio.sleep(3)
     return list_user, dico_points
 
+
 async def start_game_duo(ctx, member, name_game):
-    if not member.isdigit():
-        member = replaces(id, "<@", "", ">", "")
-    member = client.get_user(int(member))
+    member = get_member(member)
+    
     await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
     try:
         msg = await client.wait_for("message", check=lambda message: message.author.id in [member.id, ctx.author.id] and message.content.lower() in ["y", "o", "n", "yes", "oui", "no", "non"], timeout=180)
     except asyncio.TimeoutError:
         await ctx.reply(f"**{member.name}** n'a pas répondu", mention_author=False)
-        return False
+        return False, None
 
     if msg.content.lower() in ["n", "non", "no"]:
         await ctx.send("Partie refusée")
-        return False
+        return False, None
     else:
-        return True
+        return True, member
 
 
 async def end_game(ctx, list_user, dico_points):
@@ -166,11 +176,8 @@ async def hentai(ctx, category = "help", nbr = "1"):
 
 
 @client.command(aliases=["profile_picture", "pdp"])
-async def pp(ctx, id):
-    if not id.isdigit():
-        id = replaces(id, "<@", "", ">", "")
-
-    member = client.get_user(int(id))
+async def pp(ctx, member):
+    member = get_member(member)
     if member is None:
         await ctx.send("Je ne peux pas trouver l'utilisateur !")
     filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
@@ -223,7 +230,7 @@ async def help(ctx):
         embed.add_field(name=f"{prefix}toggle_rolevocal - _admin_", value="active/desactive le fait de donner un role à chaque fois qu'un membre rejoint un salon vocal ", inline=False)  
         embed.add_field(name=f"\n{prefix}toggle_logs - _admin_", value="active/désactive les logs", inline=False)
         embed.add_field(name=f"\n{prefix}toggle_welcome_message - _admin_", value="active/désactive le message de bienvenue", inline=False)
-        embed.add_field(name=f"{prefix}clear <nbr/texte> - _admin_", value="supprime le nombres de messages,\nsupprime les messages jusqu'au texte donné", inline=False)
+        embed.add_field(name=f"{prefix}clear <nbr/texte> - _admin_", value="supprime le nombres de messages,\nsupprime les messages jusqu'au lien donné", inline=False)
         embed.add_field(name=f"{prefix}nuck <salon> - _admin_", value="enleve tous les messages d'un salon", inline=False)
               
         embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
@@ -327,10 +334,11 @@ async def calcul_mental(ctx, limit = 5):
 
 @client.command(aliases=["p4"])
 async def puissance4(ctx, member):
-    response = await start_game_duo(ctx, member, "puissance 4")
+
+    response, member = await start_game_duo(ctx, member, "puissance 4")
     if response is False:
         return
-
+    
     rond_gris = "⚫"
     rond_rouge = "🔴"
     rond_jaune = "🟡"
@@ -448,11 +456,12 @@ async def puissance4(ctx, member):
         plateau = await end()
         if plateau is None:
             return
-
+"""
 @puissance4.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <membre>")
+"""
 
 # - admin
 @client.command()
@@ -488,12 +497,9 @@ async def on_message_error(ctx, error):
 
 
 @client.command()
-async def dm(ctx, id, *, msg):
-    if not id.isdigit():
-        id = replaces(id, "<@!", "", ">", "")
-
-    member = client.get_user(int(id))
-    await member.send(msg + f"\n\nmessage envoyé par {ctx.author.mention}")
+async def dm(ctx, member, *, msg):
+    member = get_member(member)
+    await member.send(msg)
     await ctx.message.add_reaction("✅")
 
 @dm.error
@@ -503,6 +509,20 @@ async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
 
+@client.command()
+async def get_dm(ctx, member):
+    member = get_member(member)
+    str = ""
+    async for message in member.history(limit=None):
+        str = message.author.name + ": " + message.content + "\n-----------\n\n"
+        await ctx.send(str)
+        
+@get_dm.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.CommandInvokeError):
+        await ctx.send("Le membre n'existe pas ou est introuvable")
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
 
 @client.command()
 @has_permissions(administrator=True)
@@ -576,8 +596,8 @@ async def clear(ctx, *, arg = "1"):
         tmp = 0
         async for message in ctx.history(limit = 500):
             tmp += 1
-            if message.content == arg:
-                await ctx.send(f"{tmp - 2} messages sélectionner jusqu'à \"{arg}\". voulez-vous les supprimer ? (oui/non)")
+            if message.jump_url == arg:
+                await ctx.send(f"{tmp - 2} messages sélectionné jusqu'au message demandé. voulez-vous les supprimer ? (oui/non)")
                 msg = await client.wait_for("message", check = lambda message: message.author == ctx.author)
                 if msg.content.lower() in ["oui", "o", "y", "yes"]:
                     await ctx.channel.purge(limit = tmp + 1)
@@ -664,6 +684,8 @@ async def view(ctx):
 # - moi
 @client.command(aliases=["set_avatar"])
 async def set_pp(ctx):
+    if ctx.author.id != 236853417681616906:
+        return
     if len(ctx.message.attachments) == 0:
         await ctx.send("Il faut envoyé une image")
     elif len(ctx.message.attachments) > 1:
@@ -675,7 +697,7 @@ async def set_pp(ctx):
         await client.user.edit(avatar=byte_avatar)
         await ctx.message.add_reaction("✅")
         os.remove(file)
-
+        
 
         
 # --- logs       
@@ -702,11 +724,18 @@ async def on_message_delete(message):
                 await attachment.save(attachment.filename)
                 files.append(attachment.filename)
 
-            for file in files:
+            for index, file in enumerate(files):
                 embed=discord.Embed(color=0xf0a3ff)
                 embed.set_author(name=f"{message.author.name} à supprimé un message", icon_url=message.author.avatar_url)
                 embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
-                embed.set_image(url=f"attachment://{file}")
+                    
+                if file.endswith(".mp4"):
+                    embed.video.url = f"attachment://{file}"
+                    embed.video.height = message.attachments[index]
+                    embed.video.width = message.attachments[index]
+                else:
+                    embed.set_image(url=f"attachment://{file}")
+                    
                 embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
                 embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_time(), inline=False)
                 ds_file = discord.File(file)
@@ -715,9 +744,7 @@ async def on_message_delete(message):
 
 @client.event
 async def on_message_edit(before, after):
-    if before.author.bot:
-        return
-    elif before.content == after.content:
+    if before.author.bot or before.guild is None or before.content == after.content:
         return
     if dico[before.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
@@ -932,4 +959,4 @@ async def on_voice_state_update(member, before, after):
 
 
 keep_alive()
-client.run(os.environ['token'])
+client.run(os.environ["token"])
