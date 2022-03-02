@@ -331,6 +331,612 @@ async def calcul_mental(ctx, limit = 5):
 
     await end_game(ctx, list_user, dico_points)
 
+@client.command()
+async def mo(ctx):
+    # fait une liste de tout les participants
+    msg = await ctx.send("**Partie de Monopoly lancée !**\npour participer réagissez avec 🖐️")
+    await msg.add_reaction("🖐️")
+    await asyncio.sleep(12)
+    list_user = []
+    async for e in ctx.channel.history(limit=100):
+        if e.id == msg.id:
+            for reaction in e.reactions:
+                if reaction.emoji == "🖐️":
+                    async for user in reaction.users():
+                        if user.id != client.user.id:
+                            list_user.append(user)
+            break
+
+    if not list_user:
+        await ctx.reply("Aucun joueur n'a rejoint la partie", mention_author=False)
+        return
+
+    random.shuffle(list_user)
+    # --- joueur    
+
+    class joueur:
+        def __init__(self, id: int, mention, name: str, emote) -> None:
+            self.id = id
+            self.mention = mention
+            self.proprietes = []
+            self.name = name
+            self.argent = 2000
+            self.chance = []
+            self.prison_ = 0
+            self.position = 0
+            self.last_position = (12, 11)
+            self.emote = emote
+            self.sorti_prison = False
+            self.gare = 0
+
+        def prison(self):
+            self.position = 10
+            self.prison = 2
+
+        def deplace(self, valeur):
+            """déplace le joueur de la valeur donné
+
+            Args:
+                valeur (int): nombre
+            """
+            tmp = self.position
+            self.position = self.position + valeur - 40 if self.position + valeur >= 40 else self.position + valeur
+            if self.position < tmp:
+                self.argent += 100
+            
+
+        def achete(self, propriete):
+            """le joueur achete une propriete
+
+            Args:
+                propriete (_type_): objet propriete
+            """
+
+            self.proprietes.append(propriete)
+            self.argent -= propriete.valeur
+            propriete.est_achete(self)
+            plateau.propriete_acheté(propriete)
+
+        def echange(self, propriete, joueur, prix) -> bool:
+            """self échange une propriete avec joueur
+                self donne l'argent et joueur donne la propriete
+
+            Args:
+                propriete (_type_): la propriete a transfere d'un joueur a l'autre
+                joueur (_type_): le joueur avec qui faire la transaction
+                prix (_type_): prix de la propriete convenu entre self et joueur
+
+            Returns:
+                int: 0 = pas assez d'argent / 1 = joueur n'a pas la propriete / 2 = ok
+            """
+            if self.argent - prix < 0:
+                return 0
+            elif propriete not in joueur.proprietes:
+                return 1
+            else:
+                self.argent -= prix
+                propriete.est_achete(self)
+                joueur.argent += prix
+                return 2
+
+        def perd_propriete(self, propriete):
+            """self perds la propriete et elle est ajouter dans la liste des propriete libres
+
+            Args:
+                propriete (_type_): propriete a enlever
+            """
+            self.proprietes.remove(propriete)
+            plateau.propriete_vendu(propriete)
+
+        def hypotheque(self, propiete):
+            """self perds la propriete et gagne la moitié de la valeur de la propriete
+
+            Args:
+                propiete (_type_): propriete a hypothéqué 
+            """
+            self.argent += propiete.valeur * 0.5
+            self.perd_propriete(propriete)
+
+        def perd(self):
+            liste_joueurs.remove(user)
+            for propriete in self.proprietes:
+                self.perd_propriete(propriete)
+                
+            for y in range(len(plateau_matrice)):
+                for x in range(len(plateau_matrice)):
+                    if plateau_matrice[x][y] == self.emote:
+                        plateau_matrice[x][y] = "⬛"
+
+    # --- cartes
+
+    class gare:
+        def __init__(self, valeurs: tuple) -> None:
+            self.nom = valeurs[0]
+            self.num = valeurs[1]
+            self.valeur = valeurs[2]
+            self.proprietaire = valeurs[3]
+            self.loyer = 100
+            self.emote = "🚉"
+        
+        def affiche(self):
+            return f"la gare {self.nom} vaut {self.prix} le proprietaire est {self.proprietaire}"
+
+        def est_achete(self, joueur: joueur):
+            """change le proprietaire de la propriete
+            """
+            self.proprietaire = joueur
+
+    class propriete:
+        def __init__(self, valeurs: tuple) -> None:
+            self.nom = valeurs[0]
+            self.valeur = valeurs[1]
+            self.proprietaire = valeurs[2]
+            self.emote = valeurs[3]
+
+        def est_achete(self, joueur: joueur):
+            """change le proprietaire de la propriete
+            """
+            self.proprietaire = joueur
+        
+        def affiche(self):
+            return f"{self.nom} vaut {self.valeur}, le proprietaire est {self.proprietaire}"
+
+    class impots:
+        def __init__(self, valeurs) -> None:
+            self.valeur = valeurs[0]
+            self.nom = valeurs[1]
+        
+        def affiche(self):
+            return f"{self.nom}, il faut payer {self.valeur}"
+
+    class special:
+        def __init__(self, type) -> None:
+            self.type = type
+
+        def affiche(self):
+            return self.type
+
+    
+        
+    def chance(user):
+        nbr = random.randint(1, 21)
+        if nbr == 1:
+            user.position = 0
+            user.argent += 100
+            return "Retournez à la case départ et touchez 100 ₿"
+        elif nbr == 2:
+            msg = "Un furry vous pourchasse vous allez au parc gratuit"
+            if user.positon >= 21:
+                user.argent += 100
+                msg += "\nvous passez par la case départ et recevez 100 ₿"
+            user.position = 0
+            return msg
+        elif nbr == 3:
+            user.argent -= 40
+            return "Vous avez gagné un iphone 13 !\nmais c'était une arnaque -40 ₿"
+        elif nbr == 4:
+            user.position = random.randint(0, 40)
+            return "Blitzcrank vous à attrapé, il vous téléporte aléatoirement sur le plateau"
+        elif nbr == 5:
+            for joueur in liste_joueurs:
+                user.argent += 20
+                joueur.argent -= 20
+            return "C'est ton anniv Bro!!! les autres joueurs doivent te donner de la thune or Konsékens"
+        elif nbr == 6:
+            user.argent += 100
+            return "SIUUUUUU ! Oh mon dieu Ronaldo viens vous voir et vous donne 100 ₿"
+        elif nbr == 7:
+            user.argent = int(user.argent * 0.95)
+            return "Les gros rats de la banque vous vole 5% de votre richesse"
+        elif nbr == 8:
+            user.argent += 75
+            return "Tu es très beau donc tu gagne une concours de beauté >u<. Tu gagne 75 ₿"
+        elif nbr == 9:
+            user.argent -= 100
+            return "Tu as perdu une battle de rap contre JUL... le monde te desteste maintenant et ta famille te renies... -100 ₿"
+        elif nbr == 10:
+            user.argent -= 200
+            return "OMG banner de Klee ! perd 200 ₿. sad ta pity sur Qiqi"
+        elif nbr == 11:
+            user.argent -= 30
+            return "Tu as perdu ton porte feuille... 30 Balles en moins. T'es trop con aussi bro"
+        elif nbr == 12:
+            user.argent += 125
+            return "Tu vends tes pieds sur Onlyfans https://www.onlyfans.com/nokiiro, + 125 ₿"
+        elif nbr == 13:
+            user.argent -= 175
+            return "Tu as trop rager sur Clash royal tu as casse ton téléphone, il faut te le repayer, - 175 ₿"
+        elif nbr == 14:
+            user.argent += 200
+            return "tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
+        elif nbr == 15:
+            user.argent += 175
+            return "tu as gagner au loto, o_0 + 175 ₿"
+        elif nbr == 16:
+            user.argent += 300
+            user.prison()
+            return "Tu écris le meilleur hentai de loli, gagne 300 mais perds ta santée mentale et va en prison"
+        elif nbr == 17:
+            user.argent += 125
+            return "Tu touches l'héritage de tonton jean-ma, gagne 125 ₿"
+        elif nbr == 18:
+            user.argent += 100
+            return "Tu as gagner au loto mais ton père à enfin fini d'acheter des clopes donc au lieu de gagner 1000 ₿ tu gagne 100 ₿"
+        elif nbr == 19:
+            propriete_ = plateau.propriete_restante[13]
+            print(propriete_)
+            print(propriete_.proprietaire)
+            print(propriete_.nom)
+            msg = "Tu deviens premier ministre des randoms, acquière l'avenue matignon"
+            if propriete_.proprietaire is None:
+                user.achete(propriete_)
+            else:
+                propriete_.proprietaire -= propriete_.valeur
+                msg += f", si déjà occupée,\nle propriétaire te doit le prix d'acquisition donc {propriete_.proprietaire} paye"
+            user.argent += propriete_.valeure
+            return msg
+        elif nbr == 20:
+            user.argent -= 250
+            return "tu es mort. tu doit payer 250 ₿ pour pouvoir t'enterrer"
+        elif nbr == 21:
+            user.argent -= 100
+            return "la littérature française t'a aider a avancer ! +10 point en intelligence mais -100€ pour tous les livres acheté"
+
+    # --- plateau
+
+    class plateau_:
+        def __init__(self, liste_cases) -> None:
+            propriete_restante = [case for case in liste_cases if isinstance(case, (propriete, gare))]
+
+            self.propriete_restante = propriete_restante
+            self.dico_personne_meme_case = {}
+
+        def propriete_acheté(self, propriete):
+            """enleve la propriete des proprietes libres
+
+            Args:
+                propriete (_type_): propriete qui est acheté
+            """
+            self.propriete_restante.remove(propriete)
+
+        def propriete_vendu(self, propriete):
+            """ajoute la propriete aux proprietes libres
+
+            Args:
+                propriete (_type_): propriete qui est vendu
+            """
+            self.propriete_restante.append(propriete)
+
+
+    liste_cases = []
+    for valeurs in [["départ"], ["boulevard de belleville", 60, None, ":brown_square:"], [chance], ["rue lecoubre", 60, None, ":brown_square:"], [200, "impôts sur le revenue"], ["gare monparnasse", 1, 200, None], ["rue de vaugirard", 100, None, "🟦"], [chance], ["rue de courcelles", 100, None, "🟦"], ["avenue de la republique", 120, None, "🟦"], ["prison"], ["boulevard de la vilette", 140, None, "🟪"], [chance], ["avenue de neuilly", 140, None, "🟪"], ["rue de paradis", 160, None, "🟪"], ["gare de Lyon", 2, 200, None], ["avenue mozart", 180, None, "🟧"], [chance], ["boulevard saint-michel", 180, None, "🟧"], ["place pigalle", 200, None, "🟧"], ["parc gratuit"], ["avenue matignon", 220, None, "🟥"], [chance], ["boulevard malesherbes", 220, None, "🟥"], ["avenue henri-martin", 240, None, "🟥"], ["gare du nord", 3, 200, None], ["faurbourg saint-honoré", 260, None, "🟨"], ["place de la bourse", 260, None, "🟨"], [chance], ["rue la fayette", 280, None, "🟨"], ["allez en prison"], ["avenue de breteuil", 300, None, "🟩"], ["avenue foch", 300, None, "🟩"], [chance], ["boulevard des capucines", 320, None, "🟩"], ["gare de saint-Lazare", 4, 200, None], [chance], ["avenue des champs-élysées", 350, None, "⬜"], [100, "taxe de luxe"], ["rue de la paix", 400, None, "⬜"]]:
+        if len(valeurs) == 4 and valeurs[2] is int:
+            liste_cases.append(gare(valeurs))
+        elif len(valeurs) == 4:
+            liste_cases.append(propriete(valeurs))
+        elif len(valeurs) == 2:
+            liste_cases.append(impots(valeurs))
+        elif len(valeurs) == 1 and str(type(valeurs[0])) == "<class 'str'>":
+            liste_cases.append(special(valeurs[0]))
+        elif len(valeurs) == 1:
+            liste_cases.append(valeurs)
+
+    plateau = plateau_(liste_cases)
+
+    plateau_matrice = [
+        ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], 
+        ["⬛", "🚗", "🟥", "❔", "🟥", "🟥", "🚉", "🟨", "🟨", "❔", "🟨", "👮", "⬛"],
+        ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
+        ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
+        ["⬛", "❔", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "❔", "⬛"],
+        ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
+        ["⬛", "🚉", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🚉", "⬛"],
+        ["⬛", "🟪", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "❔", "⬛"],
+        ["⬛", "🟪", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬜", "⬛"],
+        ["⬛", "❔", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "💵", "⬛"],
+        ["⬛", "🟪", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬜", "⬛"],
+        ["⬛", "⛓️", "🟦", "🟦", "❔", "🟦", "🚉", "💵", "🟫", "❔", "🟫", "⬅️", "⬛"],
+        ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"]
+        ]
+
+
+    def affiche():
+        msg = ""
+        for list_of_emote in plateau_matrice:
+            for emote in list_of_emote:
+                msg += emote
+            msg += "\n"
+        return msg
+
+
+    def emote_(tupl, user):
+        pos = plateau_matrice[tupl[0]][tupl[1]]
+        if pos in liste_emote:
+            for user_bis in liste_joueurs:
+                if user_bis.emote == pos:
+                    plateau.dico_personne_meme_case[tupl] = [user_bis, user]
+                    plateau_matrice[tupl[0]][tupl[1]] = "2️⃣"
+        elif tupl in plateau.dico_personne_meme_case:
+            plateau.dico_personne_meme_case[tupl] = plateau.dico_personne_meme_case[tupl] + [user]
+            dico = {
+            2: "2️⃣",
+            3: "3️⃣",
+            4: "4️⃣",
+            5: "5️⃣",
+            6: "6️⃣",
+            7: "7️⃣",
+            8: "8️⃣",
+            9: "9️⃣"
+            }
+            plateau_matrice[tupl[0]][tupl[1]] = dico[len(plateau.dico_personne_meme_case[tupl])]
+        else:
+            plateau_matrice[tupl[0]][tupl[1]] = user.emote
+
+
+    def _emote(tupl, user):
+        if tupl in plateau.dico_personne_meme_case:
+            if len(plateau.dico_personne_meme_case[tupl]) == 2:
+                plateau.dico_personne_meme_case[tupl].remove(user)
+                plateau_matrice[tupl[0]][tupl[1]] = plateau.dico_personne_meme_case[tupl][0].emote
+                plateau.dico_personne_meme_case.pop(tupl, None)
+            else:
+                plateau.dico_personne_meme_case[tupl].remove(user)
+                dico = {
+                    2: "2️⃣",
+                    3: "3️⃣",
+                    4: "4️⃣",
+                    5: "5️⃣",
+                    6: "6️⃣",
+                    7: "7️⃣",
+                    8: "8️⃣",
+                    9: "9️⃣"
+                }
+
+                plateau_matrice[tupl[0]][tupl[1]] = dico[len(plateau.dico_personne_meme_case[tupl])]
+        else:
+            plateau_matrice[tupl[0]][tupl[1]] = "⬛"
+
+
+
+    def places_joueurs(user):
+        pos = user.position
+        _emote(user.last_position, user)
+
+        if 0 <= pos <= 10:
+            emote_((12, 11 - pos), user)
+            user.last_position = (12, 11 - pos)
+        elif 11 <= pos <= 20:
+            pos -= 10
+            emote_((11 - pos, 0), user)
+            user.last_position = (11 - pos, 0)
+        elif 21 <= pos <= 30:
+            pos -= 20
+            emote_((0, 1 + pos), user)
+            user.last_position = (0, 1 + pos)
+        else:
+            pos -= 31
+            emote_((2 + pos, 12), user)
+            user.last_position = (2 + pos, 12)
+
+
+    def discord_embed(username, de, action):
+        embed=discord.Embed()
+        embed.add_field(name="Plateau", value=affiche(), inline=True)
+        embed.add_field(name="Tour de", value=username, inline=False)
+        embed.add_field(name="dé", value=de, inline=False)
+        embed.add_field(name="action", value=action, inline=False)
+        return embed
+
+
+    async def joue(user):
+
+        # lance le dé et déplace le joueur
+        await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", "lancement du dé...", "..."))
+        de = random.randint(2, 12)
+        user.deplace(de)
+        places_joueurs(user)
+
+        # prends la case sur laquelle le joueur c'est arreté
+        tmp_case = liste_cases[user.position]
+
+        # si la case est une gare ou une propriete
+        if isinstance(tmp_case, (propriete, gare)):
+            # si le joueur est chez lui il se passe rien 
+            if tmp_case.proprietaire == user:
+                return
+            
+            # si le joueur peut acheter la case
+            elif tmp_case.valeur < user.argent and tmp_case.proprietaire is None:
+                await demande_acheter(user, tmp_case, de)
+
+            # si le joueur doit payer le proprietaire
+            elif tmp_case.proprietaire is not None:
+                multiplicateur = user.gare if isinstance(tmp_case, gare) else 1
+                if tmp_case.valeur * multiplicateur < user.argent:
+                    print(tmp_case.nom)
+                    print(tmp_case.proprietaire)
+                    tmp_case.proprietaire.argent += tmp_case.valeur * multiplicateur
+                    user.argent -= tmp_case.valeur * multiplicateur
+                    await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** paye {tmp_case.valeur} à **{tmp_case.proprietaire.name}**"))
+                else:
+                    await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** ne peut pas payer !\nil est donc éliminer"))
+                    user.perd()
+
+            # si le joueur n'a pas assez d'argent
+            else:
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", "vous n'avez pas assez d'argent pour acheter la propriete"))
+
+        # si la case est une case spécial 
+        elif isinstance(tmp_case, special):
+            if tmp_case.type == "prison":
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", "vous visitez la prison, c'est le repère des arabes"))
+            elif tmp_case.type == "parc gratuit":
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", "vous visitez le parc gratuit, il y a plein de sdf par terre"))
+            elif tmp_case.type == "allez en prison":
+                user.prison()
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", "le policier vous à pris pour un noir et vous envoye en prison"))
+
+            places_joueurs(user)
+
+        # si la case est une case impots
+        elif isinstance(tmp_case, impots):
+            await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"Vous devez payez les {tmp_case.nom}, {tmp_case.valeur} ₿"))
+            
+            if tmp_case.valeur < user.argent:
+                user.argent -= tmp_case.valeur
+            else:
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** ne peut pas payer !\nil est donc éliminer"))
+                user.perd()
+
+        # si c'est une case chance
+        else:
+            # lance la fonction chance
+            text = chance(user)
+            await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", text))
+            places_joueurs(user)
+            await asyncio.sleep(3)
+
+
+
+    async def demande_acheter(user, tmp_case, de):
+        await msg.remove_reaction("ℹ️", client.user)
+        await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}**, voulez-vous acheter \"{tmp_case.nom}\"\npour la somme de {tmp_case.valeur} ₿ ?"))
+
+        try:
+            for emote in ["✅", "❌"]:
+                await msg.add_reaction(emote)
+        except:
+            await msg.clear_reactions()
+            for emote in ["✅", "❌"]:
+                await msg.add_reaction(emote)
+
+        try:
+            num, _ = await client.wait_for("reaction_add", check=lambda reaction, user_: user_.id == user.id and str(reaction.emoji) in ["✅", "❌"], timeout=300)
+        except asyncio.TimeoutError:
+            pass
+        else:
+            if str(num.emoji) == "✅":
+                user.achete(tmp_case)
+                if isinstance(tmp_case, gare):
+                    user.gare += 1
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** vous avez acheté {tmp_case.nom} !"))
+            else:
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** vous n'avez pas acheté {tmp_case.nom} !"))
+
+        await msg.clear_reactions()
+        for e in ["🎲", "ℹ️"]:
+            await msg.add_reaction(e)
+
+    prepa_emote = ["💤", "🦑", "🦥", "♿", "🛒", "👑", "☃️"]
+    liste_emote = []
+    
+    def random_emote():
+        tmp = random.choice(prepa_emote)
+        prepa_emote.remove(tmp)
+        liste_emote.append(tmp)
+        return tmp
+
+    liste_joueurs = [joueur(user.id, user.mention, user.name, random_emote()) for user in list_user]
+
+    embed=discord.Embed()
+    for joueur_ in liste_joueurs:
+        embed.add_field(name=joueur_.name, value=joueur_.emote, inline=True)
+    await ctx.send(embed=embed)
+     
+    msg = await ctx.send(embed=discord_embed("...", "...", "..."))
+    for e in ["🎲", "ℹ️"]:
+        await msg.add_reaction(e)
+
+
+
+
+    async def main_mono(user):        
+        # en attente d'une action
+        await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", "en attente...", "..."))
+        
+        # si le joueur est en prison et qu'il peut utiliser une carte sortie, lui propose de l'utiliser
+        if user.prison_ != 0 and user.sorti_prison:
+            await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"...", f"**{user.name}**, voulez-vous utilisez votre carte sorti de prison ?"))
+
+            try:
+                num, _ = await client.wait_for("reaction_add", check=lambda reaction, user_: user_.id == user.id and str(reaction.emoji) in ["✅", "❌"], timeout=300)
+            except asyncio.TimeoutError:
+                pass
+            else:
+                if str(num.emoji) == "✅":
+                    user.sorti_prison = False
+                    await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"...", f"Vous avez utilisez votre carte !"))
+                else:
+                    await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"...", f"Vous n'avez pas utilisez votre carte !"))
+
+                await asyncio.sleep(3)
+                await msg.clear_reactions()
+                for e in ["🎲", "ℹ️"]:
+                    await msg.add_reaction(e)
+
+
+        # si le joueur n'est pas en prison le tour se passe normalement
+        if user.prison_ == 0:
+
+            # attends que le joueur utilise une reaction
+            try:
+                num, user_emote = await client.wait_for("reaction_add", check=lambda reaction, user_: user_.id == user.id and str(reaction.emoji) in ["🎲", "ℹ️"], timeout=300)
+            except asyncio.TimeoutError:
+                # si le joueur est afk on passe son tour
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"", f"{user.name} n'a pas jouer on saute son tour"))
+                await asyncio.sleep(3)
+                return
+
+            await msg.remove_reaction(num.emoji, user_emote)
+
+            
+
+            # si le joueur réagit avec le dé le fonction
+            if str(num.emoji) == "🎲":
+                await joue(user)
+            elif str(num.emoji) == "ℹ️":
+                # si il a appuyer sur la reaction info
+                # envoie la liste de ses proprietes
+                text_propri = "".join(f"{terrain.emote}: {terrain.nom}, {terrain.valeur}\n" for terrain in user.proprietes)
+                if text_propri == "":
+                    text_propri = "Vous possedez aucune propriete"
+
+                embed=discord.Embed()
+                embed.add_field(name=f"Argent", value=f"{user.argent} ₿" , inline=False)
+                embed.add_field(name=f"Proprietes de {user.name}, total: {len(user.proprietes)}", value=text_propri , inline=False)
+                info = await ctx.send(embed=embed)
+
+                # attends que le joueur appuye sur la croix pour fermer le panel d'information
+                try:
+                    await info.add_reaction("❌")
+                except:
+                    await msg.clear_reactions()
+                    await info.add_reaction("❌")
+                try:
+                    num, user_emote = await client.wait_for("reaction_add", check=lambda reaction, user_: user_.id == user.id and str(reaction.emoji) == "❌", timeout=300)
+                except asyncio.TimeoutError:
+                    pass
+
+                
+                # supprime le message d'information et relance le tour 
+                await info.delete()
+                await main_mono(user)
+        else:
+            user.prison_ -= 1
+    
+
+    while True:
+        for user in liste_joueurs:
+            
+            # véréfication de la victoire
+            if len(liste_joueurs) == 1:
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", "...", f"Partie terminé le gagnant est {user.mention}"))
+                return
+
+            
+
+            await main_mono(user)
+            await asyncio.sleep(4)
 
 @client.command(aliases=["p4"])
 async def puissance4(ctx, member):
@@ -403,8 +1009,6 @@ async def puissance4(ctx, member):
             elif str(num.emoji) == "🔄":
                 plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
             else:
-                
-
                 dict_number = {
                     "1️⃣": 0,
                     "2️⃣": 1,
