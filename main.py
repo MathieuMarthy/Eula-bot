@@ -333,7 +333,7 @@ async def calcul_mental(ctx, limit = 5):
     await end_game(ctx, list_user, dico_points)
 
 @client.command()
-async def monopoly(ctx):
+async def monopoly(ctx, private = None):
     # fait une liste de tout les participants
     msg = await ctx.send("**Partie de Monopoly lancée !**\npour participer réagissez avec 🖐️")
     await msg.add_reaction("🖐️")
@@ -371,7 +371,7 @@ async def monopoly(ctx):
 
         def prison(self):
             self.position = 10
-            self.prison = 2
+            self.prison_ = 2
 
         def deplace(self, valeur):
             """déplace le joueur de la valeur donné
@@ -420,13 +420,14 @@ async def monopoly(ctx):
                 return 2
 
         def perd_propriete(self, propriete):
-            """self perds la propriete et elle est ajouter dans la liste des propriete libres
+            """self perds la propriete et elle est ajouter dans la liste des proprietes libres
 
             Args:
                 propriete (_type_): propriete a enlever
             """
             self.proprietes.remove(propriete)
             plateau.propriete_vendu(propriete)
+            propriete.perds_proprietaire()
 
         def hypotheque(self, propiete):
             """self perds la propriete et gagne la moitié de la valeur de la propriete
@@ -437,10 +438,11 @@ async def monopoly(ctx):
             self.argent += propiete.valeur * 0.5
             self.perd_propriete(propriete)
 
-        def perd(self):
+        def perds(self):
             liste_joueurs.remove(user)
             for propriete in self.proprietes:
                 self.perd_propriete(propriete)
+
                 
             for y in range(len(plateau_matrice)):
                 for x in range(len(plateau_matrice)):
@@ -454,8 +456,8 @@ async def monopoly(ctx):
             self.num = valeurs[1]
             self.valeur = valeurs[2]
             self.proprietaire = valeurs[3]
-            self.loyer = 100
             self.emote = "🚉"
+            self.multipli_loyer = 1.0
         
         def affiche(self):
             return f"la gare {self.nom} vaut {self.prix} le proprietaire est {self.proprietaire}"
@@ -465,6 +467,18 @@ async def monopoly(ctx):
             """
             self.proprietaire = joueur
 
+        def perds_proprietaire(self):
+            """perds son proprietaire
+            """
+            self.proprietaire = None
+            self.multipli_loyer = 1.0
+            print(self.nom, "perds son proprietaire")
+
+        def loyer(self) -> int:
+            """donne le loyer à payer
+            """
+            return int(self.valeur * self.multipli_loyer)
+
     
     class propriete:
         def __init__(self, valeurs: tuple) -> None:
@@ -472,12 +486,25 @@ async def monopoly(ctx):
             self.valeur = valeurs[1]
             self.proprietaire = valeurs[2]
             self.emote = valeurs[3]
+            self.multipli_loyer = 1.0
 
         def est_achete(self, joueur: joueur):
             """change le proprietaire de la propriete
             """
             self.proprietaire = joueur
-        
+
+        def perds_proprietaire(self):
+            """perds son proprietaire
+            """
+            self.proprietaire = None
+            self.multipli_loyer = 1.0
+            print(self.nom, "perds son proprietaire")
+
+        def loyer(self) -> int:
+            """donne le loyer à payer
+            """
+            return int(self.valeur * self.multipli_loyer)
+
         def affiche(self):
             return f"{self.nom} vaut {self.valeur}, le proprietaire est {self.proprietaire}"
 
@@ -510,28 +537,28 @@ async def monopoly(ctx):
             if user.position >= 21:
                 user.argent += 100
                 msg += "\nvous passez par la case départ et recevez 100 ₿"
-            user.position = 0
+            user.position = 20
             return msg
         elif nbr == 3:
-            user.argent -= 40
+            user.argent -= 125
             return "Vous avez gagné un iphone 13 !\nmais c'était une arnaque -40 ₿"
         elif nbr == 4:
             user.position = random.randint(0, 40)
             return "Blitzcrank vous à attrapé, il vous téléporte aléatoirement sur le plateau"
         elif nbr == 5:
             for joueur in liste_joueurs:
-                user.argent += 20
-                joueur.argent -= 20
-            return "C'est ton anniv Bro!!! les autres joueurs doivent te donner de la thune or Konsékens"
+                user.argent += 75
+                joueur.argent -= 75
+            return "C'est ton anniv Bro!!! les autres joueurs doivent te donner 75 ₿ or Konsékens"
         elif nbr == 6:
-            user.argent += 100
-            return "SIUUUUUU ! Oh mon dieu Ronaldo viens vous voir et vous donne 100 ₿"
+            user.argent += 325
+            return "SIUUUUUU ! Oh mon dieu Ronaldo viens vous voir et vous donne 325 ₿"
         elif nbr == 7:
             user.argent = int(user.argent * 0.95)
             return "Les gros rats de la banque vous vole 5% de votre richesse"
         elif nbr == 8:
-            user.argent += 75
-            return "Tu es très beau donc tu gagne une concours de beauté >u<. Tu gagne 75 ₿"
+            user.argent += 175
+            return "Tu es très beau donc tu gagne une concours de beauté >u<. Tu gagne 175 ₿"
         elif nbr == 9:
             user.argent -= 100
             return "Tu as perdu une battle de rap contre JUL... le monde te desteste maintenant et ta famille te renies... -100 ₿"
@@ -539,11 +566,11 @@ async def monopoly(ctx):
             user.argent -= 200
             return "OMG banner de Klee ! perd 200 ₿. sad ta pity sur Qiqi"
         elif nbr == 11:
-            user.argent -= 30
-            return "Tu as perdu ton porte feuille... 30 Balles en moins. T'es trop con aussi bro"
+            user.argent -= 160
+            return "Tu as perdu ton porte feuille... 160 Balles en moins. T'es trop con aussi bro"
         elif nbr == 12:
-            user.argent += 125
-            return "Tu vends tes pieds sur Onlyfans https://www.onlyfans.com/nokiiro, + 125 ₿"
+            user.argent += 225
+            return "Tu vends tes pieds sur Onlyfans https://www.onlyfans.com/nokiiro, + 225 ₿"
         elif nbr == 13:
             user.argent -= 175
             return "Tu as trop rager sur Clash royal tu as casse ton téléphone, il faut te le repayer, - 175 ₿"
@@ -551,30 +578,31 @@ async def monopoly(ctx):
             user.argent += 200
             return "tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
         elif nbr == 15:
-            user.argent += 175
-            return "tu as gagner au loto, o_0 + 175 ₿"
+            user.argent += 400
+            return "tu as gagner au loto, o_0 + 400 ₿"
         elif nbr == 16:
             user.argent += 300
             user.prison()
-            return "Tu écris le meilleur hentai de loli, gagne 300 mais perds ta santée mentale et va en prison"
+            return "Tu écris le meilleur hentai de loli, gagne 300 ₿ mais perds ta santée mentale et va en prison"
         elif nbr == 17:
             user.argent += 125
             return "Tu touches l'héritage de tonton jean-ma, gagne 125 ₿"
         elif nbr == 18:
+            ######
             user.argent += 100
             return "Tu as gagner au loto mais ton père à enfin fini d'acheter des clopes donc au lieu de gagner 1000 ₿ tu gagne 100 ₿"
         elif nbr == 19:
-            propriete_ = plateau.propriete_restante[13]
-            print(propriete_)
-            print(propriete_.proprietaire)
-            print(propriete_.nom)
+            propriete_ = liste_cases[21]
             msg = "Tu deviens premier ministre des randoms, acquière l'avenue matignon"
             if propriete_.proprietaire is None:
                 user.achete(propriete_)
+                user.argent += propriete_.valeur
+            elif propriete_.proprietaire == user:
+                msg += "\nmais tu possède deja cette avenue !"
             else:
-                propriete_.proprietaire -= propriete_.valeur
-                msg += f", si déjà occupée,\nle propriétaire te doit le prix d'acquisition donc {propriete_.proprietaire} paye"
-            user.argent += propriete_.valeure
+                propriete_.proprietaire.argent -= propriete_.valeur
+                msg += f", si déjà occupée,\nle propriétaire te doit le prix d'acquisition donc **{propriete_.proprietaire.name}** paye {propriete_.valeur} ₿"
+                user.argent += propriete_.valeur
             return msg
         elif nbr == 20:
             user.argent -= 250
@@ -721,7 +749,7 @@ async def monopoly(ctx):
 
     def discord_embed(username, de, action):
         embed=discord.Embed()
-        embed.add_field(name="Plateau", value=affiche(), inline=True)
+        embed.add_field(name="Plateau, cases restantes: " + str(len(plateau.propriete_restante)), value=affiche(), inline=True)
         embed.add_field(name="Tour de", value=username, inline=False)
         embed.add_field(name="dé", value=de, inline=False)
         embed.add_field(name="action", value=action, inline=False)
@@ -732,8 +760,17 @@ async def monopoly(ctx):
 
         # lance le dé et déplace le joueur
         await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", "lancement du dé...", "..."))
-        de = random.randint(2, 12)
-        user.deplace(de)
+        de1 = random.randint(1, 6)
+        de2 = random.randint(1, 6)
+        rejoue = False
+        
+        de = de1 + de2
+        if de1 == de2:
+            de = str(de) + ", double "
+            rejoue = True
+            
+            
+        user.deplace(de1 + de2)
         places_joueurs(user)
 
         # prends la case sur laquelle le joueur c'est arreté
@@ -741,24 +778,33 @@ async def monopoly(ctx):
 
         # si la case est une gare ou une propriete
         if isinstance(tmp_case, (propriete, gare)):
-            # si le joueur est chez lui il se passe rien 
+            # si le joueur est chez lui il se passe rien
             if tmp_case.proprietaire == user:
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** vous êtes chez vous !\nle loyer augmente de 2%"))
+                tmp_case.multipli_loyer += 0.02
+                if rejoue:
+                    await asyncio.sleep(4)
+                    await main_mono(user)
                 return
             
             # si le joueur peut acheter la case
-            elif tmp_case.valeur < user.argent and tmp_case.proprietaire is None:
+            elif tmp_case.loyer() < user.argent and tmp_case.proprietaire is None:
                 await demande_acheter(user, tmp_case, de)
 
             # si le joueur doit payer le proprietaire
             elif tmp_case.proprietaire is not None:
-                multiplicateur = tmp_case.proprietaire.gare if isinstance(tmp_case, gare) else 1
-                if tmp_case.valeur * multiplicateur < user.argent:
-                    tmp_case.proprietaire.argent += tmp_case.valeur * multiplicateur
-                    user.argent -= tmp_case.valeur * multiplicateur
-                    await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** paye {tmp_case.valeur * multiplicateur} à **{tmp_case.proprietaire.name}**"))
+                bonus_gare = 0
+                if isinstance(tmp_case, gare):
+                    for _ in range(tmp_case.proprietaire.gare - 1):
+                        bonus_gare += 100
+
+                if (tmp_case.loyer() + bonus_gare) < user.argent:
+                    tmp_case.proprietaire.argent += (tmp_case.loyer() + bonus_gare)
+                    user.argent -= (tmp_case.loyer() + bonus_gare)
+                    await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** paye {tmp_case.loyer() + bonus_gare} à **{tmp_case.proprietaire.name}**"))
                 else:
                     await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** ne peut pas payer !\nil est donc éliminer"))
-                    user.perd()
+                    user.perds()
 
             # si le joueur n'a pas assez d'argent
             else:
@@ -773,6 +819,9 @@ async def monopoly(ctx):
             elif tmp_case.type == "allez en prison":
                 user.prison()
                 await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", "le policier vous à pris pour un noir et vous envoye en prison"))
+            elif tmp_case.type == "départ":
+                await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", "vous recevez 200 ₿"))
+
 
             places_joueurs(user)
 
@@ -784,7 +833,7 @@ async def monopoly(ctx):
                 user.argent -= tmp_case.valeur
             else:
                 await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** ne peut pas payer !\nil est donc éliminer"))
-                user.perd()
+                user.perds()
 
         # si c'est une case chance
         else:
@@ -793,6 +842,10 @@ async def monopoly(ctx):
             await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", text))
             places_joueurs(user)
             await asyncio.sleep(3)
+
+        if rejoue:
+            await asyncio.sleep(4)
+            await main_mono(user)
 
 
 
@@ -816,10 +869,7 @@ async def monopoly(ctx):
             if str(num.emoji) == "✅":
                 user.achete(tmp_case)
                 if isinstance(tmp_case, gare):
-                    print("+ 1 gare")
-                    print(user.gare)
                     user.gare += 1
-                    print(user.gare)
                 await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** vous avez acheté {tmp_case.nom} !"))
             else:
                 await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", f"le dé est tombé sur ... {de} !", f"**{user.name}** vous n'avez pas acheté {tmp_case.nom} !"))
@@ -828,7 +878,7 @@ async def monopoly(ctx):
         for e in ["🎲", "ℹ️"]:
             await msg.add_reaction(e)
 
-    prepa_emote = ["💤", "🦑", "🦥", "♿", "🛒", "👑", "☃️"]
+    prepa_emote = ["💤", "🦑", "🦥", "♿", "🛒", "👑", "☃️", "🐷", "🐭", "🐐", "🍩", "🎏", "☄️"]
     liste_emote = []
     
     def random_emote():
@@ -898,13 +948,13 @@ async def monopoly(ctx):
             elif str(num.emoji) == "ℹ️":
                 # si il a appuyer sur la reaction info
                 # envoie la liste de ses proprietes
-                text_propri = "".join(f"{terrain.emote}: {terrain.nom}, {terrain.valeur}\n" for terrain in user.proprietes)
+                text_propri = "".join(f"{terrain.emote}: {terrain.nom}, {terrain.loyer()}\n" for terrain in user.proprietes)
                 if text_propri == "":
                     text_propri = "Vous possedez aucune propriete"
 
                 embed=discord.Embed()
                 embed.add_field(name=f"Argent", value=f"{user.argent} ₿" , inline=False)
-                embed.add_field(name=f"Proprietes de {user.name}, total: {len(user.proprietes)}", value=text_propri , inline=False)
+                embed.add_field(name=f"Proprietes de {user.name}", value=text_propri , inline=False)
                 info = await ctx.send(embed=embed)
 
                 # attends que le joueur appuye sur la croix pour fermer le panel d'information
@@ -926,10 +976,10 @@ async def monopoly(ctx):
                 await msg.edit(embed=discord_embed("...", "...", "partie annulée"))
                 return True
 
-
-            
         else:
+            await msg.edit(embed=discord_embed(f"{user.mention}, ₿: {user.argent}", "...", f"vous êtes en prison pour encore {user.prison_} tours !"))
             user.prison_ -= 1
+
 
         return False
 
@@ -1112,34 +1162,8 @@ async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}reaction <salon> <id du msg> <reactions>")
 
-
-@client.command()
-async def dm(ctx, member, *, msg):
-    member = get_member(member)
-    await member.send(msg)
-    await ctx.message.add_reaction("✅")
-
-@dm.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("Le membre n'existe pas ou est introuvable")
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
-
-@client.command()
-async def get_dm(ctx, member):
-    member = get_member(member)
-    str = ""
-    async for message in member.history(limit=None):
-        str = message.author.name + ": " + message.content + "\n-----------\n\n"
-        await ctx.send(str)
         
-@get_dm.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("Le membre n'existe pas ou est introuvable")
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
+
 
 @client.command()
 @has_permissions(administrator=True)
@@ -1315,7 +1339,37 @@ async def set_pp(ctx):
         await ctx.message.add_reaction("✅")
         os.remove(file)
         
+@client.command()
+async def dm(ctx, member, *, msg):
+    if ctx.author.id != 236853417681616906:
+        return
+    member = get_member(member)
+    await member.send(msg)
+    await ctx.message.add_reaction("✅")
 
+@dm.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.CommandInvokeError):
+        await ctx.send("Le membre n'existe pas ou est introuvable")
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
+
+@client.command()
+async def get_dm(ctx, member):
+    if ctx.author.id != 236853417681616906:
+        return
+    member = get_member(member)
+    str = ""
+    async for message in member.history(limit=None):
+        str = message.author.name + ": " + message.content + "\n-----------\n\n"
+        await ctx.send(str)
+
+@get_dm.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.CommandInvokeError):
+        await ctx.send("Le membre n'existe pas ou est introuvable")
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
         
 # --- logs       
 # - message
