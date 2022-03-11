@@ -12,7 +12,7 @@ from discord.ext.commands import has_permissions
 from keep_alive import keep_alive
 
 # --- setup
-token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.FtLLU3LpM6guKOij6ZI2oRY8YC0"
+token = ""
 path = r"/home/runner/Eula-bot"
 prefix = "!"
 default_intents = discord.Intents.default()
