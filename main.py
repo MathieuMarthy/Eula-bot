@@ -12,6 +12,7 @@ from discord.ext.commands import has_permissions
 from keep_alive import keep_alive
 
 # --- setup
+token = os.environ["token"]
 path = r"/home/runner/Eula-bot"
 prefix = "!"
 default_intents = discord.Intents.default()
@@ -1406,7 +1407,14 @@ async def set_pp(ctx):
         await client.user.edit(avatar=byte_avatar)
         await ctx.message.add_reaction("✅")
         os.remove(file)
-        
+
+@client.command()
+async def shutdown(ctx):
+    if ctx.author.id != 236853417681616906:
+        return
+    await ctx.send("logout...")
+    quit()
+
 @client.command()
 async def dm(ctx, member, *, msg):
     if ctx.author.id != 236853417681616906:
@@ -1698,4 +1706,4 @@ async def on_voice_state_update(member, before, after):
 
 
 keep_alive()
-client.run(os.environ["token"])
+client.run(token)
