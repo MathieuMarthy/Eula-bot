@@ -638,8 +638,22 @@ async def monopoly(ctx, private = None):
             matrice_board[tupl[0]][tupl[1]] = dico[len(board.player_same_square[tupl])]
         else:
             matrice_board[tupl[0]][tupl[1]] = user.emote
+<<<<<<< HEAD
+=======
 
 
+    def remove_emote(tupl, user):
+        # enleve l'emoji du joueur de la matrice
+
+        if tupl in board.player_same_square:
+>>>>>>> origin/main
+
+            if len(board.player_same_square[tupl]) == 2:
+                board.player_same_square[tupl].remove(user)
+                matrice_board[tupl[0]][tupl[1]] = board.player_same_square[tupl][0].emote
+                board.player_same_square.pop(tupl)
+
+<<<<<<< HEAD
     def remove_emote(tupl, user):
         # enleve l'emoji du joueur de la matrice
 
@@ -650,6 +664,8 @@ async def monopoly(ctx, private = None):
                 matrice_board[tupl[0]][tupl[1]] = board.player_same_square[tupl][0].emote
                 board.player_same_square.pop(tupl)
 
+=======
+>>>>>>> origin/main
             else:
                 board.player_same_square[tupl].remove(user)
                 dico = {
@@ -666,8 +682,13 @@ async def monopoly(ctx, private = None):
                 matrice_board[tupl[0]][tupl[1]] = dico[len(board.player_same_square[tupl])]
         else:
             matrice_board[tupl[0]][tupl[1]] = "⬛"
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> origin/main
     def place_player(user):
         # actualise la position de tout les joueurs
         pos = user.position
@@ -1015,6 +1036,7 @@ async def monopoly(ctx, private = None):
             list_square.append(values[0])
         else:
             list_square.append(values[0])
+<<<<<<< HEAD
 
 
     board = _board(list_square)
@@ -1039,6 +1061,32 @@ async def monopoly(ctx, private = None):
     min = 1 if private == "normal" else -2
     max = 32
 
+=======
+
+
+    board = _board(list_square)
+
+    matrice_board = [
+        ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], 
+        ["⬛", "🚗", "🟥", "❔", "🟥", "🟥", "🚉", "🟨", "🟨", "❔", "🟨", "👮", "⬛"],
+        ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
+        ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
+        ["⬛", "❔", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "❔", "⬛"],
+        ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
+        ["⬛", "🚉", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🚉", "⬛"],
+        ["⬛", "🟪", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "❔", "⬛"],
+        ["⬛", "🟪", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬜", "⬛"],
+        ["⬛", "❔", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "💵", "⬛"],
+        ["⬛", "🟪", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬜", "⬛"],
+        ["⬛", "⛓️", "🟦", "🟦", "❔", "🟦", "🚉", "💵", "🟫", "❔", "🟫", "⬅️", "⬛"],
+        ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"]
+        ]
+
+
+    min = 1 if private == "normal" else -2
+    max = 32
+
+>>>>>>> origin/main
     prepa_emote = ["💤", "🦑", "🦥", "♿", "🛒", "👑", "☃️", "🐷", "🐭", "🐐", "🍩", "🎏", "☄️", "🦦", "🍑", "🛺", "🦉", "🦀"]
     list_emote = []
     list_emote_game = ["🎲", "ℹ️", "⬆️", "🏳️", "🏦"]
