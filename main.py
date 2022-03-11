@@ -13,7 +13,7 @@ from keep_alive import keep_alive
 
 # --- setup
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.Out5az1brljtuHRkYw7IE36O-d8"
-path = r"/home/debian/botdicord/Eula-bot"
+path = r"/home/debian/botdiscord/Eula-bot"
 prefix = "!"
 default_intents = discord.Intents.default()
 decalage_horaire = 1
@@ -1412,8 +1412,9 @@ async def set_pp(ctx):
 @client.command()
 async def shutdown(ctx):
     if ctx.author.id != 236853417681616906:
-	return
-    await ctx.add_reaction("✅")
+        return
+    await ctx.message.add_reaction("✅")
+    await client.close()
     quit()
 
 @client.command()
