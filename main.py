@@ -12,8 +12,8 @@ from discord.ext.commands import has_permissions
 from keep_alive import keep_alive
 
 # --- setup
-token = ""
-path = r"/home/debian/botdiscord/Eula-bot"
+token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.FtLLU3LpM6guKOij6ZI2oRY8YC0"
+path = r"/home/runner/Eula-bot"
 prefix = "!"
 default_intents = discord.Intents.default()
 decalage_horaire = 1
@@ -436,12 +436,14 @@ async def monopoly(ctx, private = None):
             self.owner = None
             self.x_rent = 1.0
 
+            self.benefit = 0
+
         def is_bought(self, player):
             self.owner = player
             self.x_rent = 1.0
 
         def get_rent(self) -> int:
-            station_bonus = 100 * self.train_station - 1 if self.emote == "🚉" else 0
+            station_bonus = 100 * self.owner.train_station - 1 if self.emote == "🚉" else 0
             return int(self.rent * self.x_rent + station_bonus)
 
         def increase_x_rent(self):
@@ -468,7 +470,8 @@ async def monopoly(ctx, private = None):
             user.money += 200
             return "tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
         elif nbr == 0:
-            pass
+            user.money += 200
+            return "tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
         elif nbr == 1:
             user.position = 0
             user.money += 100
@@ -579,7 +582,7 @@ async def monopoly(ctx, private = None):
             user.turn_protection += 2
             return "Tu as un compte en banque en Suisse!!! tu est immunisé a toute facture (maison/taxe) pendant 2 tours."
         elif nbr == 27:
-            user.sorti_prison = True
+            user.card_jail = True
             return "Un mafieux peut corrompre la garde de la prison pour toi\ncette carte peux être utilisé plus tard"
         elif nbr == 28:
             return "Tu as voler de la nourriture a un Africain. +100 de riz et c'est tout TA CRU KOI TOUA"
@@ -705,7 +708,7 @@ async def monopoly(ctx, private = None):
                 await msg.add_reaction(emote)
         except:
             await msg.clear_reactions()
-            for emote in list_of_emotes:
+            for emote in list_emote_game + list_of_emotes:
                 await msg.add_reaction(emote)
 
 
@@ -781,11 +784,11 @@ async def monopoly(ctx, private = None):
                 
                 msgs = []
                 tmp = 0
-                embed=discord.Embed()
+                embed=discord.Embed(title="emote: nom, loyer, proprietaire, benefice")
                 for emote in ["🚉", "🟫", "🟦", "🟪", "🟧", "🟥", "🟨", "🟩", "⬜"]:
                     text = ""
                     for property_ in [property_ for property_ in board.all_properties if property_.emote == emote]:
-                        text += f"{property_.emote}: {property_.name}, {property_.rent if property_.owner is None else property_.get_rent()}, {'aucun' if property_.owner is None else property_.owner.discord.name}\n"
+                        text += f"{property_.emote}: {property_.name}, {property_.rent if property_.owner is None else property_.get_rent()}, {'aucun' if property_.owner is None else property_.owner.discord.name}, {property_.benefit}\n"
                     embed.add_field(name="case:", value=text, inline=False)
                     tmp += 1
                     if tmp == 5 or tmp == 9:
@@ -842,6 +845,10 @@ async def monopoly(ctx, private = None):
                 else:
                     text = "opération annulée"
                 await msg.edit(embed=discord_embed(hearder_msg(), "...", text))
+                
+                for react in ["❌", "✅"]:
+                        await msg.clear_reaction(react)
+                    
                 await asyncio.sleep(3)
                 await wait_reactions()
 
@@ -931,10 +938,10 @@ async def monopoly(ctx, private = None):
                 square.increase_x_rent()
                 str_ = str(square.x_rent)[2:4]
                 str_nbr =  str_ + "0" if len(str_) == 1 else str_
-                text = f"**{user.discord.name}** vous êtes chez vous !\nle loyer augmente de {str_nbr} %"
+                text = f"**{user.discord.name}** vous êtes chez vous !\nle loyer augmente de {str_nbr} %, ( {square.get_rent()} )"
 
             elif square.rent < user.money and square.owner is None:
-                emoji , _ = await ask(f"le dé est tombé sur ... {dice} !", f"**{user.discord.name}** voulez-vous acheter {square.name} pour {square.rent} ?")
+                emoji , _ = await ask(f"le dé est tombé sur ... {dice} !", f"**{user.discord.name}** voulez-vous acheter {square.name} pour {square.rent} ₿ ?")
 
                 if str(emoji.emoji) == "✅":
                     user.buy(square)
@@ -952,18 +959,25 @@ async def monopoly(ctx, private = None):
                 elif square.get_rent() < user.money and square.owner is not None:
                     user.money -= square.get_rent()
                     square.owner.money += square.get_rent()
+                    square.benefit += square.get_rent()
                     text = f"**{user.discord.name}** paye {square.get_rent()} ₿ a **{square.owner.discord.name}** !"
 
                 elif square.get_rent() > user.money and square.owner is not None:
                     text = f"**{user.discord.name}** vous n'avez pas assez d'argent pour payer le loyer ! il est donc éliminer\n**{square.owner.discord.name}** gagne que {user.money} ₿"
                     user.game_over()
                     square.owner.money += user.money
+                    square.benefit += user.money
+                    await asyncio.sleep(3)
 
 
         # case chance
         elif callable(square):
             text = luck()
-            await asyncio.sleep(5)
+            for player_ in list_player:
+                place_player(player_)
+            await asyncio.sleep(2)
+            await msg.edit(embed=discord_embed(hearder_msg(), f"le dé est tombé sur ... {dice} !", text))
+            await asyncio.sleep(2)
 
 
         # case impots
@@ -998,6 +1012,7 @@ async def monopoly(ctx, private = None):
 
         for react in ["❌", "✅"]:
             await msg.clear_reaction(react)
+
 
         if replay and not user.lost:
             await asyncio.sleep(4)
@@ -1036,7 +1051,7 @@ async def monopoly(ctx, private = None):
         ]
 
 
-    min = 1 if private == "normal" else -2
+    min = 1 if private == "normal" else -1
     max = 32
 
     prepa_emote = ["💤", "🦑", "🦥", "♿", "🛒", "👑", "☃️", "🐷", "🐭", "🐐", "🍩", "🎏", "☄️", "🦦", "🍑", "🛺", "🦉", "🦀"]
@@ -1065,6 +1080,9 @@ async def monopoly(ctx, private = None):
         
         if await wait_reactions():
             return
+
+        if user.turn_protection != 0:
+            user.turn_protection -= 1
 
         await asyncio.sleep(4)
         index_player = 0 if index_player >= len(list_player) - 1 else index_player + 1
