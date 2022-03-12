@@ -13,7 +13,7 @@ from keep_alive import keep_alive
 
 # --- setup
 token = ""
-path = r"/home/runner/Eula-bot"
+path = r"/home/debian/botdiscord/Eula-bot"
 prefix = "!"
 default_intents = discord.Intents.default()
 decalage_horaire = 1
