@@ -59,6 +59,7 @@ def replaces(string, *args):
         string = string.replace(args[i], args[i + 1])
     return string
 
+
 def get_member(member):
     if not member.isdigit():
         if "!" in member:
@@ -115,6 +116,10 @@ async def start_game_multi(ctx, limit, name_game):
 
 async def start_game_duo(ctx, member, name_game):
     member = get_member(member)
+    
+    if member is None:
+        await ctx.send("Vous n'avez pas mentionné un joueur")
+        return False, None
     
     await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
     try:
@@ -183,8 +188,10 @@ async def hentai(ctx, category = "help", nbr = "1"):
 @client.command(aliases=["profile_picture", "pdp"])
 async def pp(ctx, member):
     member = get_member(member)
+
     if member is None:
-        await ctx.send("Je ne peux pas trouver l'utilisateur !")
+        await ctx.send("Vous n'avez pas mentionné un joueur !")
+
     filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
     await member.avatar_url.save(filename)
     file = discord.File(fp=filename)
@@ -213,7 +220,7 @@ async def eightball(ctx, *, msg):
     if msg.endswith("ratio ?"):
         await ctx.reply("ratio !", mention_author=False)
     else:
-        await ctx.reply(a[random.randint(0, len(a) - 1)], mention_author=False)
+        await ctx.reply(a[random.choice(a)], mention_author=False)
 
 
 @client.command()
@@ -355,6 +362,7 @@ async def monopoly(ctx, private = None):
     if not list_user:
         await ctx.reply("Aucun joueur n'a rejoint la partie", mention_author=False)
         return
+
     elif len(list_user) == 1:
         await ctx.reply("Vous ne pouvez pas jouer seul")
 
@@ -502,7 +510,7 @@ async def monopoly(ctx, private = None):
             return "Les gros rats de la banque vous vole 5% de votre richesse"
         elif nbr == 8:
             user.money += 175
-            return "Tu es très beau donc tu gagne un concours de beauté >u<. Tu gagne 175 ₿"
+            return "Tu es très beau donc tu gagne un concours de beauté >u<. + 175 ₿"
         elif nbr == 9:
             user.money -= 100
             return "Tu as perdu une battle de rap contre JUL... le monde te desteste maintenant et ta famille te renies... -100 ₿"
@@ -832,8 +840,10 @@ async def monopoly(ctx, private = None):
             
 
             elif str(emoji.emoji) == "⬆️":
+                if len(user.properties) == 0:
+                    await msg.edit(embed=discord_embed(hearder_msg(), "...", "Vous possedez aucune propriété !"))
                 price_upgrade = 75 * len(user.properties)
-                num, _ = await ask("...", f"**{user.discord.name}** voulez-vous payer {price_upgrade} ₿\n pour augmenter le loyer de toutes vos proprietes de 5 % ?")
+                num, _ = await ask("...", f"**{user.discord.name}** voulez-vous payer {price_upgrade} ₿\n pour augmenter le loyer de toutes vos propriétés de 5 % ?")
 
                 if str(num.emoji) == "✅":
                     user.money -= price_upgrade
@@ -841,7 +851,7 @@ async def monopoly(ctx, private = None):
                     for property_ in user.properties:
                         property_.increase_x_rent()
                     
-                    text = "Le loyer de toutes vos proprietes ont été augmenté !"
+                    text = "Le loyer de toutes vos propriétés a été augmenté !"
                 else:
                     text = "opération annulée"
                 await msg.edit(embed=discord_embed(hearder_msg(), "...", text))
@@ -856,7 +866,7 @@ async def monopoly(ctx, private = None):
             elif str(emoji.emoji) == "🏦":
                 text = "".join(f"{property_.emote}: {property_.name}, {int(property_.rent / 2)}\n" for property_ in user.properties)
                 if text == "":
-                    await msg.edit(embed=discord_embed(hearder_msg(), "...", "Vous possedez aucune propriete !"))
+                    await msg.edit(embed=discord_embed(hearder_msg(), "...", "Vous possedez aucune propriété !"))
                     await asyncio.sleep(4)
                     await wait_reactions()
                     return False
@@ -864,7 +874,7 @@ async def monopoly(ctx, private = None):
 
                 embed=discord.Embed()
                 embed.add_field(name=f"Argent", value=f"{user.money} ₿" , inline=False)
-                embed.add_field(name="Instructions", value=f"**{user.discord.name}** écrivez le nom des proprietes a vendre et \"leave\" pour quitter", inline=False)
+                embed.add_field(name="Instructions", value=f"**{user.discord.name}** écrivez le nom des propriétés a vendre et \"leave\" pour quitter", inline=False)
                 embed.add_field(name="prix de vente", value=text, inline=False)
                 msg_info = await ctx.send(embed=embed)
 
@@ -892,7 +902,7 @@ async def monopoly(ctx, private = None):
                     else:
                         embed=discord.Embed()
                         embed.add_field(name=f"Argent", value=f"{user.money} ₿" , inline=False)
-                        embed.add_field(name="Instructions", value=f"**{user.discord.name}** écrivez le nom des proprietes a vendre et leave pour arreter", inline=False)
+                        embed.add_field(name="Instructions", value=f"**{user.discord.name}** écrivez le nom des propriétés a vendre et leave pour arreter", inline=False)
                         embed.add_field(name="prix de vente", value=text , inline=False)
 
                         if content in name_properties:
@@ -901,7 +911,7 @@ async def monopoly(ctx, private = None):
                             embed.add_field(name="info", value=f"\"{content}\" a bien été vendu", inline=False)
 
                         else:
-                            embed.add_field(name="info", value=f"\"{content}\" n'est pas une propriete ou elle ne vous appartient pas\"" , inline=False)
+                            embed.add_field(name="info", value=f"\"{content}\" n'est pas une propriété ou elle ne vous appartient pas\"" , inline=False)
                         await msg_info.edit(embed=embed)
                         await asyncio.sleep(3)
                         await message.delete()
@@ -930,7 +940,7 @@ async def monopoly(ctx, private = None):
         place_player(user)
         square = list_square[user.position]
 
-        # propriete
+        # propriété
         if isinstance(square, property):
 
             # si le joueur est chez lui
@@ -938,7 +948,7 @@ async def monopoly(ctx, private = None):
                 square.increase_x_rent()
                 str_ = str(square.x_rent)[2:4]
                 str_nbr =  str_ + "0" if len(str_) == 1 else str_
-                text = f"**{user.discord.name}** vous êtes chez vous !\nle loyer augmente de {str_nbr} %, ( {square.get_rent()} )"
+                text = f"**{user.discord.name}** vous êtes chez vous !\nle loyer augmente de {str_nbr} %, ( {square.get_rent()} ₿ )"
 
             elif square.rent < user.money and square.owner is None:
                 emoji , _ = await ask(f"le dé est tombé sur ... {dice} !", f"**{user.discord.name}** voulez-vous acheter {square.name} pour {square.rent} ₿ ?")
@@ -1440,6 +1450,10 @@ async def dm(ctx, member, *, msg):
     if ctx.author.id != 236853417681616906:
         return
     member = get_member(member)
+
+    if member is None:
+        await ctx.send("Vous n'avez pas mentionné un joueur !")
+
     await member.send(msg)
     await ctx.message.add_reaction("✅")
 
@@ -1455,6 +1469,10 @@ async def get_dm(ctx, member):
     if ctx.author.id != 236853417681616906:
         return
     member = get_member(member)
+
+    if member is None:
+        await ctx.send("Vous n'avez pas mentionné un joueur !")
+
     str = ""
     async for message in member.history(limit=None):
         str = message.author.name + ": " + message.content + "\n-----------\n\n"
