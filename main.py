@@ -12,7 +12,7 @@ from discord.ext.commands import has_permissions
 from keep_alive import keep_alive
 
 # --- setup
-token = ""
+token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.ozzjIh1aj6yNM-2bENbKMT0glWI"
 path = r"/home/debian/botdiscord/Eula-bot"
 prefix = "!"
 default_intents = discord.Intents.default()
@@ -220,7 +220,7 @@ async def eightball(ctx, *, msg):
     if msg.endswith("ratio ?"):
         await ctx.reply("ratio !", mention_author=False)
     else:
-        await ctx.reply(a[random.choice(a)], mention_author=False)
+        await ctx.reply(random.choice(a), mention_author=False)
 
 
 @client.command()
