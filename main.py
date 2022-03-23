@@ -214,10 +214,10 @@ async def pile_ou_face(ctx):
     embed=discord.Embed(color=0xf0a3ff)
     
     if random.choice([True, False]):
-        embed.add_field(name=f"󠀮Pile", value="", inline=True)
+        embed.add_field(name=f"󠀮Pile", value="----", inline=True)
         embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956263588748746812/pile_eula.png")
     else:
-        embed.add_field(name=f"󠀮Face", value="", inline=True)
+        embed.add_field(name=f"󠀮Face", value="----", inline=True)
         embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956263588992020541/face_eula.png")
         
     await ctx.send(embed=embed)
