@@ -12,7 +12,7 @@ from discord.ext.commands import has_permissions
 from keep_alive import keep_alive
 
 # --- setup
-token = ""
+token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.mEnJ-NPkEs-hYPdITYp2Z2CtueM"
 path = r"/home/debian/botdiscord/Eula-bot"
 prefix = "!"
 default_intents = discord.Intents.default()
@@ -215,10 +215,10 @@ async def pile_ou_face(ctx):
     
     if random.choice([True, False]):
         embed.add_field(name=f"󠀮Pile", value="----", inline=True)
-        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956263588748746812/pile_eula.png")
+        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956276974383423538/pile_eula.png")
     else:
         embed.add_field(name=f"󠀮Face", value="----", inline=True)
-        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956263588992020541/face_eula.png")
+        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956276974660251748/face_eula.png")
         
     await ctx.reply(embed=embed)
         
@@ -268,6 +268,7 @@ async def help(ctx):
     embed.add_field(name=f"{prefix}10fastfinger", value="jeu multijoueur dans lequel les participants doivent écrire une phrase le plus vite possible", inline=False)
     embed.add_field(name=f"{prefix}calcul_mental", value="jeu multijoueur dans lequel les participants doivent résoudre des calculs", inline=False)
     embed.add_field(name=f"{prefix}random <nombre>", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
+    embed.add_field(name=f"{prefix}piece", value="pile ou face", inline=False)
     embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
     embed.add_field(name=f"{prefix}puissance4 <id du membre/mention>", value="lance une partie de puissance 4", inline=False)
     embed.add_field(name=f"{prefix}monopoly", value="lance une partie de monopoly", inline=False)
