@@ -220,7 +220,7 @@ async def pile_ou_face(ctx):
         embed.add_field(name=f"󠀮Face", value="----", inline=True)
         embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956276974660251748/face_eula.png")
         
-    await ctx.reply(embed=embed)
+    await ctx.reply(embed=embed, mention_author=False)
         
         
 @aleatoire.error
