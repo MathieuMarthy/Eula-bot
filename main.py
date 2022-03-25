@@ -12,7 +12,7 @@ from discord.ext.commands import has_permissions
 from keep_alive import keep_alive
 
 # --- setup
-token = "ODMxNjMzNzYxNDYzNTY2Mzg2.YHYFSw.CwFC0CRxL9V5KpLY8fYPdo6jzGE"
+token = ""
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
 default_intents = discord.Intents.default()
