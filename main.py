@@ -1703,7 +1703,7 @@ async def on_member_update(before, after):
         if before.roles != after.roles:
             if len(before.roles) > len(after.roles):
                 for role in before.roles:
-                    if role not in after.roles and role.id != dico[before.guild.id]["autorole"]:
+                    if role not in after.roles and role.id != dico[before.guild.id]["voc"]:
                         embed=discord.Embed(color=0xf0a3ff)
                         embed.set_author(name=f"{before.name} à gagner un role", icon_url=before.avatar_url)
                         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918043170259074/plus_1.png")
@@ -1713,7 +1713,7 @@ async def on_member_update(before, after):
 
             if len(before.roles) < len(after.roles):
                 for role in after.roles:
-                    if role not in before.roles and role.id != dico[before.guild.id]["autorole"]:
+                    if role not in before.roles and role.id != dico[before.guild.id]["voc"]:
                         embed=discord.Embed(color=0xf0a3ff)
                         embed.set_author(name=f"{before.name} à perdu un role", icon_url=before.avatar_url)
                         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918042981498910/minus.png")
