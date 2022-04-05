@@ -14,7 +14,7 @@ from discord.ext import tasks
 from keep_alive import keep_alive
 
 # --- setup
-token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.MuDX673P9cesf-FStNN_7XpKD-k"
+token = ""
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
 default_intents = discord.Intents.default()
@@ -23,11 +23,14 @@ default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
 
 #--- dico
-dico = ast.literal_eval(open(os.path.join(path, "server.txt"), "r").read().replace("f'", '"'))
+dico = ast.literal_eval(open(os.path.join(path, "server.txt"), "r").read().replace("b'", "'").replace("'", '"'))
 # forme:  {id: {"name": str, "logs": int, "voc": int, "autorole": int, "welcome_msg": str}}
 
 print("connection...")
 
+
+def utf8(string: str) -> str:
+    return string.encode("utf-8")
 
 @client.event
 async def on_ready():
@@ -36,9 +39,9 @@ async def on_ready():
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{prefix}help"))
     for serveur in client.guilds:
         if serveur.id not in dico:
-           dico[serveur.id] = {"name": serveur.name, "logs": None, "voc": None, "autorole": None}
-        elif serveur.name != dico[serveur.id]["name"]:
-            dico[serveur.id]["name"] = serveur.name
+           dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None}
+        elif utf8(serveur.name) != utf8(dico[serveur.id]["name"]):
+            dico[serveur.id]["name"] = utf8(serveur.name)
     dico_update()
     status = cycle([f"{prefix}help", f"serveurs: {len(client.guilds)}"])
     change_status.start()
