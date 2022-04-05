@@ -1,5 +1,6 @@
 import asyncio
 import ast
+from itertools import cycle
 import time
 import os
 import random
@@ -8,6 +9,7 @@ import requests
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
+from discord.ext import tasks
 
 from keep_alive import keep_alive
 
@@ -29,12 +31,22 @@ print("connection...")
 
 @client.event
 async def on_ready():
+    global status
     print("connecté ! ⊂(◉‿◉)つ")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{prefix}help"))
     for serveur in client.guilds:
         if serveur.id not in dico:
            dico[serveur.id] =  {"name": serveur.name, "logs": None, "voc": None, "autorole": None}
+        elif serveur.name != dico[serveur.id]["name"]:
+            dico[serveur.id]["name"] = serveur.name
     dico_update()
+    status = cycle([f"{prefix}help", f"serveurs: {len(client.guilds)}"])
+    change_status.start()
+
+@tasks.loop(seconds=5)
+async def change_status():
+    await client.wait_until_ready()
+    await client.change_presence(activity=discord.Game(name=next(status)))
 
 # --- fonctions
 # - all
@@ -1635,7 +1647,7 @@ async def on_guild_role_delete(role):
 @client.event
 async def on_guild_join(guild):
     if guild.id not in dico:
-           dico[guild.id] =  {"name": guild.name, "logs": None, "voc": None, "autorole": None}
+        dico[guild.id] =  {"name": guild.name, "logs": None, "voc": None, "autorole": None}
     dico_update()
 
 
