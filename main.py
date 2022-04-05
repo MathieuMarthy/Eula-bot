@@ -14,7 +14,7 @@ from discord.ext import tasks
 from keep_alive import keep_alive
 
 # --- setup
-token = ""
+token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.MuDX673P9cesf-FStNN_7XpKD-k"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
 default_intents = discord.Intents.default()
@@ -36,7 +36,7 @@ async def on_ready():
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{prefix}help"))
     for serveur in client.guilds:
         if serveur.id not in dico:
-           dico[serveur.id] =  {"name": serveur.name, "logs": None, "voc": None, "autorole": None}
+           dico[serveur.id] = {"name": serveur.name, "logs": None, "voc": None, "autorole": None}
         elif serveur.name != dico[serveur.id]["name"]:
             dico[serveur.id]["name"] = serveur.name
     dico_update()
