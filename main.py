@@ -1,6 +1,5 @@
 import asyncio
 import ast
-from itertools import cycle
 import time
 import os
 import random
@@ -42,14 +41,13 @@ async def on_ready():
            dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None}
         elif utf8(serveur.name) != utf8(dico[serveur.id]["name"]):
             dico[serveur.id]["name"] = utf8(serveur.name)
-    dico_update()
-    status = cycle([f"{prefix}help", f"serveurs: {len(client.guilds)}"])
-    change_status.start()
+        
+    tmp = [server.id for server in client.guilds ]
+    for server, _ in dico.copy().items():
+        if server not in tmp:
+            del dico[server]
 
-@tasks.loop(seconds=5)
-async def change_status():
-    await client.wait_until_ready()
-    await client.change_presence(activity=discord.Game(name=next(status)))
+    dico_update()
 
 # --- fonctions
 # - all
