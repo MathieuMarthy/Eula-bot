@@ -17,7 +17,7 @@ token = ""
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
 default_intents = discord.Intents.default()
-decalage_horaire = 1
+decalage_horaire = 2
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
 
