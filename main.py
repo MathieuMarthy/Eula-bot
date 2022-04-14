@@ -3,7 +3,9 @@ import ast
 import time
 import os
 import random
+from zoneinfo import ZoneInfo
 import requests
+from datetime import datetime
 
 import discord
 from discord.ext import commands
@@ -13,7 +15,7 @@ from discord.ext import tasks
 from keep_alive import keep_alive
 
 # --- setup
-token = ""
+token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
 default_intents = discord.Intents.default()
@@ -60,7 +62,7 @@ def channel_send(id):
 
 
 def get_date_time():
-    return time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(time.time() + decalage_horaire * 3600))
+    return datetime.now(tz=ZoneInfo("Europe/Paris")).strftime("%d/%m/%Y %H:%M:%S")
 
 
 def replaces(string, *args):
