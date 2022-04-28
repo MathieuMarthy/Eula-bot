@@ -179,7 +179,7 @@ async def hentai(ctx, category = "help", nbr = "1"):
         nbr = 1
 
     if nbr > 20:
-        await ctx.send("Le nombre maximum d'image est de 20")
+        await ctx.send("Le nombre maximum d'images est de 20")
         nbr = 20
 
     if not ctx.channel.is_nsfw() and not ctx.author.guild_permissions.administrator:
@@ -263,21 +263,21 @@ async def help(ctx):
     embed.set_author(name="help - Eula", icon_url="https://media.discordapp.net/attachments/836943322580516904/917794030694318172/padoru_eula___genshin_impact_by_dekunyart_devgso1-fullview.png?width=614&height=614")
     embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
     if ctx.author.guild_permissions.administrator:
-        embed.add_field(name=f"{prefix}toggle_autorole <role> - _admin_", value="active/desactive le fait de donner un role a tous les nouveaux arrivant", inline=False)
-        embed.add_field(name=f"{prefix}toggle_rolevocal - _admin_", value="active/desactive le fait de donner un role a chaque fois qu'un membre rejoint un salon vocal ", inline=False)  
+        embed.add_field(name="commandes admin", value="----------------------------", inline=False)
+        embed.add_field(name=f"{prefix}toggle_autorole <role> - _admin_", value="active/désactive le fait de donner un rôle a tous les nouveaux arrivant", inline=False)
+        embed.add_field(name=f"{prefix}toggle_rolevocal - _admin_", value="active/désactive le fait de donner un rôle à chaque fois qu'un membre rejoint un salon vocal ", inline=False)  
         embed.add_field(name=f"\n{prefix}toggle_logs - _admin_", value="active/désactive les logs", inline=False)
-        embed.add_field(name=f"\n{prefix}toggle_welcome_message - _admin_", value="active/désactive le message de bienvenue", inline=False)
+        embed.add_field(name=f"\n{prefix}toggle_welcome_message - _admin_", value="active/désactive le message de bienvenue en message privé", inline=False)
         embed.add_field(name=f"{prefix}clear <nbr/texte> - _admin_", value="supprime le nombres de messages,\nsupprime les messages jusqu'au lien donné", inline=False)
         embed.add_field(name=f"{prefix}nuck <salon> - _admin_", value="enleve tous les messages d'un salon", inline=False)
               
         embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
-        embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les reactions donnés, les reaction doivent être coller", inline=False)
-        embed.add_field(name=f"{prefix}dm <id du membre/mention> <message>", value="envoie le message avec le bot",inline=False)
+        embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les réactions données, les réactions doivent être collées", inline=False)
     embed.add_field(name="commandes normales", value="----------------------------", inline=False)
     embed.add_field(name=f"{prefix}8ball <message>", value="Boule magique", inline=False)
     embed.add_field(name=f"{prefix}10fastfinger", value="jeu multijoueur dans lequel les participants doivent écrire une phrase le plus vite possible", inline=False)
     embed.add_field(name=f"{prefix}calcul_mental", value="jeu multijoueur dans lequel les participants doivent résoudre des calculs", inline=False)
-    embed.add_field(name=f"{prefix}random <nombre>", value="donne un nombre aleatoire entre 0 et le nombre donné", inline=False)
+    embed.add_field(name=f"{prefix}random <nombre>", value="donne un nombre aléatoire entre 0 et le nombre donné", inline=False)
     embed.add_field(name=f"{prefix}piece", value="pile ou face", inline=False)
     embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
     embed.add_field(name=f"{prefix}puissance4 <id du membre/mention>", value="lance une partie de puissance 4", inline=False)
@@ -318,7 +318,7 @@ async def jeu_reaction(ctx, limit = 5):
         try:
             msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content in [mot, "exit", "!exit", "leave", "!leave", "Exit", "!Exit", "leave", "Leave"], timeout=60)
         except asyncio.TimeoutError:
-            await ctx.send("partie finie a cause d'inactivité")
+            await ctx.send("partie finie à cause d'inactivité")
             break
         if msg.content.lower() in ["exit", "!exit", "leave", "!leave"]:
             await ctx.send("partie annulée !")
@@ -358,7 +358,7 @@ async def calcul_mental(ctx, limit = 5):
         try:
             msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content.lower() in [str(eval(calcul)), "exit", "!exit", "leave", "!leave"], timeout=180)
         except asyncio.TimeoutError:
-            await ctx.send("partie finie a cause d'inactivité")
+            await ctx.send("partie finie à cause d'inactivité")
             break
         if msg.content.lower() in ["exit", "!exit", "leave", "!leave"]:
             await ctx.send("partie annulée !")
@@ -502,7 +502,7 @@ async def monopoly(ctx, private = None):
         nbr = random.randint(min , max)
         if nbr == -1:
             user.money += 200
-            return "tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
+            return "tony à arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
         elif nbr == 0:
             user.money += 200
             return "tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
@@ -1282,7 +1282,7 @@ async def reaction(ctx, channel, id, *, react):
 @reaction.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("L'id correspond a auncun message ou le bot ne peux pas mettre la reaction saisie")
+        await ctx.send("L'id correspond à auncun message ou le bot ne peux pas mettre la réaction saisie")
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}reaction <salon> <id du msg> <reactions>")
 
@@ -1294,7 +1294,7 @@ async def on_message_error(ctx, error):
 async def toggle_welcome_message(ctx, msg = None):
     if dico[ctx.guild.id]["welcome_msg"] is None:
         if msg is None:
-            await ctx.send(f"**quel message de bienvenue voulez-vous mettre ?**\npour que le bot écrive le nom du nouvel arrivant dans message écriver $username$\nexemple: le message \"bienvenue $username$\" donnera \"bienvenue {ctx.author.name}\"")
+            await ctx.send(f"**quel message de bienvenue voulez-vous mettre ?**\npour que le bot écrive le nom du nouvel arrivant dans message écrivez $username$\nexemple: le message \"bienvenue $username$\" donnera \"bienvenue {ctx.author.name}\"")
             response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=180)
             msg = response.content
         dico[ctx.guild.id]["welcome_msg"] = msg
@@ -1336,7 +1336,7 @@ async def on_message_error(ctx, error):
 async def toggle_autorole(ctx, role : discord.Role = None):
     if dico[ctx.guild.id]["autorole"] is None:
         if role is None:
-            await ctx.send("quel role voulez vous mettre ?")
+            await ctx.send("quel rôle voulez-vous mettre ?")
             response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
             if "<@&" not in response.content.lower():
                 await ctx.send(f"\"{response.content}\" n'est pas un rôle")
@@ -1345,11 +1345,11 @@ async def toggle_autorole(ctx, role : discord.Role = None):
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
         dico[ctx.guild.id]["autorole"] = role.id
         dico_update()
-        await ctx.send(f"Le role {role.mention} est maintenant donné a tous les nouveaux arrivant !")
+        await ctx.send(f"Le rôle **{role.name}** est maintenant donné à tous les nouveaux arrivant !")
     else:
         dico[ctx.guild.id]["autorole"] = None
         dico_update()
-        await ctx.send("La fonction d'autorole est maintenant désactivé")
+        await ctx.send("La fonction d'autorole est maintenant désactivée")
 
 
 @client.command(aliases=["c"])
@@ -1362,7 +1362,7 @@ async def clear(ctx, *, arg = "1"):
         async for message in ctx.history(limit = 500):
             tmp += 1
             if message.jump_url == arg:
-                await ctx.send(f"{tmp - 2} messages sélectionné jusqu'au message demandé. voulez-vous les supprimer ? (oui/non)")
+                await ctx.send(f"{tmp - 2} messages sélectionnés jusqu'au message demandé. voulez-vous les supprimer ? (oui/non)")
                 msg = await client.wait_for("message", check = lambda message: message.author == ctx.author)
                 if msg.content.lower() in ["oui", "o", "y", "yes"]:
                     await ctx.channel.purge(limit = tmp + 1)
@@ -1382,7 +1382,7 @@ async def nuck(ctx, channel):
         await ctx.send("salon non trouvé")
         return
     
-    await ctx.send(f"Voulez-vous vraiment nuck le salon {channel.mention} ?")
+    await ctx.send(f"Voulez-vous vraiment remettre à zéro le salon {channel.mention} ?")
     try:
         reponse = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout = 30)
     except asyncio.TimeoutError:
@@ -1403,7 +1403,7 @@ async def on_message_error(ctx, error):
 async def toggle_rolevocal(ctx, role: discord.Role):
     if dico[ctx.author.guild.id]["voc"] is None:
         if role is None:
-            await ctx.send("quel role voulez vous mettre ?")
+            await ctx.send("quel rôle voulez-vous mettre ?")
             response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
             if "<@&" not in response.content.lower():
                 await ctx.send(f"\"{response.content}\" n'est pas un rôle")
@@ -1412,18 +1412,18 @@ async def toggle_rolevocal(ctx, role: discord.Role):
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
         dico[ctx.guild.id]["autorole"] = role.id
         dico_update()
-        await ctx.send(f"Le role {role.mention} est maintenant donné a toutes les personnes qui rentre dans un salon vocal !")
+        await ctx.send(f"Le rôle **{role.name}** est maintenant donné à toutes les personnes qui rentre dans un salon vocal !")
     else:
         dico[ctx.author.guild.id]["voc"] = None
         dico_update()
-        await ctx.send("Plus aucun role ne sera donner quand quelqu'un rejoint un salon vocal")
+        await ctx.send("Plus aucun rôle ne sera donné quand quelqu'un rejoint un salon vocal")
 
 
 @client.command()
 @has_permissions(administrator=True)
 async def toggle_logs(ctx):
     if dico[ctx.author.guild.id]["logs"] is None:
-        await ctx.send("Dans quel salon voulez-vous activés les logs ?")
+        await ctx.send("Dans quel salon voulez-vous activer les logs ?")
         response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
         if "<#" not in response.content.lower():
             await ctx.send(f"\"{response.content}\" n'est pas un salon")
@@ -1432,11 +1432,11 @@ async def toggle_logs(ctx):
         channel = client.get_channel(int(id))
         dico[ctx.guild.id]["logs"] = channel.id
         dico_update()
-        await ctx.send(f"Les logs sont maintenant activés dans {channel.mention} !")
+        await ctx.send(f"Les logs sont maintenant activées dans {channel.mention} !")
     else:
         dico[ctx.guild.id]["logs"] = None
         dico_update()
-        await ctx.send("Les logs sont maintenant désactivé !")
+        await ctx.send("Les logs sont maintenant désactivées !")
 
 
 @client.command()
@@ -1451,7 +1451,7 @@ async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
         return
     if len(ctx.message.attachments) == 0:
-        await ctx.send("Il faut envoyé une image")
+        await ctx.send("Il faut envoyer une image")
     elif len(ctx.message.attachments) > 1:
         await ctx.send("Il faut qu'une image")
     else:
@@ -1515,11 +1515,9 @@ async def on_message_error(ctx, error):
 # - message
 @client.event
 async def on_message_delete(message):
-    if message.author.bot:
-        return
     if dico[message.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"{message.author.name} a supprimé un message", icon_url=message.author.avatar_url)
+        embed.set_author(name=f"un message de {message.author.name} a été supprimé", icon_url=message.author.avatar_url)
         embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
         if message.content == "":
             embed.add_field(name="contenu", value="<image>", inline=True)
@@ -1537,7 +1535,7 @@ async def on_message_delete(message):
 
             for index, file in enumerate(files):
                 embed=discord.Embed(color=0xf0a3ff)
-                embed.set_author(name=f"{message.author.name} a supprimé un message", icon_url=message.author.avatar_url)
+                embed.set_author(name=f"un message de {message.author.name} a été supprimé", icon_url=message.author.avatar_url)
                 embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
                     
                 if file.endswith(".mp4"):
@@ -1613,7 +1611,7 @@ async def on_guild_channel_update(before , after):
 async def on_guild_role_create(role):
     if dico[role.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"un nouveau role a été créé", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
+        embed.set_author(name=f"un nouveau rôle a été créé", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918043170259074/plus_1.png")
         embed.add_field(name="nom", value=role.name, inline=True)
         embed.add_field(name="󠀮 ", value=role.mention + " - " + get_date_time(), inline=False)
@@ -1626,7 +1624,7 @@ async def on_guild_role_update(before, after):
         return
     if dico[before.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"le role {after.name} a été modifié", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
+        embed.set_author(name=f"le rôle {after.name} a été modifié", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914861144206893076/edit.png")
         embed.add_field(name="avant", value=before.name, inline=True)
         embed.add_field(name="après", value=after.name, inline=True)
@@ -1638,7 +1636,7 @@ async def on_guild_role_update(before, after):
 async def on_guild_role_delete(role):
     if dico[role.guild.id]["logs"] is not None:
         embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"le role {role} a été supprimer", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
+        embed.set_author(name=f"le rôle {role} a été supprimer", icon_url="https://media.discordapp.net/attachments/836943322580516904/914539780363145336/unknown.png")
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914539782040850472/unknown.png")
         embed.add_field(name="nom", value=role.name, inline=True)
         embed.add_field(name="󠀮 ", value=get_date_time(), inline=False)
@@ -1719,7 +1717,7 @@ async def on_member_update(before, after):
                 for role in before.roles:
                     if role not in after.roles and role.id != dico[before.guild.id]["voc"]:
                         embed=discord.Embed(color=0xf0a3ff)
-                        embed.set_author(name=f"{before.name} a gagner un role", icon_url=before.avatar_url)
+                        embed.set_author(name=f"{before.name} a gagné un rôle", icon_url=before.avatar_url)
                         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918043170259074/plus_1.png")
                         embed.add_field(name="role", value=role.mention, inline=True)
                         embed.add_field(name="󠀮 ", value=after.mention + " - " + get_date_time(), inline=False)
@@ -1729,7 +1727,7 @@ async def on_member_update(before, after):
                 for role in after.roles:
                     if role not in before.roles and role.id != dico[before.guild.id]["voc"]:
                         embed=discord.Embed(color=0xf0a3ff)
-                        embed.set_author(name=f"{before.name} a perdu un role", icon_url=before.avatar_url)
+                        embed.set_author(name=f"{before.name} a perdu un rôle", icon_url=before.avatar_url)
                         embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914918042981498910/minus.png")
                         embed.add_field(name="role", value=role.mention, inline=True)
                         embed.add_field(name="󠀮 ", value=after.mention + " - " + get_date_time(), inline=False)
@@ -1761,7 +1759,7 @@ async def on_voice_state_update(member, before, after):
                     await member.remove_roles(discord.utils.get(member.guild.roles, id = dico[member.guild.id]["voc"]))
             else:
                 embed=discord.Embed(color=0xf0a3ff)
-                embed.set_author(name=f"{member.name} a changer de salon vocal", icon_url=member.avatar_url)
+                embed.set_author(name=f"{member.name} a changé de salon vocal", icon_url=member.avatar_url)
                 embed.set_thumbnail(url="https://media.discordapp.net/attachments/836943322580516904/914922944000577536/shuffle.png")
                 embed.add_field(name=f"󠀮avant", value=before.channel.mention, inline=True)
                 embed.add_field(name=f"󠀮après", value=after.channel.mention, inline=True)
