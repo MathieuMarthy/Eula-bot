@@ -14,7 +14,7 @@ from discord.ext import tasks
 from keep_alive import keep_alive
 
 # --- setup
-token = "ODMxNjMzNzYxNDYzNTY2Mzg2.YHYFSw.t37SOCKUmXs3pwZFqVzWr1dwgGs"
+token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
 default_intents = discord.Intents.default()
