@@ -1,6 +1,5 @@
 import asyncio
 import ast
-import time
 import os
 import random
 from zoneinfo import ZoneInfo
@@ -15,7 +14,7 @@ from discord.ext import tasks
 from keep_alive import keep_alive
 
 # --- setup
-token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
+token = "ODMxNjMzNzYxNDYzNTY2Mzg2.YHYFSw.t37SOCKUmXs3pwZFqVzWr1dwgGs"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
 default_intents = discord.Intents.default()
@@ -1520,7 +1519,7 @@ async def on_message_delete(message):
         embed.set_author(name=f"un message de {message.author.name} a été supprimé", icon_url=message.author.avatar_url)
         embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/836943322580516904/914539782040850472/unknown.png")
         if message.content == "":
-            embed.add_field(name="contenu", value="<image>", inline=True)
+            embed.add_field(name="contenu", value="<fichier>", inline=True)
         else:
             embed.add_field(name="contenu", value=message.content, inline=True)
         embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
@@ -1542,7 +1541,7 @@ async def on_message_delete(message):
                     embed.video.url = f"attachment://{file}"
                     embed.video.height = message.attachments[index]
                     embed.video.width = message.attachments[index]
-                else:
+                elif file.endswith((".png", ".jpg", ".jpeg")):
                     embed.set_image(url=f"attachment://{file}")
                     
                 embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
