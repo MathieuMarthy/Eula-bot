@@ -20,27 +20,27 @@ dico = {
     "pile": "https://media.discordapp.net/attachments/836943322580516904/971843297117077584/pile_eula.png",
 
 }
-class image:
-    def get_img(name: str) -> str:
-        """
-        power
-        suffle
-        plus
-        minus
-        notif
-        edit
-        plus_rond
-        croix_non
-        croix_plus
-        speaker
-        trash
-        setting
-        speaker_x
-        mic
-        exit
-        enter
-        setting_bar
-        face
-        pile
-        """
-        return dico[name]
+
+def get_img(name: str) -> str:
+    """
+    power
+    suffle
+    plus
+    minus
+    notif
+    edit
+    plus_rond
+    croix_non
+    croix_plus
+    speaker
+    trash
+    setting
+    speaker_x
+    mic
+    exit
+    enter
+    setting_bar
+    face
+    pile
+    """
+    return dico[name]
