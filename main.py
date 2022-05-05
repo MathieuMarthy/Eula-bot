@@ -1765,6 +1765,4 @@ async def on_voice_state_update(member, before, after):
                 embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
                 await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
 
-
-keep_alive()
 client.run(token)
