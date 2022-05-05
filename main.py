@@ -11,7 +11,6 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from discord.ext import tasks
 
-from keep_alive import keep_alive
 
 # --- setup
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
