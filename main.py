@@ -223,10 +223,10 @@ async def pile_ou_face(ctx):
     
     if random.choice([True, False]):
         embed.add_field(name=f"󠀮Pile", value="----", inline=True)
-        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956276974383423538/pile_eula.png")
+        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/971843297117077584/pile_eula.png")
     else:
         embed.add_field(name=f"󠀮Face", value="----", inline=True)
-        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/956276974660251748/face_eula.png")
+        embed.set_image(url="https://media.discordapp.net/attachments/836943322580516904/971841674156339370/face_eula.png")
         
     await ctx.reply(embed=embed, mention_author=False)
         
