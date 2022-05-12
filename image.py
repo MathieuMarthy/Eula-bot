@@ -1,6 +1,6 @@
 dico = {
     "power": "https://media.discordapp.net/attachments/836943322580516904/971846167078006814/unknown.png",
-    "suffle": "https://media.discordapp.net/attachments/836943322580516904/971846499443019776/unknown.png",
+    "shuffle": "https://media.discordapp.net/attachments/836943322580516904/971846499443019776/unknown.png",
     "plus": "https://media.discordapp.net/attachments/836943322580516904/971846604321599548/unknown.png",
     "minus": "https://media.discordapp.net/attachments/836943322580516904/971847114445443112/unknown.png",
     "notif": "https://media.discordapp.net/attachments/836943322580516904/971847177741684826/unknown.png",
@@ -24,7 +24,7 @@ dico = {
 def get_img(name: str) -> str:
     """
     power
-    suffle
+    shuffle
     plus
     minus
     notif
