@@ -18,6 +18,7 @@ from image import get_img
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
+version = "3.5.3"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -171,6 +172,10 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
+@client.command()
+async def version(ctx):
+    await ctx.send(f"Version: {version}")
+
 @client.command()
 async def hentai(ctx, category = "help", nbr = "1"):
     if nbr.isdigit():
