@@ -1256,6 +1256,13 @@ async def on_message_error(ctx, error):
 
 # - admin
 @client.command()
+async def view_config(ctx):
+    if ctx.author.id != 236853417681616906:
+        return
+    
+    await ctx.send(dico[ctx.message.guild.id])
+
+@client.command()
 @has_permissions(administrator=True)
 async def reaction(ctx, channel, id, *, react):
     if not channel.isdigit():
@@ -1401,7 +1408,7 @@ async def on_message_error(ctx, error):
 @client.command()
 @has_permissions(administrator=True)
 async def toggle_rolevocal(ctx, role: discord.Role = None):
-    if dico[ctx.author.guild.id]["voc"] is None:
+    if dico[ctx.guild.id]["voc"] is None:
         if role is None:
             await ctx.send("quel rôle voulez-vous mettre ?")
             response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
