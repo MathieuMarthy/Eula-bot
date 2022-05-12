@@ -1400,7 +1400,7 @@ async def on_message_error(ctx, error):
 
 @client.command()
 @has_permissions(administrator=True)
-async def toggle_rolevocal(ctx, role: discord.Role):
+async def toggle_rolevocal(ctx, role: discord.Role = None):
     if dico[ctx.author.guild.id]["voc"] is None:
         if role is None:
             await ctx.send("quel rôle voulez-vous mettre ?")
