@@ -1417,7 +1417,7 @@ async def toggle_rolevocal(ctx, role: discord.Role = None):
                 return
             id = replaces(response.content, "<@&", "", ">", "")
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
-        dico[ctx.guild.id]["autorole"] = role.id
+        dico[ctx.guild.id]["voc"] = role.id
         dico_update()
         await ctx.send(f"Le rôle **{role.name}** est maintenant donné à toutes les personnes qui rentre dans un salon vocal !")
     else:
