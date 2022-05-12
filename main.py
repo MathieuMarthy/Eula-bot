@@ -18,7 +18,7 @@ from image import get_img
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version = "3.5.3"
+version_bot = "3.5.5"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -174,7 +174,7 @@ async def end_game(ctx, list_user, dico_points):
 # - everyone
 @client.command()
 async def version(ctx):
-    await ctx.send(f"Version: {version}")
+    await ctx.send(f"Version: {version_bot}")
 
 @client.command()
 async def hentai(ctx, category = "help", nbr = "1"):
@@ -1531,13 +1531,19 @@ async def on_message_delete(message):
         embed=discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"un message de {message.author.name} a été supprimé", icon_url=message.author.avatar_url)
         embed.set_thumbnail(url=get_img("trash"))
-        if message.content == "":
-            embed.add_field(name="contenu", value="<fichier>", inline=True)
+
+        if message.embeds:
+            await channel_send(dico[message.guild.id]["logs"]).send(content=f"un message avec un embed de **{message.author.name}** à été supprimé\nCe qui à été supprimé est le embed de ce message" ,embed=message.embeds[0])
+            return
         else:
-            embed.add_field(name="contenu", value=message.content, inline=True)
-        embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
-        embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_date_time(), inline=False)
-        msg = await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
+            if message.content == "":
+                embed.add_field(name="contenu", value="<fichier>", inline=True)
+            else:
+                embed.add_field(name="contenu", value=message.content, inline=True)
+
+            embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
+            embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_date_time(), inline=False)
+            msg = await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
         
         if len(message.attachments) != 0:
             files = []
@@ -1726,8 +1732,8 @@ async def on_member_update(before, after):
 
         if before.roles != after.roles:
             if len(before.roles) < len(after.roles):
-                for role in before.roles:
-                    if role not in after.roles and role.id != dico[before.guild.id]["voc"]:
+                for role in after.roles:
+                    if role not in before.roles:
                         embed=discord.Embed(color=0xf0a3ff)
                         embed.set_author(name=f"{before.name} a gagné un rôle", icon_url=before.avatar_url)
                         embed.set_thumbnail(url=get_img("plus"))
@@ -1736,8 +1742,8 @@ async def on_member_update(before, after):
                         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
             if len(before.roles) > len(after.roles):
-                for role in after.roles:
-                    if role not in before.roles and role.id != dico[before.guild.id]["voc"]:
+                for role in before.roles:
+                    if role not in after.roles:
                         embed=discord.Embed(color=0xf0a3ff)
                         embed.set_author(name=f"{before.name} a perdu un rôle", icon_url=before.avatar_url)
                         embed.set_thumbnail(url=get_img("minus"))
