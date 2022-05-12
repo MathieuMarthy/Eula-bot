@@ -1725,7 +1725,7 @@ async def on_member_update(before, after):
             await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
         if before.roles != after.roles:
-            if len(before.roles) > len(after.roles):
+            if len(before.roles) < len(after.roles):
                 for role in before.roles:
                     if role not in after.roles and role.id != dico[before.guild.id]["voc"]:
                         embed=discord.Embed(color=0xf0a3ff)
@@ -1735,7 +1735,7 @@ async def on_member_update(before, after):
                         embed.add_field(name="󠀮 ", value=after.mention + " - " + get_date_time(), inline=False)
                         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
-            if len(before.roles) < len(after.roles):
+            if len(before.roles) > len(after.roles):
                 for role in after.roles:
                     if role not in before.roles and role.id != dico[before.guild.id]["voc"]:
                         embed=discord.Embed(color=0xf0a3ff)
