@@ -18,7 +18,7 @@ from image import get_img
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.5.7"
+version_bot = "3.5.8"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -205,9 +205,9 @@ async def hentai(ctx, category = "help", nbr = "1"):
 @client.command(aliases=["profile_picture", "pdp"])
 async def pp(ctx, member):
 
-    if member == "serveur":
-        filename = "avatar.gif" if ctx.message.guild.icon_url.is_icon_animated() else "avatar.png"
-        ctx.message.guild.icon_url.save(filename)
+    if member in ["serveur", "server"]:
+        filename = "avatar.gif" if ctx.message.guild.is_icon_animated() else "avatar.png"
+        await ctx.message.guild.icon_url.save(filename)
 
     else:
         member = get_member(member)
@@ -227,6 +227,7 @@ async def pp(ctx, member):
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque le membre ! syntaxe: {prefix}pp <id du membre/mention>")
+
 
 @client.command(aliases=["random"])
 async def aleatoire(ctx, nbr):
@@ -1759,22 +1760,24 @@ async def on_member_update(before, after):
             if len(before.roles) < len(after.roles):
                 for role in after.roles:
                     if role not in before.roles:
-                        embed=discord.Embed(color=0xf0a3ff)
-                        embed.set_author(name=f"{before.name} a gagné un rôle", icon_url=before.avatar_url)
-                        embed.set_thumbnail(url=get_img("plus"))
-                        embed.add_field(name="role", value=role.mention, inline=True)
-                        embed.add_field(name="󠀮 ", value=after.mention + " - " + get_date_time(), inline=False)
-                        await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
+                        if role.id != dico[before.guild.id]["voc"]:
+                            embed=discord.Embed(color=0xf0a3ff)
+                            embed.set_author(name=f"{before.name} a gagné un rôle", icon_url=before.avatar_url)
+                            embed.set_thumbnail(url=get_img("plus"))
+                            embed.add_field(name="role", value=role.mention, inline=True)
+                            embed.add_field(name="󠀮 ", value=after.mention + " - " + get_date_time(), inline=False)
+                            await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
             if len(before.roles) > len(after.roles):
                 for role in before.roles:
                     if role not in after.roles:
-                        embed=discord.Embed(color=0xf0a3ff)
-                        embed.set_author(name=f"{before.name} a perdu un rôle", icon_url=before.avatar_url)
-                        embed.set_thumbnail(url=get_img("minus"))
-                        embed.add_field(name="role", value=role.mention, inline=True)
-                        embed.add_field(name="󠀮 ", value=after.mention + " - " + get_date_time(), inline=False)
-                        await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
+                        if role.id != dico[before.guild.id]["voc"]:
+                            embed=discord.Embed(color=0xf0a3ff)
+                            embed.set_author(name=f"{before.name} a perdu un rôle", icon_url=before.avatar_url)
+                            embed.set_thumbnail(url=get_img("minus"))
+                            embed.add_field(name="role", value=role.mention, inline=True)
+                            embed.add_field(name="󠀮 ", value=after.mention + " - " + get_date_time(), inline=False)
+                            await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
 
 # - vocal
