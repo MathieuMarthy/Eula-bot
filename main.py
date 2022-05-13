@@ -18,7 +18,7 @@ from image import get_img
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.5.5"
+version_bot = "3.5.7"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -36,15 +36,16 @@ def utf8(string: str) -> str:
 @client.event
 async def on_ready():
     global status
-    print("connecté ! ⊂(◉‿◉)つ")
+    print(f"connecté ! ⊂(◉‿◉)つ à {client.user.name}")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{prefix}help"))
+
     for serveur in client.guilds:
         if serveur.id not in dico:
-           dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None}
+           dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None} 
         elif utf8(serveur.name) != utf8(dico[serveur.id]["name"]):
             dico[serveur.id]["name"] = utf8(serveur.name)
         
-    tmp = [server.id for server in client.guilds ]
+    tmp = [server.id for server in client.guilds]
     for server, _ in dico.copy().items():
         if server not in tmp:
             del dico[server]
@@ -178,6 +179,10 @@ async def version(ctx):
 
 @client.command()
 async def hentai(ctx, category = "help", nbr = "1"):
+    if not ctx.channel.is_nsfw() and not ctx.author.guild_permissions.administrator:
+        await ctx.send("Il faut que le salon soit nsfw pour que la commande fonctionne")
+        return
+
     if nbr.isdigit():
         nbr = int(nbr)
     else:
@@ -187,39 +192,41 @@ async def hentai(ctx, category = "help", nbr = "1"):
         await ctx.send("Le nombre maximum d'images est de 20")
         nbr = 20
 
-    if not ctx.channel.is_nsfw() and not ctx.author.guild_permissions.administrator:
-        await ctx.send("Il faut que le salon soit nsfw pour que la commande fonctionne")
-        return
-
-    if category in ["ass", "bdsm", "cum", "creampie", "manga", "femdom", "hentai", "incest", "masturbation", "public", "ero", "orgy", "elves", "yuri", "pantsu", "glasses", "cuckold", "blowjob", "boobjob", "foot", "thighs", "vagina", "ahegao", "uniform", "gangbang", "tentacles", "gif", "neko", "nsfwMobileWallpaper", "zettaiRyouiki"]:
+    tags = ["ass", "bdsm", "cum", "creampie", "manga", "femdom", "hentai", "incest", "masturbation", "public", "ero", "orgy", "elves", "yuri", "pantsu", "glasses", "cuckold", "blowjob", "boobjob", "foot", "thighs", "vagina", "ahegao", "uniform", "gangbang", "tentacles", "gif", "neko", "nsfwMobileWallpaper", "zettaiRyouiki"]
+    if category in tags:
         for _ in range(nbr):
             response = requests.get(f"https://hmtai.herokuapp.com/nsfw/{category}")
             link = ast.literal_eval(response.text)
             await ctx.send(link["url"])
     else:
-        await ctx.send("**Liste des categories:**\nass, bdsm, cum, creampie, manga, femdom, hentai, incest, masturbation, public, ero, orgy, elves, yuri, pantsu, glasses, cuckold, blowjob, boobjob, foot, thighs, vagina, ahegao, uniform, gangbang, tentacles, gif, neko, nsfwMobileWallpaper, zettaiRyouiki")
+        await ctx.send(f"**Liste des categories:**\n{', '.join(tags)}")
 
 
 @client.command(aliases=["profile_picture", "pdp"])
 async def pp(ctx, member):
-    member = get_member(member)
-
-    if member is None:
-        await ctx.send("Vous n'avez pas mentionné un membre !")
-        return
 
     if member == "serveur":
         filename = "avatar.gif" if ctx.message.guild.icon_url.is_icon_animated() else "avatar.png"
         ctx.message.guild.icon_url.save(filename)
+
     else:
-        filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
-        await member.avatar_url.save(filename)
+        member = get_member(member)
+        if member is None:
+            await ctx.send("Vous n'avez pas mentionné un membre !")
+            return
+        
+        else:
+            filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
+            await member.avatar_url.save(filename)
 
     file = discord.File(fp=filename)
     await ctx.send(file=file)
     os.remove(filename)
 
-
+@pp.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque le membre ! syntaxe: {prefix}pp <id du membre/mention>")
 
 @client.command(aliases=["random"])
 async def aleatoire(ctx, nbr):
@@ -227,6 +234,11 @@ async def aleatoire(ctx, nbr):
         await ctx.send("Le nombre doit être plus grand que 0")
     else:
         await ctx.send(random.randint(0, int(nbr)))
+        
+@aleatoire.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque le nombre ! syntaxe: {prefix}random <nombre>")
 
         
 @client.command(aliases=["pile", "face", "piece", "pileouface"])
@@ -242,12 +254,6 @@ async def pile_ou_face(ctx):
         embed.set_image(url=get_img("face"))
         
     await ctx.reply(embed=embed, mention_author=False)
-        
-        
-@aleatoire.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque le nombre ! syntaxe: {prefix}random <nombre>")
 
 
 @client.command(aliases=["8ball", "8"])
@@ -319,11 +325,13 @@ async def jeu_reaction(ctx, limit = 5):
 
     list_question = get_sentences()
     while turn != limit:
+
         mot = list_question[random.randint(0, len(list_question) - 1)]
         embed=discord.Embed(color=0xf0a3ff)
         embed.add_field(name="Phrase", value=mot, inline=False)
         await ctx.send(embed=embed)
         list_question.remove(mot)
+
         if len(list_question) == 0:
             list_question = get_sentences()
         try:
@@ -1258,20 +1266,27 @@ async def puissance4(ctx, member):
         plateau = await end()
         if plateau is None:
             return
-"""
+
 @puissance4.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <membre>")
-"""
+        await ctx.send(f"Il manque le membre a affronter ! syntaxe: {prefix}puissance4 <id du membre/mention>")
+
 
 # - admin
 @client.command()
-async def view_config(ctx):
+async def view_config(ctx, option = None):
     if ctx.author.id != 236853417681616906:
         return
+
+    if option == "all":
+        msg = dico
+    else:
+        msg = dico[ctx.message.guild.id]
+
+    await ctx.send(msg)
+        
     
-    await ctx.send(dico[ctx.message.guild.id])
 
 @client.command()
 @has_permissions(administrator=True)
@@ -1303,8 +1318,6 @@ async def on_message_error(ctx, error):
         await ctx.send("L'id correspond à auncun message ou le bot ne peux pas mettre la réaction saisie")
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}reaction <salon> <id du msg> <reactions>")
-
-        
 
 
 @client.command()
@@ -1416,6 +1429,7 @@ async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque le salon ! syntaxe: {prefix}nuck <salon>")
 
+
 @client.command()
 @has_permissions(administrator=True)
 async def toggle_rolevocal(ctx, role: discord.Role = None):
@@ -1468,10 +1482,13 @@ async def view(ctx):
 async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
         return
+
     if len(ctx.message.attachments) == 0:
         await ctx.send("Il faut envoyer une image")
+
     elif len(ctx.message.attachments) > 1:
         await ctx.send("Il faut qu'une image")
+
     else:
         file = ctx.message.attachments[0].filename
         await ctx.message.attachments[0].save(file)
@@ -1485,9 +1502,10 @@ async def set_pp(ctx):
 async def shutdown(ctx):
     if ctx.author.id != 236853417681616906:
         return
+
     await ctx.message.add_reaction("✅")
     await client.close()
-    quit()
+    exit()
 
 @client.command()
 async def dm(ctx, member, *, msg):
@@ -1512,6 +1530,7 @@ async def on_message_error(ctx, error):
 async def get_dm(ctx, member):
     if ctx.author.id != 236853417681616906:
         return
+
     member = get_member(member)
 
     if member is None:
@@ -1550,7 +1569,7 @@ async def on_message_delete(message):
             embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
             embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_date_time(), inline=False)
             msg = await channel_send(dico[message.guild.id]["logs"]).send(embed=embed)
-        
+
         if len(message.attachments) != 0:
             files = []
             for attachment in message.attachments:
@@ -1566,6 +1585,7 @@ async def on_message_delete(message):
                     embed.video.url = f"attachment://{file}"
                     embed.video.height = message.attachments[index]
                     embed.video.width = message.attachments[index]
+
                 elif file.endswith((".png", ".jpg", ".jpeg")):
                     embed.set_image(url=f"attachment://{file}")
                     
@@ -1574,7 +1594,6 @@ async def on_message_delete(message):
                 ds_file = discord.File(file)
                 await msg.reply(file=ds_file, embed=embed)
                 os.remove(file)
-
 
 
 
@@ -1763,31 +1782,33 @@ async def on_member_update(before, after):
 async def on_voice_state_update(member, before, after):
     if dico[member.guild.id]["logs"] is not None:
         if before.channel != after.channel:
+
+            embed=discord.Embed(color=0xf0a3ff)
+
             if before.channel is None:
-                embed=discord.Embed(color=0xf0a3ff)
                 embed.set_author(name=f"{member.name} a rejoint un salon vocal", icon_url=member.avatar_url)
                 embed.set_thumbnail(url=get_img("enter"))
                 embed.add_field(name=f"󠀮salon", value=after.channel.mention, inline=True)
-                embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
-                await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
+
                 if dico[member.guild.id]["voc"] is not None:
                     await member.add_roles(discord.utils.get(member.guild.roles, id = dico[member.guild.id]["voc"]))
+
             elif after.channel is None:
-                embed=discord.Embed(color=0xf0a3ff)
                 embed.set_author(name=f"{member.name} a quitté un salon vocal", icon_url=member.avatar_url)
                 embed.set_thumbnail(url=get_img("exit"))
                 embed.add_field(name=f"󠀮salon", value=before.channel.mention, inline=True)
-                embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
-                await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
+
                 if dico[member.guild.id]["voc"] is not None:
                     await member.remove_roles(discord.utils.get(member.guild.roles, id = dico[member.guild.id]["voc"]))
+
             else:
                 embed=discord.Embed(color=0xf0a3ff)
                 embed.set_author(name=f"{member.name} a changé de salon vocal", icon_url=member.avatar_url)
                 embed.set_thumbnail(url=get_img("shuffle"))
                 embed.add_field(name=f"󠀮avant", value=before.channel.mention, inline=True)
                 embed.add_field(name=f"󠀮après", value=after.channel.mention, inline=True)
-                embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
-                await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
+
+            embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
+            await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
 
 client.run(token)
