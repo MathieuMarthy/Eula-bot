@@ -205,10 +205,16 @@ async def pp(ctx, member):
     member = get_member(member)
 
     if member is None:
-        await ctx.send("Vous n'avez pas mentionné un joueur !")
+        await ctx.send("Vous n'avez pas mentionné un membre !")
+        return
 
-    filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
-    await member.avatar_url.save(filename)
+    if member == "serveur":
+        filename = "avatar.gif" if ctx.message.guild.icon_url.is_icon_animated() else "avatar.png"
+        ctx.message.guild.icon_url.save(filename)
+    else:
+        filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
+        await member.avatar_url.save(filename)
+
     file = discord.File(fp=filename)
     await ctx.send(file=file)
     os.remove(filename)
