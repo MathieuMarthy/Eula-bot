@@ -10,11 +10,17 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from discord.ext import tasks
+from asyncpraw import Reddit
 
 from image import get_img
 
 
 # --- setup
+reddit = Reddit(
+    client_id="3usCZAVHZYrTM8mbKK6_8Q",
+    client_secret="mEmBiSuJFpaBCAioFOE1k4qk4wKlzQ",
+    user_agent="Eula bot discord"
+)
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
@@ -173,6 +179,29 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
+@client.command(aliases=["reddit"])
+async def redditt(ctx, subreddit, nbr=1):
+    subreddit = subreddit.replace("r/", "")
+
+    links = []
+    reddit_posts = await reddit.subreddit(subreddit)
+    posts = [post async for post in reddit_posts.hot(limit=200)]
+    while len(links) < nbr:
+        
+        post = random.choice(list(posts))
+        if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv")):
+            links.append(post.url)
+    
+    for link in links:
+        await ctx.send(link)
+
+@redditt.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque le subreddit ! syntaxe: {prefix}reddit <subreddit> <#nombre d'images>")
+
+
+
 @client.command()
 async def version(ctx):
     await ctx.send(f"Version: {version_bot}")
