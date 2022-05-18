@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.5.8"
+version_bot = "3.6.2"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -184,10 +184,15 @@ async def redditt(ctx, subreddit, nbr=1):
     subreddit = subreddit.replace("r/", "")
 
     links = []
-    reddit_posts = await reddit.subreddit(subreddit)
-    posts = [post async for post in reddit_posts.hot(limit=200)]
+    try:
+        reddit_posts = await reddit.subreddit(subreddit)
+        posts = [post async for post in reddit_posts.hot(limit=200)]
+    except:
+        await ctx.reply("Le subreddit n'existe pas", mention_author=False)
+        return
+
+    
     while len(links) < nbr:
-        
         post = random.choice(list(posts))
         if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv")):
             links.append(post.url)
@@ -199,7 +204,6 @@ async def redditt(ctx, subreddit, nbr=1):
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque le subreddit ! syntaxe: {prefix}reddit <subreddit> <#nombre d'images>")
-
 
 
 @client.command()
