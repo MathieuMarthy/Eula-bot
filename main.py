@@ -287,7 +287,7 @@ async def help(ctx):
         embed.add_field(name=f"\n{prefix}toggle_logs - _admin_", value="active/désactive les logs", inline=False)
         embed.add_field(name=f"\n{prefix}toggle_welcome_message - _admin_", value="active/désactive le message de bienvenue en message privé", inline=False)
         embed.add_field(name=f"{prefix}clear <nbr/texte> - _admin_", value="supprime le nombres de messages,\nsupprime les messages jusqu'au lien donné", inline=False)
-        embed.add_field(name=f"{prefix}nuck <salon> - _admin_", value="enleve tous les messages d'un salon", inline=False)
+        embed.add_field(name=f"{prefix}nuke <salon> - _admin_", value="réinitialise le salon", inline=False)
               
         embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
         embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les réactions données, les réactions doivent être collées", inline=False)
@@ -1405,7 +1405,7 @@ async def clear(ctx, *, arg = "1"):
 
 @client.command()
 @has_permissions(administrator=True)
-async def nuck(ctx, channel):
+async def nuke(ctx, channel):
     if not channel.isdigit():
         channel = replaces(channel, "<#", "", ">", "")
 
@@ -1423,12 +1423,12 @@ async def nuck(ctx, channel):
     if reponse.content.lower() in ["yes", "y", "o", "oui"]:
         await ctx.guild.create_text_channel(channel.name, overwrites = channel.overwrites, category = channel.category, position = channel.position, topic = channel.topic, nsfw = channel.nsfw, slowmode_delay = channel.slowmode_delay)
         await channel.delete()
-        await ctx.send("Channel nuck !")
+        await ctx.send("Channel nuke !")
 
-@nuck.error
+@nuke.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque le salon ! syntaxe: {prefix}nuck <salon>")
+        await ctx.send(f"Il manque le salon ! syntaxe: {prefix}nuke <salon>")
 
 
 @client.command()
