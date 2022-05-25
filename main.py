@@ -23,8 +23,8 @@ reddit = Reddit(
 )
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
-prefix = "!"
-version_bot = "3.6.2"
+prefix = "%"
+version_bot = "3.6.3"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -180,30 +180,47 @@ async def end_game(ctx, list_user, dico_points):
 # --- commandes/commands
 # - everyone
 @client.command(aliases=["reddit"])
-async def redditt(ctx, subreddit, nbr=1):
+async def redditt(ctx, subreddit, nbr = "1"):
+    if nbr.isdigit():
+        nbr = int(nbr)
+    else:
+        nbr = 1
+
+    if nbr > 20:
+        await ctx.send("Le nombre maximum d'images est de 20")
+        nbr = 20
+
     subreddit = subreddit.replace("r/", "")
+    await ctx.message.add_reaction("🔍")
 
     links = []
     try:
         reddit_posts = await reddit.subreddit(subreddit)
-        posts = [post async for post in reddit_posts.hot(limit=200)]
+        posts = [post async for post in reddit_posts.hot(limit=200) if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv"))]
     except:
         await ctx.reply("Le subreddit n'existe pas", mention_author=False)
         return
 
-    
     while len(links) < nbr:
-        post = random.choice(list(posts))
-        if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv")):
-            links.append(post.url)
-    
+        if len(posts) == 0:
+            break
+        post = posts.pop(random.randint(0, len(posts) - 1))
+        links.append(post.url)
+
+
+    await ctx.message.clear_reaction("🔍")
+
+    if len(links) == 0:
+        await ctx.reply("Aucune image dans le subreddit", mention_author=False)
+        return
+
     for link in links:
         await ctx.send(link)
 
-@redditt.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque le subreddit ! syntaxe: {prefix}reddit <subreddit> <#nombre d'images>")
+# @redditt.error
+# async def on_message_error(ctx, error):
+#     if isinstance(error, commands.MissingRequiredArgument):
+#         await ctx.send(f"Il manque le subreddit ! syntaxe: {prefix}reddit <subreddit> <#nombre d'images>")
 
 
 @client.command()
@@ -335,6 +352,7 @@ async def help(ctx):
     embed.add_field(name=f"{prefix}monopoly", value="lance une partie de monopoly", inline=False)
     embed.add_field(name=f"{prefix}hentai <categorie> <nbr d'images>", value="si le salon est NSFW envoie des images hentai", inline=False)
     embed.add_field(name=f"{prefix}pp <id du membre/mention>", value="donne la pp du membre", inline=False)
+    embed.add_field(name=f"{prefix}reddit <subreddit> <#nombre>", value="envoie des images du subreddit", inline=False)
     await ctx.send(embed=embed)
     # embed.add_field(name=f"{prefix}", value="", inline=False)
 
