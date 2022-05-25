@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.6.5"
+version_bot = "3.6.6"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -180,13 +180,13 @@ async def end_game(ctx, list_user, dico_points):
 # --- commandes/commands
 # - everyone
 @client.command(aliases=["reddit"])
-async def redditt(ctx, subreddit, nbr = "1"):
+async def redditt(ctx, subreddit, nbr="1", option="None"):
     if nbr.isdigit():
         nbr = int(nbr)
     else:
         nbr = 1
 
-    if nbr > 20:
+    if nbr > 20 and option != "cheat":
         await ctx.send("Le nombre maximum d'images est de 20")
         nbr = 20
 
