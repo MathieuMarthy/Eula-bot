@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.6.4"
+version_bot = "3.6.5"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -191,14 +191,14 @@ async def redditt(ctx, subreddit, nbr = "1"):
         nbr = 20
 
     subreddit = subreddit.replace("r/", "")
-    await ctx.message.add_reaction("🔍")
+    await ctx.message.add_reaction("<a:load:979084139200385024>")
 
     links = []
     try:
         reddit_posts = await reddit.subreddit(subreddit)
         posts = [post async for post in reddit_posts.hot(limit=200) if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv"))]
     except:
-        await ctx.reply("Le subreddit n'existe pas", mention_author=False)
+        await ctx.reply("Le subreddit n'existe pas\nLe subreddit doit être écrit exactement pareil que sur reddit", mention_author=False)
         return
 
     while len(links) < nbr:
@@ -208,7 +208,7 @@ async def redditt(ctx, subreddit, nbr = "1"):
         links.append(post.url)
 
 
-    await ctx.message.clear_reaction("🔍")
+    await ctx.message.clear_reaction("<a:load:979084139200385024>")
 
     if len(links) == 0:
         await ctx.reply("Aucune image dans le subreddit", mention_author=False)
@@ -217,10 +217,10 @@ async def redditt(ctx, subreddit, nbr = "1"):
     for link in links:
         await ctx.send(link)
 
-# @redditt.error
-# async def on_message_error(ctx, error):
-#     if isinstance(error, commands.MissingRequiredArgument):
-#         await ctx.send(f"Il manque le subreddit ! syntaxe: {prefix}reddit <subreddit> <#nombre d'images>")
+@redditt.error
+async def on_message_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"Il manque le subreddit  ! syntaxe: {prefix}reddit <subreddit> <#nombre d'images>")
 
 
 @client.command()
@@ -1456,7 +1456,11 @@ async def clear(ctx, *, arg = "1"):
 
 @client.command()
 @has_permissions(administrator=True)
-async def nuke(ctx, channel):
+async def nuke(ctx, channel=None):
+    if channel == None:
+        await ctx.send("quel salon voulez-vous supprimer ?")
+        channel = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+
     if not channel.isdigit():
         channel = replaces(channel, "<#", "", ">", "")
 
@@ -1474,12 +1478,7 @@ async def nuke(ctx, channel):
     if reponse.content.lower() in ["yes", "y", "o", "oui"]:
         await ctx.guild.create_text_channel(channel.name, overwrites = channel.overwrites, category = channel.category, position = channel.position, topic = channel.topic, nsfw = channel.nsfw, slowmode_delay = channel.slowmode_delay)
         await channel.delete()
-        await ctx.send("Channel nuke !")
-
-@nuke.error
-async def on_message_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Il manque le salon ! syntaxe: {prefix}nuke <salon>")
+        await ctx.send(f"Le salon **{channel.name}** à été nuke !")
 
 
 @client.command()
