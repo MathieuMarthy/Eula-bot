@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.6.8"
+version_bot = "3.6.9"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -196,7 +196,7 @@ async def redditt(ctx, subreddit, nbr="1", option="None"):
     links = []
     try:
         reddit_posts = await reddit.subreddit(subreddit)
-        posts = [post async for post in reddit_posts.hot(limit=200) if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv"))]
+        posts = [post async for post in reddit_posts.hot(limit=200) if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv", ".mp4", ".webm"))]
     except:
         await ctx.message.clear_reaction("<a:load:979084139200385024>")
         await ctx.reply("Le subreddit n'existe pas\nLe subreddit doit être écrit exactement pareil que sur reddit", mention_author=False)
