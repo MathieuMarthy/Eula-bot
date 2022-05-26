@@ -1532,8 +1532,9 @@ async def view(ctx):
 # - moi
 @client.command()
 async def update_git(ctx):
-    os.system("python3 update_git.py")
     await ctx.add_reaction("✅")
+    await asyncio.sleep(1)
+    os.system("python3 update_git.py")
     exit()
 
 @client.command(aliases=["set_avatar"])
