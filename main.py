@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.7.2"
+version_bot = "3.7.3"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -329,7 +329,7 @@ async def ping(ctx):
 @client.command()
 async def help(ctx):
     embed=discord.Embed(color=0xf0a3ff)
-    embed.set_author(name="help - Eula", icon_url=client.user.avatar_url)
+    embed.set_author(name=f"help - Eula, serveurs: {len(dico)}", icon_url=client.user.avatar_url)
     embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
     if ctx.author.guild_permissions.administrator:
         embed.add_field(name="commandes admin", value="----------------------------", inline=False)
