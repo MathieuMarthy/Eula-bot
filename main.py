@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.7.4"
+version_bot = "3.7.5"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -179,6 +179,17 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
+@client.command()
+async def bonjour(ctx, member):
+
+    member = get_member(member)
+    if member is None:
+        await ctx.send("Vous n'avez pas mentionné un joueur")
+        return
+    
+    embed=discord.Embed(title="Bonjour", description=f"Bonjour {member.mention} !", color=0x555555)
+
+
 @client.command(aliases=["reddit"])
 async def redditt(ctx, subreddit, nbr="1", option="None"):
     if nbr.isdigit():
@@ -1536,7 +1547,7 @@ async def update_git(ctx):
     os.system("python3 update_git.py")
     exit()
 
-@client.command(aliases=["set_avatar"])
+@client.command(aliases=["set_avatar", "setpp"])
 async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
         return
