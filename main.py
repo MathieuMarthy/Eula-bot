@@ -1530,6 +1530,11 @@ async def view(ctx):
 
 
 # - moi
+@client.command()
+async def update_git(ctx):
+    os.system("python3 update_git.py")
+    exit()
+
 @client.command(aliases=["set_avatar"])
 async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
