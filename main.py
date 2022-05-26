@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.6.9"
+version_bot = "3.7.0"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -1545,7 +1545,11 @@ async def set_pp(ctx):
         file = ctx.message.attachments[0].filename
         await ctx.message.attachments[0].save(file)
         byte_avatar = open(file, "rb").read()
-        await client.user.edit(avatar=byte_avatar)
+        try:
+            await client.user.edit(avatar=byte_avatar)
+        except:
+            await ctx.send("Il faut attendre entre chaque changement de pp")
+            return
         await ctx.message.add_reaction("✅")
         os.remove(file)
 
