@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.6.7"
+version_bot = "3.6.8"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -216,7 +216,7 @@ async def redditt(ctx, subreddit, nbr="1", option="None"):
         return
 
     for link in links:
-        await ctx.send(link)
+        await ctx.reply(link, mention_author=False)
 
 @redditt.error
 async def on_message_error(ctx, error):
