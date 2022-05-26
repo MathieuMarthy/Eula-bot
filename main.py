@@ -1532,8 +1532,7 @@ async def view(ctx):
 # - moi
 @client.command()
 async def update_git(ctx):
-    await ctx.add_reaction("✅")
-    await asyncio.sleep(1)
+    await ctx.message.add_reaction("✅")
     os.system("python3 update_git.py")
     exit()
 
