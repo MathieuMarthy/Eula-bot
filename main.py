@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.8.0"
+version_bot = "3.8.1"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -1556,12 +1556,6 @@ async def view(ctx):
 
 
 # - moi
-@client.command()
-async def update_git(ctx):
-    await ctx.message.add_reaction("✅")
-    os.system(f"python3 {os.path.join(path, 'update_git.py')}")
-    exit()
-
 @client.command(aliases=["set_avatar", "setpp"])
 async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
