@@ -21,10 +21,10 @@ reddit = Reddit(
     client_secret="mEmBiSuJFpaBCAioFOE1k4qk4wKlzQ",
     user_agent="Eula bot discord"
 )
-token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
+token = "ODMxNjMzNzYxNDYzNTY2Mzg2.YHYFSw.t37SOCKUmXs3pwZFqVzWr1dwgGs"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.8.4"
+version_bot = "3.8.5"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -179,7 +179,7 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
-async def message_tag(ctx, member, liens, msg):
+async def message_tag(ctx, liens, msg):
     
 
     embed=discord.Embed(title=msg, description="󠀮 ", color=0x555555)
@@ -187,66 +187,66 @@ async def message_tag(ctx, member, liens, msg):
     await ctx.send(embed=embed)
 
 @client.command(aliases=["hello", "hi"])
-async def bonjour(ctx, member):
+async def bonjour(ctx, member=None):
     member = get_member(member)
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
     liste_liens = ["https://c.tenor.com/thNxDWlG1EcAAAAC/killua-zoldyck-anime.gif", "https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif", "https://c.tenor.com/OSnZnnqx4vsAAAAC/anime-hello.gif", "https://c.tenor.com/WcJoZqd4C_YAAAAC/eromanga-sensei-anime.gif", "https://c.tenor.com/mjwiXPyqyrgAAAAC/hello-hi.gif", "https://c.tenor.com/dKv5A-KGZsIAAAAC/shy-hi.gif", "https://c.tenor.com/Q1dW7INg5ioAAAAC/hello-anime.gif", "https://c.tenor.com/cDCkQ6BPlF4AAAAC/pat-pat-anime.gif", "https://c.tenor.com/zeJzW4ubYqkAAAAC/nasuno-cat.gif", "https://c.tenor.com/6Gr-6QEvE7EAAAAd/school-live-cute.gif", "https://c.tenor.com/3g3D1mECft0AAAAC/anime-hi.gif", "https://c.tenor.com/dCTUyNt499gAAAAC/kobayashi-dragon.gif", "https://c.tenor.com/Z2-F9Bdaa9QAAAAC/anime-girl.gif", "https://c.tenor.com/g0QIOyhPLRQAAAAC/neon_cove-cute.gif"]
-    await message_tag(ctx, member, liste_liens, f"{ctx.author.name} dit bonjour à {member.name} !")
+    await message_tag(ctx, liste_liens, f"{ctx.author.name} dit bonjour à {member.name} !")
 
 
 @client.command(aliases=["kiss"])
-async def bisous(ctx, member):
+async def bisous(ctx, member=None):
     member = get_member(member)
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
     liste_liens = ["https://www.icegif.com/wp-content/uploads/anime-kiss-icegif-1.gif", "https://c.tenor.com/F02Ep3b2jJgAAAAC/cute-kawai.gif", "https://c.tenor.com/g9HjxRZM2C8AAAAd/anime-love.gif", "https://c.tenor.com/nRdyrvS3qa4AAAAC/anime-kiss.gif", "https://c.tenor.com/vhuon7swiOYAAAAC/rakudai-kishi-kiss.gif", "https://c.tenor.com/5iiiF4A7KI0AAAAC/anime-cry-anime.gif", "https://c.tenor.com/2u67zOB43esAAAAd/cute-anime.gif", "https://c.tenor.com/DDmZqcOZJisAAAAC/anime.gif", "https://c.tenor.com/G954PGQ7OX8AAAAd/cute-urara-shiraishi-anime.gif", "https://c.tenor.com/kyM-QWHWy1cAAAAC/anime-kissing.gif", "https://c.tenor.com/7T1cuiOtJvQAAAAC/anime-kiss.gif", "https://c.tenor.com/BJ9v5r4Th7UAAAAC/love-couple.gif"]
-    await message_tag(ctx, member, liste_liens, f"{ctx.author.name} embrasse {member.name} !")
+    await message_tag(ctx, liste_liens, f"{ctx.author.name} embrasse {member.name} !")
 
 @client.command()
-async def pat(ctx, member):
+async def pat(ctx, member=None):
     member = get_member(member)
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
     liste_liens = ["https://c.tenor.com/TDqVQaQWcFMAAAAC/anime-pat.gif", "https://c.tenor.com/Av63tpT8Y14AAAAC/pat-head.gif", "https://c.tenor.com/2vFAxyl6cI8AAAAd/mai-headpats.gif", "https://c.tenor.com/6dyxfdQx--AAAAAd/anime-senko-san.gif", "https://c.tenor.com/g75K3KA3VeAAAAAd/anime-sleep.gif", "https://c.tenor.com/OUSrLXimAq8AAAAC/head-pat-anime.gif", "https://c.tenor.com/zBPha3hhm7QAAAAC/anime-girl.gif", "https://c.tenor.com/N41zKEDABuUAAAAC/anime-head-pat-anime-pat.gif", "https://c.tenor.com/E6fMkQRZBdIAAAAC/kanna-kamui-pat.gif", "https://c.tenor.com/n6M5-pM2RiQAAAAC/anime-cry.gif", "https://c.tenor.com/edHuxNBD6IMAAAAC/anime-head-pat.gif", "https://c.tenor.com/i7nXGbPLqTsAAAAC/anime-hug.gif", "https://c.tenor.com/1bBIALbG0ikAAAAC/anime-anime-head-rub.gif", "https://c.tenor.com/lnoDyTqMk24AAAAC/anime-anime-headrub.gif", "https://c.tenor.com/sX-K9XVf6KoAAAAC/catgirl-neko.gif", "https://c.tenor.com/9R7fzXGeRe8AAAAC/fantasista-doll-anime.gif", "https://c.tenor.com/G14pV-tr0NAAAAAC/anime-head.gif", "https://c.tenor.com/epo_ns_GbwoAAAAC/anime-head-pat.gif"]
-    await message_tag(ctx, member, liste_liens, f"{ctx.author.name} pat {member.name} !")
+    await message_tag(ctx, liste_liens, f"{ctx.author.name} pat {member.name} !")
 
 
 @client.command(aliases=["calin"])
-async def hug(ctx, member):
+async def hug(ctx, member=None):
     member = get_member(member)
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
     liste_liens = ["https://c.tenor.com/QTbBCR3j-vYAAAAd/hugs-best-friends.gif", "https://c.tenor.com/8Jk1ueYnyYUAAAAC/hug.gif", "https://c.tenor.com/-3I0yCd6L6AAAAAC/anime-hug-anime.gif", "https://c.tenor.com/0T3_4tv71-kAAAAC/anime-happy.gif", "https://c.tenor.com/QwHSis0hNEQAAAAC/love-hug.gif", "https://c.tenor.com/9e1aE_xBLCsAAAAC/anime-hug.gif", "https://c.tenor.com/we1trpFB2F0AAAAC/neko-hug.gif", "https://c.tenor.com/2lr9uM5JmPQAAAAC/hug-anime-hug.gif", "https://c.tenor.com/4n3T2I239q8AAAAC/anime-cute.gif", "https://c.tenor.com/0vl21YIsGvgAAAAC/hug-anime.gif", "https://c.tenor.com/gqM9rl1GKu8AAAAC/kitsune-upload-hug.gif", "https://c.tenor.com/arMxz72tc50AAAAC/catgirl-hug.gif", "https://c.tenor.com/keasv-Cnh4kAAAAd/hug-cuddle.gif", "https://c.tenor.com/ggKei4ayfIAAAAAC/anime-hug.gif", "https://c.tenor.com/e4xYciCG6NcAAAAM/emdj-snuggle.gif", "https://c.tenor.com/aG0pA87t0dMAAAAC/anime-chino.gif", "https://c.tenor.com/1PSvBKNcNtUAAAAC/love-anime.gif"]
-    await message_tag(ctx, member, liste_liens, f"{ctx.author.name} fait un calin {member.name} !")
+    await message_tag(ctx, liste_liens, f"{ctx.author.name} fait un calin {member.name} !")
 
 @client.command()
-async def baka(ctx, member):
+async def baka(ctx, member=None):
     member = get_member(member)
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
     liste_liens = ["https://c.tenor.com/UsggMuRixo0AAAAC/baka-anime.gif", "https://c.tenor.com/dJpiway_niUAAAAC/onichan-baka-onichan.gif", "https://c.tenor.com/Xcr8fHyf84gAAAAC/baka-anime.gif", "https://c.tenor.com/pHCT4ynbGIUAAAAC/anime-girl.gif", "https://c.tenor.com/ESvZeEc2lIQAAAAC/baka-anime.gif", "https://c.tenor.com/bNrnl6bi8BEAAAAC/anime-bleh.gif", "https://c.tenor.com/2An5JdBiT9YAAAAC/baka-anime.gif", "https://c.tenor.com/ggjmRnG_oBAAAAAC/anime-baka.gif", "https://c.tenor.com/XcKQzqJPiGcAAAAC/anime-tsundere.gif", "https://c.tenor.com/dHZOfR6rZY0AAAAC/baka-anime.gif", "https://c.tenor.com/Ytn7KcbZm8wAAAAM/baka-anime.gif", "https://c.tenor.com/smRK3hdF5DMAAAAC/baka-anime.gif", "https://c.tenor.com/1IDzm1044LQAAAAC/baka-anime.gif", "https://c.tenor.com/icCAaeNx5UAAAAAC/zasbaka.gif"]
-    await message_tag(ctx, member, liste_liens, f"{member.name} est trop un baka !")
+    await message_tag(ctx, liste_liens, f"{member.name} est trop un baka !")
 
 @client.command(aliases=["mange", "mords", "mord"])
-async def bite(ctx, member):
+async def bite(ctx, member=None):
     member = get_member(member)
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
     liste_liens = ["https://c.tenor.com/IKDf1NMrzsIAAAAC/anime-acchi-kocchi.gif", "https://c.tenor.com/MKjNSLL4dGoAAAAC/bite-cute.gif", "https://c.tenor.com/4j3hMz-dUz0AAAAC/anime-love.gif", "https://c.tenor.com/MNK1CrjgMcMAAAAC/megumin-konosuba.gif", "https://c.tenor.com/6HhJw-4zmQUAAAAC/anime-bite.gif", "https://c.tenor.com/mXc2f5NeOpgAAAAC/no-blood-neck-bite.gif", "https://c.tenor.com/aKzAQ_cFsFEAAAAC/arms-bite.gif", "https://c.tenor.com/xAiGlpwEVhEAAAAC/josee-josee-to-tora-to-sakanatachi.gif", "https://c.tenor.com/TwP8Vv8acSkAAAAC/the-melancholy-of-haruhi-suzumiya-biting-ear.gif", "https://c.tenor.com/TX6YHUnHJk4AAAAC/mao-amatsuka-gj-bu.gif", "https://c.tenor.com/8UjO54apiUIAAAAC/gjbu-bite.gif", "https://c.tenor.com/BVFbvCZKNEsAAAAC/princess-connect-anime-bite.gif", "https://c.tenor.com/Xpv7HTk-DIYAAAAC/mad-angry.gif", "https://c.tenor.com/vHfD8O5dDd4AAAAC/acchi-kocchi-anime.gif", "https://c.tenor.com/Nk-Eq8_ZiNwAAAAC/index-toaru.gif", "https://c.tenor.com/DBwz1nSElowAAAAC/aruu-anime.gif", "https://c.tenor.com/0kjdOr9jyN0AAAAC/bite-girl.gif", "https://c.tenor.com/sRPSPdWp9zsAAAAC/one-piece-anime.gif", "https://c.tenor.com/ZS2uG_TqqDwAAAAC/bite.gif", ""]
-    await message_tag(ctx, member, liste_liens, f"{ctx.author.name} mord {member.name}")
+    await message_tag(ctx, liste_liens, f"{ctx.author.name} mord {member.name}")
 
 @client.command(aliases=["reddit"])
 async def redditt(ctx, subreddit, nbr="1", option="None"):
@@ -397,34 +397,94 @@ async def ping(ctx):
 
 @client.command()
 async def help(ctx):
+
+    liste_emoji = [
+        "🏠",
+        "👑",
+        "🎮",
+        "🔧",
+        "📝",
+        "💬"
+    ]
+
+    dico = {
+        "🏠": {
+            "🏠": "Accueil",
+            "👑": "Admin",
+            "🎮": "Jeux",
+            "🔧": "Utilitaire",
+            "📝": "general",
+            "💬": "Chat"
+        },
+
+        "👑": {
+            f"{prefix}toggle_autorole <role>": "active/désactive le fait de donner un rôle a tous les nouveaux arrivant",
+            f"{prefix}toggle_rolevocal": "active/désactive le fait de donner un rôle à chaque fois qu'un membre rejoint un salon vocal",
+            f"{prefix}toggle_logs": "active/désactive les logs",
+            f"{prefix}toggle_welcome_message": "active/désactive le message de bienvenue en message privé",
+            f"{prefix}clear <nbr/texte>": "supprime le nombres de messages,\nsupprime les messages jusqu'au lien donné",
+            f"{prefix}nuke <salon>": "réinitialise le salon",
+            f"{prefix}say <salon> <message>": "envoie un message dans un salon",
+            f"{prefix}reaction <salon> <id du msg> <reactions>": "le bot réagit au message avec les réactions données, les réactions doivent être collées"
+        },
+
+        "🎮": {
+            f"{prefix}10fastfinger": "écrirez des phrases le plus vite possible",
+            f"{prefix}calcul_mental": "Donnez le résultat des calculs le plus vite possible",
+            f"{prefix}puissance4 <id du membre/mention>": "jouez au puissance 4",
+            f"{prefix}monopoly": "jouez au monopoly",
+        },
+
+        "🔧": {
+            f"{prefix}random <nombre>": "donne un nombre aléatoire entre 0 et le nombre donné",
+            f"{prefix}piece": "pile ou face",
+            f"{prefix}ping": "ping le bot",        
+        },
+
+        "📝": {
+            f"{prefix}8ball <message>": "Boule magique",
+            f"{prefix}hentai <categorie> <#nbr d'images>": "envoie des images de hentai /!\ le salon doit etre en nsfw",
+            f"{prefix}pp <id du membre/mention>": "donne la pp du membre",
+            f"{prefix}reddit <subreddit> <#nbr d'images>" : "donne les images du subreddit",
+        },
+
+        "💬": {
+            f"{prefix}bite <id du membre/mention>": "miaam",
+            f"{prefix}baka <id du membre/mention>": "ba..baka !",
+            f"{prefix}hug <id du membre/mention>": "🤗",
+            f"{prefix}pat <id du membre/mention>": "pat pat",
+            f"{prefix}kiss <id du membre/mention>": "😘",
+            f"{prefix}bonjour <id du membre/mention>": "bonjour !"
+        }
+    }
+
+    choix = "🏠"
+
     embed=discord.Embed(color=0xf0a3ff)
     embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}", icon_url=client.user.avatar_url)
     embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
-    if ctx.author.guild_permissions.administrator:
-        embed.add_field(name="commandes admin", value="----------------------------", inline=False)
-        embed.add_field(name=f"{prefix}toggle_autorole <role> - _admin_", value="active/désactive le fait de donner un rôle a tous les nouveaux arrivant", inline=False)
-        embed.add_field(name=f"{prefix}toggle_rolevocal - _admin_", value="active/désactive le fait de donner un rôle à chaque fois qu'un membre rejoint un salon vocal ", inline=False)  
-        embed.add_field(name=f"\n{prefix}toggle_logs - _admin_", value="active/désactive les logs", inline=False)
-        embed.add_field(name=f"\n{prefix}toggle_welcome_message - _admin_", value="active/désactive le message de bienvenue en message privé", inline=False)
-        embed.add_field(name=f"{prefix}clear <nbr/texte> - _admin_", value="supprime le nombres de messages,\nsupprime les messages jusqu'au lien donné", inline=False)
-        embed.add_field(name=f"{prefix}nuke <salon> - _admin_", value="réinitialise le salon", inline=False)
-              
-        embed.add_field(name=f"{prefix}say <salon> <message> - _admin_", value="envoie un message dans un salon", inline=False)
-        embed.add_field(name=f"{prefix}reaction <salon> <id du msg> <reactions>", value="le bot réagit au message avec les réactions données, les réactions doivent être collées", inline=False)
-    embed.add_field(name="commandes normales", value="----------------------------", inline=False)
-    embed.add_field(name=f"{prefix}8ball <message>", value="Boule magique", inline=False)
-    embed.add_field(name=f"{prefix}10fastfinger", value="jeu multijoueur dans lequel les participants doivent écrire une phrase le plus vite possible", inline=False)
-    embed.add_field(name=f"{prefix}calcul_mental", value="jeu multijoueur dans lequel les participants doivent résoudre des calculs", inline=False)
-    embed.add_field(name=f"{prefix}random <nombre>", value="donne un nombre aléatoire entre 0 et le nombre donné", inline=False)
-    embed.add_field(name=f"{prefix}piece", value="pile ou face", inline=False)
-    embed.add_field(name=f"{prefix}ping", value="ping le bot", inline=False)
-    embed.add_field(name=f"{prefix}puissance4 <id du membre/mention>", value="lance une partie de puissance 4", inline=False)
-    embed.add_field(name=f"{prefix}monopoly", value="lance une partie de monopoly", inline=False)
-    embed.add_field(name=f"{prefix}hentai <categorie> <nbr d'images>", value="si le salon est NSFW envoie des images hentai", inline=False)
-    embed.add_field(name=f"{prefix}pp <id du membre/mention>", value="donne la pp du membre", inline=False)
-    embed.add_field(name=f"{prefix}reddit <subreddit> <#nombre>", value="envoie des images du subreddit", inline=False)
-    await ctx.send(embed=embed)
-    # embed.add_field(name=f"{prefix}", value="", inline=False)
+
+    for key, value in dico[choix].items():
+            embed.add_field(name=key, value=value, inline=False)
+
+    msg = await ctx.send(embed=embed)
+
+    for emoji in liste_emoji:
+        await msg.add_reaction(emoji)
+
+    while True:
+        reaction, _ = await client.wait_for("reaction_add", check=lambda r, u: u.id == ctx.author.id and r.emoji in liste_emoji , timeout=60.0)
+        choix = reaction.emoji
+        await msg.remove_reaction(reaction.emoji, ctx.author)
+
+        embed=discord.Embed(color=0xf0a3ff)
+        embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}", icon_url=client.user.avatar_url)
+        embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
+        
+        for key, value in dico[choix].items():
+            embed.add_field(name=key, value=value, inline=False)
+
+        await msg.edit(embed=embed)        
 
 
 # - jeux
