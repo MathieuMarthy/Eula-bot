@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.7.6"
+version_bot = "3.7.7"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -186,8 +186,9 @@ async def bonjour(ctx, member):
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
-    
-    embed=discord.Embed(title="Bonjour", description=f"Bonjour {member.mention} !", color=0x555555)
+
+    embed=discord.Embed(title=f"{ctx.author.mention} dit bonjour à {member.mention} !", description="󠀮 ", color=0x555555)
+    embed.set_image(url="https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif")
     await ctx.send(embed=embed)
 
 
@@ -341,7 +342,7 @@ async def ping(ctx):
 @client.command()
 async def help(ctx):
     embed=discord.Embed(color=0xf0a3ff)
-    embed.set_author(name=f"help - Eula, serveurs: {len(dico)}", icon_url=client.user.avatar_url)
+    embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version}", icon_url=client.user.avatar_url)
     embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
     if ctx.author.guild_permissions.administrator:
         embed.add_field(name="commandes admin", value="----------------------------", inline=False)
