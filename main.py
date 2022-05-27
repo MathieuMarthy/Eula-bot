@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.7.9"
+version_bot = "3.8.0"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -179,7 +179,7 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
-@client.command()
+@client.command(aliases=["hello", "hi"])
 async def bonjour(ctx, member):
 
     member = get_member(member)
@@ -189,6 +189,19 @@ async def bonjour(ctx, member):
 
     embed=discord.Embed(title=f"{ctx.author.name} dit bonjour à {member.name} !", description="󠀮 ", color=0x555555)
     embed.set_image(url="https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif")
+    await ctx.send(embed=embed)
+
+
+@client.command(aliases=["kiss"])
+async def bisous(ctx, member):
+    
+    member = get_member(member)
+    if member is None:
+        await ctx.send("Vous n'avez pas mentionné un joueur")
+        return
+
+    embed=discord.Embed(title=f"{ctx.author.name} fait un bisous à {member.name} !", description="󠀮 ", color=0x555555)
+    embed.set_image(url="https://www.icegif.com/wp-content/uploads/anime-kiss-icegif-1.gif")
     await ctx.send(embed=embed)
 
 
