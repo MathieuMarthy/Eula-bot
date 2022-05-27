@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.7.5"
+version_bot = "3.7.6"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -188,6 +188,7 @@ async def bonjour(ctx, member):
         return
     
     embed=discord.Embed(title="Bonjour", description=f"Bonjour {member.mention} !", color=0x555555)
+    await ctx.send(embed=embed)
 
 
 @client.command(aliases=["reddit"])
@@ -1544,7 +1545,7 @@ async def view(ctx):
 @client.command()
 async def update_git(ctx):
     await ctx.message.add_reaction("✅")
-    os.system("python3 update_git.py")
+    os.system(f"python3 {os.path.join(path, 'update_git.py')}")
     exit()
 
 @client.command(aliases=["set_avatar", "setpp"])
