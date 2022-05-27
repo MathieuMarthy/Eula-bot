@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.8.7"
+version_bot = "3.8.9"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -79,6 +79,8 @@ def replaces(string, *args):
 
 
 def get_member(member):
+    if member is None:
+        return None
     if not member.isdigit():
         if "!" in member:
             member = replaces(member, "<@!", "", ">", "")
@@ -409,12 +411,12 @@ async def help(ctx):
 
     dico = {
         "🏠": {
-            "🏠 - Accueil": " ",
-            "👑 - Admin": " ",
-            "🎮 - Jeux": " ",
-            "🔧 - Utilitaire": " ",
-            "📝 - General": " ",
-            "💬 - Chat": " "
+            "🏠 - Accueil": "󠀮 ",
+            "👑 - Admin": "󠀮 ",
+            "🎮 - Jeux": "󠀮 ",
+            "🔧 - Utilitaire": "󠀮 ",
+            "📝 - General": "󠀮 ",
+            "💬 - Chat": "󠀮 "
         },
 
         "👑": {
@@ -465,7 +467,7 @@ async def help(ctx):
     embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
 
     for key, value in dico[choix].items():
-            embed.add_field(name=key, value=value, inline=False)
+        embed.add_field(name=key, value=value, inline=False)
 
     msg = await ctx.send(embed=embed)
 
@@ -1456,7 +1458,7 @@ async def on_message_error(ctx, error):
 
 
 # - admin
-@client.command()
+@client.command(aliases=["config", "dico"])
 async def view_config(ctx, option = None):
     if ctx.author.id != 236853417681616906:
         return
@@ -1467,7 +1469,6 @@ async def view_config(ctx, option = None):
         msg = dico[ctx.message.guild.id]
 
     await ctx.send(msg)
-        
     
 
 @client.command()
