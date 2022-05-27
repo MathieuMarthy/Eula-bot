@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.8.1"
+version_bot = "3.8.2"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -200,7 +200,7 @@ async def bisous(ctx, member):
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
-    embed=discord.Embed(title=f"{ctx.author.name} fait un bisous à {member.name} !", description="󠀮 ", color=0x555555)
+    embed=discord.Embed(title=f"{ctx.author.name} embrasse {member.name} !", description="󠀮 ", color=0x555555)
     embed.set_image(url="https://www.icegif.com/wp-content/uploads/anime-kiss-icegif-1.gif")
     await ctx.send(embed=embed)
 
