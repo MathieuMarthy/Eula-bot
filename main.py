@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.8.9"
+version_bot = "3.9.0"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -475,7 +475,7 @@ async def help(ctx):
         await msg.add_reaction(emoji)
 
     while True:
-        reaction, _ = await client.wait_for("reaction_add", check=lambda r, u: r.emoji in liste_emoji , timeout=60.0)
+        reaction, _ = await client.wait_for("reaction_add", check=lambda r, u: u.id != client.user.id and r.message.id == msg.id and r.emoji in liste_emoji , timeout=60.0)
         choix = reaction.emoji
         await msg.remove_reaction(reaction.emoji, ctx.author)
 
