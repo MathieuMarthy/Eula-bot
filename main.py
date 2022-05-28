@@ -24,7 +24,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.9.0"
+version_bot = "3.9.1"
 default_intents = discord.Intents.default()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -409,7 +409,7 @@ async def help(ctx):
         "💬"
     ]
 
-    dico = {
+    dico_help = {
         "🏠": {
             "🏠 - Accueil": "󠀮 ",
             "👑 - Admin": "󠀮 ",
@@ -466,7 +466,7 @@ async def help(ctx):
     embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}", icon_url=client.user.avatar_url)
     embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
 
-    for key, value in dico[choix].items():
+    for key, value in dico_help[choix].items():
         embed.add_field(name=key, value=value, inline=False)
 
     msg = await ctx.send(embed=embed)
@@ -483,7 +483,7 @@ async def help(ctx):
         embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}", icon_url=client.user.avatar_url)
         embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
         
-        for key, value in dico[choix].items():
+        for key, value in dico_help[choix].items():
             embed.add_field(name=key, value=value, inline=False)
 
         await msg.edit(embed=embed)        
