@@ -26,11 +26,11 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.9.2"
+version_bot = "3.9.3"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
-dico_activity = json.load(open("activities.json", "r"))
+dico_activity = json.load(open(os.path.join(path, "activities.json"), "r"))
 dico_activity = {int(k):v for k, v in dico_activity.items()}
 
 #--- dico
