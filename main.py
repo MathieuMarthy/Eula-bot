@@ -2,9 +2,11 @@ import asyncio
 import ast
 import os
 import random
+from time import gmtime, strftime
 from zoneinfo import ZoneInfo
 import requests
 from datetime import datetime
+import json
 
 import discord
 from discord.ext import commands
@@ -24,10 +26,12 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.9.1"
-default_intents = discord.Intents.default()
+version_bot = "3.9.2"
+default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
+dico_activity = json.load(open("activities.json", "r"))
+dico_activity = {int(k):v for k, v in dico_activity.items()}
 
 #--- dico
 dico = ast.literal_eval(open(os.path.join(path, "server.txt"), "r").read().replace("b'", "'").replace("'", '"'))
@@ -57,8 +61,28 @@ async def on_ready():
             del dico[server]
 
     dico_update()
+    loop.start()
 
 # --- fonctions
+# - loop
+@tasks.loop(seconds=60)
+async def loop():
+    global dico_activity
+
+    for server in client.guilds:
+
+        dico_activity[server.id] = dico_activity.get(server.id, {})
+        for member in server.members:
+
+            if member.activities is not None and not member.bot:
+
+                for activity in member.activities:
+                    if activity.type == discord.ActivityType.playing:
+            
+                        dico_activity[server.id][activity.name] = dico_activity[server.id].get(activity.name, 0) + 1
+
+    json.dump(dico_activity, open("activities.json", "w"))
+
 # - all
 def dico_update():
     open(os.path.join(path, "server.txt"), "w").write(str(dico))
@@ -181,8 +205,17 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
+@client.command()
+async def top(ctx, nbr=5):
+    tmp = sorted(dico_activity[ctx.guild.id].items(), key=lambda x: x[1], reverse=True)
+    if len(tmp) > nbr:
+        tmp = tmp[:nbr]
+    tmp = [f"{k} : {strftime('%Hh %Mm', gmtime(v * 60))}" for k, v in tmp]
+
+    embed=discord.Embed(title=f"Top {len(tmp)} des activités", description="\n".join(tmp), color=0xf0a3ff)
+    await ctx.send(embed=embed)
+
 async def message_tag(ctx, liens, msg):
-    
 
     embed=discord.Embed(title=msg, description="󠀮 ", color=0x555555)
     embed.set_image(url=random.choice(liens))
