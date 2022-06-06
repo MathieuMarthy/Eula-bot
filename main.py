@@ -2,7 +2,6 @@ import asyncio
 import ast
 import os
 import random
-from time import gmtime, strftime
 from zoneinfo import ZoneInfo
 import requests
 from datetime import datetime
@@ -26,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.9.3"
+version_bot = "3.9.4"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -210,7 +209,7 @@ async def top(ctx, nbr=5):
     tmp = sorted(dico_activity[ctx.guild.id].items(), key=lambda x: x[1], reverse=True)
     if len(tmp) > nbr:
         tmp = tmp[:nbr]
-    tmp = [f"{k} : {strftime('%Hh %Mm', gmtime(v * 60))}" for k, v in tmp]
+    tmp = [f"{k} : {divmod(v, 60)[0]}h {v % 60}min" for k, v in tmp]
 
     embed=discord.Embed(title=f"Top {len(tmp)} des activités", description="\n".join(tmp), color=0xf0a3ff)
     await ctx.send(embed=embed)
