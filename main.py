@@ -25,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.0"
+version_bot = "4.0.1"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -1698,9 +1698,11 @@ async def open_(ctx):
     print(role.name)
     
     for member in ctx.guild.members:
-        await member.add_role(role)
+        await member.add_roles(role)
 
     dico[ctx.guild.id]["autorole"] = role.id
+
+    await ctx.message.add_reaction("✅")
 
 @client.command(aliases=["set_avatar", "setpp"])
 async def set_pp(ctx):
