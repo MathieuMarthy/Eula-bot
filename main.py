@@ -25,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "3.9.6"
+version_bot = "3.9.7"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -80,7 +80,7 @@ async def loop():
             
                         dico_activity[server.id][activity.name] = dico_activity[server.id].get(activity.name, 0) + 1
 
-    json.dump(dico_activity, open("activities.json", "w"))
+    await json.dump(dico_activity, open(os.path.join(path, "activities.json"), "w"))
 
 # - all
 def dico_update():
@@ -1692,6 +1692,16 @@ async def view(ctx):
 
 
 # - moi
+@client.command()
+async def open(ctx):
+    role = discord.utils.get(ctx.guild.roles, id=984211273497608202)
+    print(role.name)
+    
+    for member in ctx.guild.members:
+        await member.add_role(role)
+
+    dico[ctx.guild.id]["autorole"] = role.id
+
 @client.command(aliases=["set_avatar", "setpp"])
 async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
