@@ -26,7 +26,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.3"
+version_bot = "4.0.4"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -213,7 +213,7 @@ async def randomizer(ctx, option = "random"):
             await ctx.reply("Le nombre doit être entre 1 et 5\n1 -> top\n2 -> jungle\n3 -> mid\n4 -> adc\n5 -> support", mention_author=False)
             return
 
-    elif option == "team":
+    if option == "team":
         role = [1, 2, 3, 4, 5]
         random.shuffle(role)
         for _ in range(5):
@@ -223,12 +223,13 @@ async def randomizer(ctx, option = "random"):
                 image = discord.File(f)
                 await ctx.reply(file=image, mention_author=False)
             os.remove(image_path)
-    else:
-        image_path = randomizer_image(option)
-        with open(image_path, "rb") as f:
-            image = discord.File(f)
-            await ctx.reply(file=image, mention_author=False)
-        os.remove(image_path)
+        return
+    
+    image_path = randomizer_image(option)
+    with open(image_path, "rb") as f:
+        image = discord.File(f)
+        await ctx.reply(file=image, mention_author=False)
+    os.remove(image_path)
 
 
 
