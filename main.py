@@ -25,8 +25,8 @@ reddit = Reddit(
 )
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
-prefix = ";"
-version_bot = "4.0.2"
+prefix = "!"
+version_bot = "4.0.3"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -205,13 +205,31 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
-@client.command()
-async def randomizer(ctx):
-    image_path = randomizer_image()
-    with open(image_path, "rb") as f:
-        image = discord.File(f)
-        await ctx.send(file=image)
-    os.remove(image_path)
+@client.command(aliases=["rand"])
+async def randomizer(ctx, option = "random"):
+    if option.isdigit():
+        option = int(option)
+        if option <= 0 or option > 5:
+            await ctx.reply("Le nombre doit être entre 1 et 5\n1 -> top\n2 -> jungle\n3 -> mid\n4 -> adc\n5 -> support", mention_author=False)
+            return
+
+    elif option == "team":
+        role = [1, 2, 3, 4, 5]
+        random.shuffle(role)
+        for _ in range(5):
+            image_path = randomizer_image(role[0])
+            role.pop(0)
+            with open(image_path, "rb") as f:
+                image = discord.File(f)
+                await ctx.reply(file=image, mention_author=False)
+            os.remove(image_path)
+    else:
+        image_path = randomizer_image(option)
+        with open(image_path, "rb") as f:
+            image = discord.File(f)
+            await ctx.reply(file=image, mention_author=False)
+        os.remove(image_path)
+
 
 
 @client.command()

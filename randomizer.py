@@ -74,8 +74,13 @@ def summoners(jungle: bool = False) -> list[str]:
     return random_summoners
 
 
-def build() -> dict:
-    dico = {"lane": lane(), "champion": champion(), "runes": runes(), "items": [], "summoners": [], "starter": ""}
+def build(gived_lane: str = "random") -> dict:
+    dico = {"champion": champion(), "runes": runes(), "items": [], "summoners": [], "starter": ""}
+
+    if gived_lane in [1, 2, 3, 4, 5]:
+        dico["lane"] = gived_lane
+    else:
+        dico["lane"] = lane()
 
     dico["summoners"] = summoners(dico["lane"] == 2)
 
@@ -110,8 +115,8 @@ def build() -> dict:
     return dico
 
 
-def randomizer_image():
-    dico = build()
+def randomizer_image(lane: str = "random"):
+    dico = build(lane)
     image = Image.new("RGBA", (400, 420))
 
     # image du champion
