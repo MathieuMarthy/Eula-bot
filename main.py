@@ -14,6 +14,7 @@ from discord.ext import tasks
 from asyncpraw import Reddit
 
 from image import get_img
+from randomizer import randomizer_image
 
 
 # --- setup
@@ -24,8 +25,8 @@ reddit = Reddit(
 )
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
-prefix = "!"
-version_bot = "4.0.1"
+prefix = ";"
+version_bot = "4.0.2"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
@@ -204,6 +205,15 @@ async def end_game(ctx, list_user, dico_points):
 
 # --- commandes/commands
 # - everyone
+@client.command()
+async def randomizer(ctx):
+    image_path = randomizer_image()
+    with open(image_path, "rb") as f:
+        image = discord.File(f)
+        await ctx.send(file=image)
+    os.remove(image_path)
+
+
 @client.command()
 async def top(ctx, nbr=5):
     tmp = sorted(dico_activity[ctx.guild.id].items(), key=lambda x: x[1], reverse=True)
@@ -389,13 +399,14 @@ async def aleatoire(ctx, nbr):
         await ctx.send("Le nombre doit être plus grand que 0")
     else:
         await ctx.send(random.randint(0, int(nbr)))
-        
+
+
 @aleatoire.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque le nombre ! syntaxe: {prefix}random <nombre>")
 
-        
+
 @client.command(aliases=["pile", "face", "piece", "pileouface"])
 async def pile_ou_face(ctx):
     
@@ -1692,18 +1703,6 @@ async def view(ctx):
 
 
 # - moi
-@client.command(aliases=["open"])
-async def open_(ctx):
-    role = discord.utils.get(ctx.guild.roles, id=984211273497608202)
-    print(role.name)
-    
-    for member in ctx.guild.members:
-        await member.add_roles(role)
-
-    dico[ctx.guild.id]["autorole"] = role.id
-
-    await ctx.message.add_reaction("✅")
-
 @client.command(aliases=["set_avatar", "setpp"])
 async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
