@@ -2,7 +2,7 @@ import random
 import os
 import sys
 from PIL import Image
-from sklearn.utils import shuffle
+import data_lol
 
 assets_path = os.path.dirname(sys.argv[0]) + "/assets"
 
@@ -15,11 +15,13 @@ def runes() -> list[str]:
     # choisi une branche principal aléatoirement
     path_list_of_runes = []
     path_main_branch = assets_runes_path + "/" + random.choice(branches)
-    path_list_of_runes.append(path_main_branch + "/principal/" + random.choice(os.listdir(path_main_branch + "/principal")))
+    path_list_of_runes.append(
+        path_main_branch + "/principal/" + random.choice(os.listdir(path_main_branch + "/principal")))
 
     # choisi les petites runes de la branche principale
     for i in range(1, 4):
-        path_list_of_runes.append(path_main_branch + f"/secondaire/{i}/" + random.choice(os.listdir(path_main_branch + "/secondaire" + f"/{i}")))
+        path_list_of_runes.append(path_main_branch + f"/secondaire/{i}/" + random.choice(
+            os.listdir(path_main_branch + "/secondaire" + f"/{i}")))
 
     # choisi les runes secondaires
     path_secondary_branch = assets_runes_path + "/" + random.choice(branches)
@@ -29,11 +31,13 @@ def runes() -> list[str]:
     tmp = [1, 2, 3]
     secondary_branches = [tmp.pop(tmp.index(random.choice(tmp))) for _ in range(2)]
     for secondary_branch in secondary_branches:
-        path_list_of_runes.append(path_secondary_branch + f"/secondaire/{secondary_branch}/" + random.choice(os.listdir(path_secondary_branch + f"/secondaire/{secondary_branch}/")))
+        path_list_of_runes.append(path_secondary_branch + f"/secondaire/{secondary_branch}/" + random.choice(
+            os.listdir(path_secondary_branch + f"/secondaire/{secondary_branch}/")))
 
     # choisi les runes bonus
     for i in range(1, 4):
-        path_list_of_runes.append(assets_path + f"/runes_shards/{i}/" + random.choice(os.listdir(assets_path + f"/runes_shards/{i}")))
+        path_list_of_runes.append(
+            assets_path + f"/runes_shards/{i}/" + random.choice(os.listdir(assets_path + f"/runes_shards/{i}")))
 
     return path_list_of_runes
 
@@ -42,7 +46,7 @@ def champion() -> str:
     return assets_path + "/champions/" + random.choice(os.listdir(assets_path + "/champions"))
 
 
-def lane() -> int:
+def lane():
     """
     1 -> top
     2 -> jungle
@@ -99,24 +103,37 @@ def build(gived_lane: str = "random") -> dict:
         dico["starter"] = assets_path + f"/starter/" + random.choice(os.listdir(assets_path + f"/starter"))
 
     # bottes aléatoire
-    dico["items"].append(assets_path + "/items/Boots/" + random.choice(os.listdir(assets_path + "/items/Boots")))
+    if dico["champion"].split("/")[-1] != "Cassiopeia.png":
+        dico["items"].append(assets_path + "/items/Boots/" + random.choice(os.listdir(assets_path + "/items/Boots")))
 
     # mythique aléatoire
     dico["items"].append(assets_path + "/items/Mythic/" + random.choice(os.listdir(assets_path + "/items/Mythic")))
 
+    list_of_all_item = os.listdir(assets_path + "/items/Other")
+
+    if dico["champion"].split("/")[-1] not in data_lol.range_champion:
+        list_of_all_item.remove("Runaans_Hurricane_item.png")
+
     while len(dico["items"]) != 6:
-        # il faut ajouter les contraintes d'items
-        item = assets_path + "/items/Other/" + random.choice(os.listdir(assets_path + "/items/Other"))
-        if item not in dico["items"]:
-            dico["items"].append(item)
+        item = random.choice(list_of_all_item)
+
+        dico["items"].append(assets_path + "/items/Other/" + item)
+        list_of_all_item.remove(item)
+
+        for list_of_item in data_lol.incompatible_items:
+            if item in list_of_item:
+
+                for incompatible_item in list_of_item:
+                    if incompatible_item in list_of_all_item:
+                        list_of_all_item.remove(incompatible_item)
 
     dico["lane"] = assets_path + f"/lane/{dico['lane']}.png"
 
     return dico
 
 
-def randomizer_image(lane: str = "random"):
-    dico = build(lane)
+def randomizer_image(lane_of_player="random"):
+    dico = build(lane_of_player)
     image = Image.new("RGBA", (400, 420))
 
     # image du champion
@@ -126,6 +143,15 @@ def randomizer_image(lane: str = "random"):
     # image de la lane
     lane_image = Image.open(dico["lane"]).resize((50, 50))
     image.paste(lane_image, (125, 35))
+
+    # image du cadre en or de l'objet mythique
+    x = 72
+    if dico["lane"].split("/")[-1] == "5.png":
+        x += 65
+    if dico["champion"].split("/")[-1] == "Cassiopeia.png":
+        x -= 65
+    cadre_image = Image.open(assets_path + "/images_background/cadre.png")
+    image.paste(cadre_image, (x, 347))
 
     # image des summoners
     x = 7
@@ -143,7 +169,8 @@ def randomizer_image(lane: str = "random"):
     # image max
     max_text_image = Image.open(assets_path + "/images_background/max.png").resize((52, 17))
     image.paste(max_text_image, (13, 270))
-    max_item_image = Image.open(assets_path + "/spells/" + random.choice(os.listdir(assets_path + "/spells"))).resize((30, 30))
+    max_item_image = Image.open(assets_path + "/spells/" + random.choice(os.listdir(assets_path + "/spells"))).resize(
+        (30, 30))
     image.paste(max_item_image, (125, 263))
 
     # images runes
@@ -179,7 +206,6 @@ def randomizer_image(lane: str = "random"):
         image.paste(item_image, (x, 350))
         x += 65
 
-    name = "".join(shuffle("1234567890")) + ".png"
-    image.save(assets_path + f"/{name}")
-    return assets_path + f"/{name}"
-
+    name = "".join(random.sample("1234567890", 10)) + ".png"
+    image.save(assets_path + f"/pictures/{name}")
+    return assets_path + f"/pictures/{name}"

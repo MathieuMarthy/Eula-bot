@@ -16,7 +16,6 @@ from asyncpraw import Reddit
 from image import get_img
 from randomizer import randomizer_image
 
-
 # --- setup
 reddit = Reddit(
     client_id="3usCZAVHZYrTM8mbKK6_8Q",
@@ -26,35 +25,38 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.4"
+version_bot = "4.0.5"
+changelog = "**Randomizer**\n-cardre en or sur l'objet mythique\n-ajouts des contraintes d'items (runaan + items incompatibles)"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
-client = commands.Bot(command_prefix = [prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ", "<@!914226393565499412>"],  help_command = None, intents = default_intents)
+client = commands.Bot(
+    command_prefix=[prefix, "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ",
+                    "<@!914226393565499412>"], help_command=None, intents=default_intents)
 dico_activity = json.load(open(os.path.join(path, "activities.json"), "r"))
-dico_activity = {int(k):v for k, v in dico_activity.items()}
+dico_activity = {int(k): v for k, v in dico_activity.items()}
 
-#--- dico
+# --- dico
 dico = ast.literal_eval(open(os.path.join(path, "server.txt"), "r").read().replace("b'", "'").replace("'", '"'))
 # forme:  {id: {"name": str, "logs": int, "voc": int, "autorole": int, "welcome_msg": str}}
 
 print("connection...")
 
 
-def utf8(string: str) -> str:
+def utf8(string: str) -> bytes:
     return string.encode("utf-8")
+
 
 @client.event
 async def on_ready():
-    global status
     print(f"connecté ! ⊂(◉‿◉)つ à {client.user.name}")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{prefix}help"))
 
     for serveur in client.guilds:
         if serveur.id not in dico:
-           dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None} 
+            dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None}
         elif utf8(serveur.name) != utf8(dico[serveur.id]["name"]):
             dico[serveur.id]["name"] = utf8(serveur.name)
-        
+
     tmp = [server.id for server in client.guilds]
     for server, _ in dico.copy().items():
         if server not in tmp:
@@ -62,6 +64,7 @@ async def on_ready():
 
     dico_update()
     loop.start()
+
 
 # --- fonctions
 # - loop
@@ -78,10 +81,10 @@ async def loop():
 
                 for activity in member.activities:
                     if activity.type == discord.ActivityType.playing:
-            
                         dico_activity[server.id][activity.name] = dico_activity[server.id].get(activity.name, 0) + 1
 
     json.dump(dico_activity, open(os.path.join(path, "activities.json"), "w"))
+
 
 # - all
 def dico_update():
@@ -111,8 +114,8 @@ def get_member(member):
         else:
             member = replaces(member, "<@", "", ">", "")
     return client.get_user(int(member))
-    
-    
+
+
 # - mini jeux
 async def start_game_multi(ctx, limit, name_game):
     """
@@ -132,26 +135,32 @@ async def start_game_multi(ctx, limit, name_game):
         limit = int(limit)
     else:
         limit = 5
+
     msg = await ctx.send(f"**Partie de {name_game} lancée !**\npour participer réagissez avec 🖐️")
     await msg.add_reaction("🖐️")
     await asyncio.sleep(15)
     list_user = []
+
     async for e in ctx.channel.history(limit=100):
         if e.id == msg.id:
-            for reaction in e.reactions:
-                if reaction.emoji == "🖐️":
-                    async for user in reaction.users():
+            for reaction_of_message in e.reactions:
+                if reaction_of_message.emoji == "🖐️":
+                    async for user in reaction_of_message.users():
                         if user.id != client.user.id:
                             list_user.append(user)
             break
+
     if len(list_user) == 0:
         await ctx.reply("Aucun joueur n'a rejoint la partie", mention_author=False)
         return [], []
+
     str_name = ""
     dico_points = {}
+
     for i in list_user:
         dico_points[i.id] = 0
         str_name += ", " + i.name
+
     str_name = str_name.replace(", ", "", 1)
     await ctx.send(f"Liste des participants: {str_name}\nC'est parti pour {limit} manches !")
     await asyncio.sleep(3)
@@ -160,14 +169,17 @@ async def start_game_multi(ctx, limit, name_game):
 
 async def start_game_duo(ctx, member, name_game):
     member = get_member(member)
-    
+
     if member is None:
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return False, None
-    
+
     await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
     try:
-        msg = await client.wait_for("message", check=lambda message: message.author.id in [member.id, ctx.author.id] and message.content.lower() in ["y", "o", "n", "yes", "oui", "no", "non"], timeout=180)
+        msg = await client.wait_for("message", check=lambda message: message.author.id in [member.id,
+                                                                                           ctx.author.id] and message.content.lower() in [
+                                                                         "y", "o", "n", "yes", "oui", "no", "non"],
+                                    timeout=180)
     except asyncio.TimeoutError:
         await ctx.reply(f"**{member.name}** n'a pas répondu", mention_author=False)
         return False, None
@@ -175,6 +187,7 @@ async def start_game_duo(ctx, member, name_game):
     if msg.content.lower() in ["n", "non", "no"]:
         await ctx.send("Partie refusée")
         return False, None
+
     else:
         return True, member
 
@@ -188,29 +201,34 @@ async def end_game(ctx, list_user, dico_points):
         dico_points : dictionnaire des points 
     """
     n = (list_user[0].id, dico_points[list_user[0].id])
+
     for id, point in dico_points.items():
         if n[1] < point:
             n = (id, point)
+
     list_winner = [id for id, point in dico_points.items() if n[1] == point]
     if len(list_winner) == 1:
         username = client.get_user(list_winner[0])
-        await ctx.send(f"󠀮 \n**Partie finie !**\nLe vainqueur est {username.mention} avec {dico_points[username.id]} points !")
+        await ctx.send(
+            f"󠀮 \n**Partie finie !**\nLe vainqueur est {username.mention} avec {dico_points[username.id]} points !")
     else:
         str_winner = ""
         for i, e in enumerate(list_winner):
             username = client.get_user(list_winner[i])
             str_winner += " " + username.mention
-        await ctx.send(f"󠀮 \n**Partie finie !**\nLes vainqueurs sont {str_winner} avec {dico_points[username.id]} points !")
-    
+        await ctx.send(
+            f"󠀮 \n**Partie finie !**\nLes vainqueurs sont {str_winner} avec {dico_points[username.id]} points !")
+
 
 # --- commandes/commands
 # - everyone
 @client.command(aliases=["rand"])
-async def randomizer(ctx, option = "random"):
+async def randomizer(ctx, option="random"):
     if option.isdigit():
         option = int(option)
         if option <= 0 or option > 5:
-            await ctx.reply("Le nombre doit être entre 1 et 5\n1 -> top\n2 -> jungle\n3 -> mid\n4 -> adc\n5 -> support", mention_author=False)
+            await ctx.reply("Le nombre doit être entre 1 et 5\n1 -> top\n2 -> jungle\n3 -> mid\n4 -> adc\n5 -> support",
+                            mention_author=False)
             return
 
     if option == "team":
@@ -223,14 +241,14 @@ async def randomizer(ctx, option = "random"):
                 image = discord.File(f)
                 await ctx.reply(file=image, mention_author=False)
             os.remove(image_path)
+            await asyncio.sleep(0.1)
         return
-    
+
     image_path = randomizer_image(option)
     with open(image_path, "rb") as f:
         image = discord.File(f)
         await ctx.reply(file=image, mention_author=False)
     os.remove(image_path)
-
 
 
 @client.command()
@@ -240,14 +258,15 @@ async def top(ctx, nbr=5):
         tmp = tmp[:nbr]
     tmp = [f"{k} : {divmod(v, 60)[0]}h {v % 60}min" for k, v in tmp]
 
-    embed=discord.Embed(title=f"Top {len(tmp)} des activités", description="\n".join(tmp), color=0xf0a3ff)
+    embed = discord.Embed(title=f"Top {len(tmp)} des activités", description="\n".join(tmp), color=0xf0a3ff)
     await ctx.send(embed=embed)
+
 
 async def message_tag(ctx, liens, msg):
-
-    embed=discord.Embed(title=msg, description="󠀮 ", color=0x555555)
+    embed = discord.Embed(title=msg, description="󠀮 ", color=0x555555)
     embed.set_image(url=random.choice(liens))
     await ctx.send(embed=embed)
+
 
 @client.command(aliases=["hello", "hi"])
 async def bonjour(ctx, member=None):
@@ -256,7 +275,20 @@ async def bonjour(ctx, member=None):
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
-    liste_liens = ["https://c.tenor.com/thNxDWlG1EcAAAAC/killua-zoldyck-anime.gif", "https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif", "https://c.tenor.com/OSnZnnqx4vsAAAAC/anime-hello.gif", "https://c.tenor.com/WcJoZqd4C_YAAAAC/eromanga-sensei-anime.gif", "https://c.tenor.com/mjwiXPyqyrgAAAAC/hello-hi.gif", "https://c.tenor.com/dKv5A-KGZsIAAAAC/shy-hi.gif", "https://c.tenor.com/Q1dW7INg5ioAAAAC/hello-anime.gif", "https://c.tenor.com/cDCkQ6BPlF4AAAAC/pat-pat-anime.gif", "https://c.tenor.com/zeJzW4ubYqkAAAAC/nasuno-cat.gif", "https://c.tenor.com/6Gr-6QEvE7EAAAAd/school-live-cute.gif", "https://c.tenor.com/3g3D1mECft0AAAAC/anime-hi.gif", "https://c.tenor.com/dCTUyNt499gAAAAC/kobayashi-dragon.gif", "https://c.tenor.com/Z2-F9Bdaa9QAAAAC/anime-girl.gif", "https://c.tenor.com/g0QIOyhPLRQAAAAC/neon_cove-cute.gif"]
+    liste_liens = ["https://c.tenor.com/thNxDWlG1EcAAAAC/killua-zoldyck-anime.gif",
+                   "https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif",
+                   "https://c.tenor.com/OSnZnnqx4vsAAAAC/anime-hello.gif",
+                   "https://c.tenor.com/WcJoZqd4C_YAAAAC/eromanga-sensei-anime.gif",
+                   "https://c.tenor.com/mjwiXPyqyrgAAAAC/hello-hi.gif",
+                   "https://c.tenor.com/dKv5A-KGZsIAAAAC/shy-hi.gif",
+                   "https://c.tenor.com/Q1dW7INg5ioAAAAC/hello-anime.gif",
+                   "https://c.tenor.com/cDCkQ6BPlF4AAAAC/pat-pat-anime.gif",
+                   "https://c.tenor.com/zeJzW4ubYqkAAAAC/nasuno-cat.gif",
+                   "https://c.tenor.com/6Gr-6QEvE7EAAAAd/school-live-cute.gif",
+                   "https://c.tenor.com/3g3D1mECft0AAAAC/anime-hi.gif",
+                   "https://c.tenor.com/dCTUyNt499gAAAAC/kobayashi-dragon.gif",
+                   "https://c.tenor.com/Z2-F9Bdaa9QAAAAC/anime-girl.gif",
+                   "https://c.tenor.com/g0QIOyhPLRQAAAAC/neon_cove-cute.gif"]
     await message_tag(ctx, liste_liens, f"{ctx.author.name} dit bonjour à {member.name} !")
 
 
@@ -267,8 +299,20 @@ async def bisous(ctx, member=None):
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
-    liste_liens = ["https://www.icegif.com/wp-content/uploads/anime-kiss-icegif-1.gif", "https://c.tenor.com/F02Ep3b2jJgAAAAC/cute-kawai.gif", "https://c.tenor.com/g9HjxRZM2C8AAAAd/anime-love.gif", "https://c.tenor.com/nRdyrvS3qa4AAAAC/anime-kiss.gif", "https://c.tenor.com/vhuon7swiOYAAAAC/rakudai-kishi-kiss.gif", "https://c.tenor.com/5iiiF4A7KI0AAAAC/anime-cry-anime.gif", "https://c.tenor.com/2u67zOB43esAAAAd/cute-anime.gif", "https://c.tenor.com/DDmZqcOZJisAAAAC/anime.gif", "https://c.tenor.com/G954PGQ7OX8AAAAd/cute-urara-shiraishi-anime.gif", "https://c.tenor.com/kyM-QWHWy1cAAAAC/anime-kissing.gif", "https://c.tenor.com/7T1cuiOtJvQAAAAC/anime-kiss.gif", "https://c.tenor.com/BJ9v5r4Th7UAAAAC/love-couple.gif"]
+    liste_liens = ["https://www.icegif.com/wp-content/uploads/anime-kiss-icegif-1.gif",
+                   "https://c.tenor.com/F02Ep3b2jJgAAAAC/cute-kawai.gif",
+                   "https://c.tenor.com/g9HjxRZM2C8AAAAd/anime-love.gif",
+                   "https://c.tenor.com/nRdyrvS3qa4AAAAC/anime-kiss.gif",
+                   "https://c.tenor.com/vhuon7swiOYAAAAC/rakudai-kishi-kiss.gif",
+                   "https://c.tenor.com/5iiiF4A7KI0AAAAC/anime-cry-anime.gif",
+                   "https://c.tenor.com/2u67zOB43esAAAAd/cute-anime.gif",
+                   "https://c.tenor.com/DDmZqcOZJisAAAAC/anime.gif",
+                   "https://c.tenor.com/G954PGQ7OX8AAAAd/cute-urara-shiraishi-anime.gif",
+                   "https://c.tenor.com/kyM-QWHWy1cAAAAC/anime-kissing.gif",
+                   "https://c.tenor.com/7T1cuiOtJvQAAAAC/anime-kiss.gif",
+                   "https://c.tenor.com/BJ9v5r4Th7UAAAAC/love-couple.gif"]
     await message_tag(ctx, liste_liens, f"{ctx.author.name} embrasse {member.name} !")
+
 
 @client.command()
 async def pat(ctx, member=None):
@@ -277,7 +321,24 @@ async def pat(ctx, member=None):
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
-    liste_liens = ["https://c.tenor.com/TDqVQaQWcFMAAAAC/anime-pat.gif", "https://c.tenor.com/Av63tpT8Y14AAAAC/pat-head.gif", "https://c.tenor.com/2vFAxyl6cI8AAAAd/mai-headpats.gif", "https://c.tenor.com/6dyxfdQx--AAAAAd/anime-senko-san.gif", "https://c.tenor.com/g75K3KA3VeAAAAAd/anime-sleep.gif", "https://c.tenor.com/OUSrLXimAq8AAAAC/head-pat-anime.gif", "https://c.tenor.com/zBPha3hhm7QAAAAC/anime-girl.gif", "https://c.tenor.com/N41zKEDABuUAAAAC/anime-head-pat-anime-pat.gif", "https://c.tenor.com/E6fMkQRZBdIAAAAC/kanna-kamui-pat.gif", "https://c.tenor.com/n6M5-pM2RiQAAAAC/anime-cry.gif", "https://c.tenor.com/edHuxNBD6IMAAAAC/anime-head-pat.gif", "https://c.tenor.com/i7nXGbPLqTsAAAAC/anime-hug.gif", "https://c.tenor.com/1bBIALbG0ikAAAAC/anime-anime-head-rub.gif", "https://c.tenor.com/lnoDyTqMk24AAAAC/anime-anime-headrub.gif", "https://c.tenor.com/sX-K9XVf6KoAAAAC/catgirl-neko.gif", "https://c.tenor.com/9R7fzXGeRe8AAAAC/fantasista-doll-anime.gif", "https://c.tenor.com/G14pV-tr0NAAAAAC/anime-head.gif", "https://c.tenor.com/epo_ns_GbwoAAAAC/anime-head-pat.gif"]
+    liste_liens = ["https://c.tenor.com/TDqVQaQWcFMAAAAC/anime-pat.gif",
+                   "https://c.tenor.com/Av63tpT8Y14AAAAC/pat-head.gif",
+                   "https://c.tenor.com/2vFAxyl6cI8AAAAd/mai-headpats.gif",
+                   "https://c.tenor.com/6dyxfdQx--AAAAAd/anime-senko-san.gif",
+                   "https://c.tenor.com/g75K3KA3VeAAAAAd/anime-sleep.gif",
+                   "https://c.tenor.com/OUSrLXimAq8AAAAC/head-pat-anime.gif",
+                   "https://c.tenor.com/zBPha3hhm7QAAAAC/anime-girl.gif",
+                   "https://c.tenor.com/N41zKEDABuUAAAAC/anime-head-pat-anime-pat.gif",
+                   "https://c.tenor.com/E6fMkQRZBdIAAAAC/kanna-kamui-pat.gif",
+                   "https://c.tenor.com/n6M5-pM2RiQAAAAC/anime-cry.gif",
+                   "https://c.tenor.com/edHuxNBD6IMAAAAC/anime-head-pat.gif",
+                   "https://c.tenor.com/i7nXGbPLqTsAAAAC/anime-hug.gif",
+                   "https://c.tenor.com/1bBIALbG0ikAAAAC/anime-anime-head-rub.gif",
+                   "https://c.tenor.com/lnoDyTqMk24AAAAC/anime-anime-headrub.gif",
+                   "https://c.tenor.com/sX-K9XVf6KoAAAAC/catgirl-neko.gif",
+                   "https://c.tenor.com/9R7fzXGeRe8AAAAC/fantasista-doll-anime.gif",
+                   "https://c.tenor.com/G14pV-tr0NAAAAAC/anime-head.gif",
+                   "https://c.tenor.com/epo_ns_GbwoAAAAC/anime-head-pat.gif"]
     await message_tag(ctx, liste_liens, f"{ctx.author.name} pat {member.name} !")
 
 
@@ -288,8 +349,25 @@ async def hug(ctx, member=None):
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
-    liste_liens = ["https://c.tenor.com/QTbBCR3j-vYAAAAd/hugs-best-friends.gif", "https://c.tenor.com/8Jk1ueYnyYUAAAAC/hug.gif", "https://c.tenor.com/-3I0yCd6L6AAAAAC/anime-hug-anime.gif", "https://c.tenor.com/0T3_4tv71-kAAAAC/anime-happy.gif", "https://c.tenor.com/QwHSis0hNEQAAAAC/love-hug.gif", "https://c.tenor.com/9e1aE_xBLCsAAAAC/anime-hug.gif", "https://c.tenor.com/we1trpFB2F0AAAAC/neko-hug.gif", "https://c.tenor.com/2lr9uM5JmPQAAAAC/hug-anime-hug.gif", "https://c.tenor.com/4n3T2I239q8AAAAC/anime-cute.gif", "https://c.tenor.com/0vl21YIsGvgAAAAC/hug-anime.gif", "https://c.tenor.com/gqM9rl1GKu8AAAAC/kitsune-upload-hug.gif", "https://c.tenor.com/arMxz72tc50AAAAC/catgirl-hug.gif", "https://c.tenor.com/keasv-Cnh4kAAAAd/hug-cuddle.gif", "https://c.tenor.com/ggKei4ayfIAAAAAC/anime-hug.gif", "https://c.tenor.com/e4xYciCG6NcAAAAM/emdj-snuggle.gif", "https://c.tenor.com/aG0pA87t0dMAAAAC/anime-chino.gif", "https://c.tenor.com/1PSvBKNcNtUAAAAC/love-anime.gif"]
+    liste_liens = ["https://c.tenor.com/QTbBCR3j-vYAAAAd/hugs-best-friends.gif",
+                   "https://c.tenor.com/8Jk1ueYnyYUAAAAC/hug.gif",
+                   "https://c.tenor.com/-3I0yCd6L6AAAAAC/anime-hug-anime.gif",
+                   "https://c.tenor.com/0T3_4tv71-kAAAAC/anime-happy.gif",
+                   "https://c.tenor.com/QwHSis0hNEQAAAAC/love-hug.gif",
+                   "https://c.tenor.com/9e1aE_xBLCsAAAAC/anime-hug.gif",
+                   "https://c.tenor.com/we1trpFB2F0AAAAC/neko-hug.gif",
+                   "https://c.tenor.com/2lr9uM5JmPQAAAAC/hug-anime-hug.gif",
+                   "https://c.tenor.com/4n3T2I239q8AAAAC/anime-cute.gif",
+                   "https://c.tenor.com/0vl21YIsGvgAAAAC/hug-anime.gif",
+                   "https://c.tenor.com/gqM9rl1GKu8AAAAC/kitsune-upload-hug.gif",
+                   "https://c.tenor.com/arMxz72tc50AAAAC/catgirl-hug.gif",
+                   "https://c.tenor.com/keasv-Cnh4kAAAAd/hug-cuddle.gif",
+                   "https://c.tenor.com/ggKei4ayfIAAAAAC/anime-hug.gif",
+                   "https://c.tenor.com/e4xYciCG6NcAAAAM/emdj-snuggle.gif",
+                   "https://c.tenor.com/aG0pA87t0dMAAAAC/anime-chino.gif",
+                   "https://c.tenor.com/1PSvBKNcNtUAAAAC/love-anime.gif"]
     await message_tag(ctx, liste_liens, f"{ctx.author.name} fait un calin {member.name} !")
+
 
 @client.command()
 async def baka(ctx, member=None):
@@ -298,8 +376,22 @@ async def baka(ctx, member=None):
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
-    liste_liens = ["https://c.tenor.com/UsggMuRixo0AAAAC/baka-anime.gif", "https://c.tenor.com/dJpiway_niUAAAAC/onichan-baka-onichan.gif", "https://c.tenor.com/Xcr8fHyf84gAAAAC/baka-anime.gif", "https://c.tenor.com/pHCT4ynbGIUAAAAC/anime-girl.gif", "https://c.tenor.com/ESvZeEc2lIQAAAAC/baka-anime.gif", "https://c.tenor.com/bNrnl6bi8BEAAAAC/anime-bleh.gif", "https://c.tenor.com/2An5JdBiT9YAAAAC/baka-anime.gif", "https://c.tenor.com/ggjmRnG_oBAAAAAC/anime-baka.gif", "https://c.tenor.com/XcKQzqJPiGcAAAAC/anime-tsundere.gif", "https://c.tenor.com/dHZOfR6rZY0AAAAC/baka-anime.gif", "https://c.tenor.com/Ytn7KcbZm8wAAAAM/baka-anime.gif", "https://c.tenor.com/smRK3hdF5DMAAAAC/baka-anime.gif", "https://c.tenor.com/1IDzm1044LQAAAAC/baka-anime.gif", "https://c.tenor.com/icCAaeNx5UAAAAAC/zasbaka.gif"]
+    liste_liens = ["https://c.tenor.com/UsggMuRixo0AAAAC/baka-anime.gif",
+                   "https://c.tenor.com/dJpiway_niUAAAAC/onichan-baka-onichan.gif",
+                   "https://c.tenor.com/Xcr8fHyf84gAAAAC/baka-anime.gif",
+                   "https://c.tenor.com/pHCT4ynbGIUAAAAC/anime-girl.gif",
+                   "https://c.tenor.com/ESvZeEc2lIQAAAAC/baka-anime.gif",
+                   "https://c.tenor.com/bNrnl6bi8BEAAAAC/anime-bleh.gif",
+                   "https://c.tenor.com/2An5JdBiT9YAAAAC/baka-anime.gif",
+                   "https://c.tenor.com/ggjmRnG_oBAAAAAC/anime-baka.gif",
+                   "https://c.tenor.com/XcKQzqJPiGcAAAAC/anime-tsundere.gif",
+                   "https://c.tenor.com/dHZOfR6rZY0AAAAC/baka-anime.gif",
+                   "https://c.tenor.com/Ytn7KcbZm8wAAAAM/baka-anime.gif",
+                   "https://c.tenor.com/smRK3hdF5DMAAAAC/baka-anime.gif",
+                   "https://c.tenor.com/1IDzm1044LQAAAAC/baka-anime.gif",
+                   "https://c.tenor.com/icCAaeNx5UAAAAAC/zasbaka.gif"]
     await message_tag(ctx, liste_liens, f"{member.name} est trop un baka !")
+
 
 @client.command(aliases=["mange", "mords", "mord"])
 async def bite(ctx, member=None):
@@ -308,8 +400,27 @@ async def bite(ctx, member=None):
         await ctx.send("Vous n'avez pas mentionné un joueur")
         return
 
-    liste_liens = ["https://c.tenor.com/IKDf1NMrzsIAAAAC/anime-acchi-kocchi.gif", "https://c.tenor.com/MKjNSLL4dGoAAAAC/bite-cute.gif", "https://c.tenor.com/4j3hMz-dUz0AAAAC/anime-love.gif", "https://c.tenor.com/MNK1CrjgMcMAAAAC/megumin-konosuba.gif", "https://c.tenor.com/6HhJw-4zmQUAAAAC/anime-bite.gif", "https://c.tenor.com/mXc2f5NeOpgAAAAC/no-blood-neck-bite.gif", "https://c.tenor.com/aKzAQ_cFsFEAAAAC/arms-bite.gif", "https://c.tenor.com/xAiGlpwEVhEAAAAC/josee-josee-to-tora-to-sakanatachi.gif", "https://c.tenor.com/TwP8Vv8acSkAAAAC/the-melancholy-of-haruhi-suzumiya-biting-ear.gif", "https://c.tenor.com/TX6YHUnHJk4AAAAC/mao-amatsuka-gj-bu.gif", "https://c.tenor.com/8UjO54apiUIAAAAC/gjbu-bite.gif", "https://c.tenor.com/BVFbvCZKNEsAAAAC/princess-connect-anime-bite.gif", "https://c.tenor.com/Xpv7HTk-DIYAAAAC/mad-angry.gif", "https://c.tenor.com/vHfD8O5dDd4AAAAC/acchi-kocchi-anime.gif", "https://c.tenor.com/Nk-Eq8_ZiNwAAAAC/index-toaru.gif", "https://c.tenor.com/DBwz1nSElowAAAAC/aruu-anime.gif", "https://c.tenor.com/0kjdOr9jyN0AAAAC/bite-girl.gif", "https://c.tenor.com/sRPSPdWp9zsAAAAC/one-piece-anime.gif", "https://c.tenor.com/ZS2uG_TqqDwAAAAC/bite.gif", ""]
+    liste_liens = ["https://c.tenor.com/IKDf1NMrzsIAAAAC/anime-acchi-kocchi.gif",
+                   "https://c.tenor.com/MKjNSLL4dGoAAAAC/bite-cute.gif",
+                   "https://c.tenor.com/4j3hMz-dUz0AAAAC/anime-love.gif",
+                   "https://c.tenor.com/MNK1CrjgMcMAAAAC/megumin-konosuba.gif",
+                   "https://c.tenor.com/6HhJw-4zmQUAAAAC/anime-bite.gif",
+                   "https://c.tenor.com/mXc2f5NeOpgAAAAC/no-blood-neck-bite.gif",
+                   "https://c.tenor.com/aKzAQ_cFsFEAAAAC/arms-bite.gif",
+                   "https://c.tenor.com/xAiGlpwEVhEAAAAC/josee-josee-to-tora-to-sakanatachi.gif",
+                   "https://c.tenor.com/TwP8Vv8acSkAAAAC/the-melancholy-of-haruhi-suzumiya-biting-ear.gif",
+                   "https://c.tenor.com/TX6YHUnHJk4AAAAC/mao-amatsuka-gj-bu.gif",
+                   "https://c.tenor.com/8UjO54apiUIAAAAC/gjbu-bite.gif",
+                   "https://c.tenor.com/BVFbvCZKNEsAAAAC/princess-connect-anime-bite.gif",
+                   "https://c.tenor.com/Xpv7HTk-DIYAAAAC/mad-angry.gif",
+                   "https://c.tenor.com/vHfD8O5dDd4AAAAC/acchi-kocchi-anime.gif",
+                   "https://c.tenor.com/Nk-Eq8_ZiNwAAAAC/index-toaru.gif",
+                   "https://c.tenor.com/DBwz1nSElowAAAAC/aruu-anime.gif",
+                   "https://c.tenor.com/0kjdOr9jyN0AAAAC/bite-girl.gif",
+                   "https://c.tenor.com/sRPSPdWp9zsAAAAC/one-piece-anime.gif",
+                   "https://c.tenor.com/ZS2uG_TqqDwAAAAC/bite.gif", ""]
     await message_tag(ctx, liste_liens, f"{ctx.author.name} mord {member.name}")
+
 
 @client.command(aliases=["reddit"])
 async def redditt(ctx, subreddit, nbr="1", option="None"):
@@ -328,10 +439,12 @@ async def redditt(ctx, subreddit, nbr="1", option="None"):
     links = []
     try:
         reddit_posts = await reddit.subreddit(subreddit)
-        posts = [post async for post in reddit_posts.hot(limit=200) if post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv", ".mp4", ".webm"))]
+        posts = [post async for post in reddit_posts.hot(limit=200) if
+                 post.url.endswith((".jpg", ".png", ".gif", ".jpeg", ".gifv", ".mp4", ".webm"))]
     except:
         await ctx.message.clear_reaction("<a:load:979084139200385024>")
-        await ctx.reply("Le subreddit n'existe pas\nLe subreddit doit être écrit exactement pareil que sur reddit", mention_author=False)
+        await ctx.reply("Le subreddit n'existe pas\nLe subreddit doit être écrit exactement pareil que sur reddit",
+                        mention_author=False)
         return
 
     while len(links) < nbr:
@@ -339,7 +452,6 @@ async def redditt(ctx, subreddit, nbr="1", option="None"):
             break
         post = posts.pop(random.randint(0, len(posts) - 1))
         links.append(post.url)
-
 
     await ctx.message.clear_reaction("<a:load:979084139200385024>")
 
@@ -350,6 +462,7 @@ async def redditt(ctx, subreddit, nbr="1", option="None"):
     for link in links:
         await ctx.reply(link, mention_author=False)
 
+
 @redditt.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -358,10 +471,12 @@ async def on_message_error(ctx, error):
 
 @client.command()
 async def version(ctx):
-    await ctx.send(f"Version: {version_bot}")
+    embed = discord.Embed(color=0xf0a3ff, title="Version - Changelog", description=f"Version: {version_bot}\nChangelog:\n{changelog}")
+    await ctx.send(embed=embed)
+
 
 @client.command()
-async def hentai(ctx, category = "help", nbr = "1"):
+async def hentai(ctx, category="help", nbr="1"):
     if not ctx.channel.is_nsfw() and not ctx.author.guild_permissions.administrator:
         await ctx.send("Il faut que le salon soit nsfw pour que la commande fonctionne")
         return
@@ -375,7 +490,9 @@ async def hentai(ctx, category = "help", nbr = "1"):
         await ctx.send("Le nombre maximum d'images est de 20")
         nbr = 20
 
-    tags = ["ass", "bdsm", "cum", "creampie", "manga", "femdom", "hentai", "incest", "masturbation", "public", "ero", "orgy", "elves", "yuri", "pantsu", "glasses", "cuckold", "blowjob", "boobjob", "foot", "thighs", "vagina", "ahegao", "uniform", "gangbang", "tentacles", "gif", "neko", "nsfwMobileWallpaper", "zettaiRyouiki"]
+    tags = ["ass", "bdsm", "cum", "creampie", "manga", "femdom", "hentai", "incest", "masturbation", "public", "ero",
+            "orgy", "elves", "yuri", "pantsu", "glasses", "cuckold", "blowjob", "boobjob", "foot", "thighs", "vagina",
+            "ahegao", "uniform", "gangbang", "tentacles", "gif", "neko", "nsfwMobileWallpaper", "zettaiRyouiki"]
     if category in tags:
         for _ in range(nbr):
             response = requests.get(f"https://hmtai.herokuapp.com/nsfw/{category}")
@@ -387,7 +504,6 @@ async def hentai(ctx, category = "help", nbr = "1"):
 
 @client.command(aliases=["profile_picture", "pdp"])
 async def pp(ctx, member):
-
     if member in ["serveur", "server"]:
         filename = "avatar.gif" if ctx.message.guild.is_icon_animated() else "avatar.png"
         await ctx.message.guild.icon_url.save(filename)
@@ -397,7 +513,7 @@ async def pp(ctx, member):
         if member is None:
             await ctx.send("Vous n'avez pas mentionné un membre !")
             return
-        
+
         else:
             filename = "avatar.gif" if member.is_avatar_animated() else "avatar.png"
             await member.avatar_url.save(filename)
@@ -405,6 +521,7 @@ async def pp(ctx, member):
     file = discord.File(fp=filename)
     await ctx.send(file=file)
     os.remove(filename)
+
 
 @pp.error
 async def on_message_error(ctx, error):
@@ -414,7 +531,7 @@ async def on_message_error(ctx, error):
 
 @client.command(aliases=["random"])
 async def aleatoire(ctx, nbr):
-    if int(nbr) < 0 :
+    if int(nbr) < 0:
         await ctx.send("Le nombre doit être plus grand que 0")
     else:
         await ctx.send(random.randint(0, int(nbr)))
@@ -428,22 +545,23 @@ async def on_message_error(ctx, error):
 
 @client.command(aliases=["pile", "face", "piece", "pileouface"])
 async def pile_ou_face(ctx):
-    
-    embed=discord.Embed(color=0xf0a3ff)
-    
+    embed = discord.Embed(color=0xf0a3ff)
+
     if random.choice([True, False]):
         embed.add_field(name=f"󠀮Pile", value="----", inline=True)
         embed.set_image(url=get_img("pile"))
     else:
         embed.add_field(name=f"󠀮Face", value="----", inline=True)
         embed.set_image(url=get_img("face"))
-        
+
     await ctx.reply(embed=embed, mention_author=False)
 
 
 @client.command(aliases=["8ball", "8"])
 async def eightball(ctx, *, msg):
-    a = ["Une chance sur deux", "D'après moi oui", "C'est certain", "Oui absolument", "Sans aucun doute", "Très probable", "Oui", "C'est bien parti", "C'est non", "Peu probable", "Faut pas rêver", "N'y compte pas", "Impossible"]
+    a = ["Une chance sur deux", "D'après moi oui", "C'est certain", "Oui absolument", "Sans aucun doute",
+         "Très probable", "Oui", "C'est bien parti", "C'est non", "Peu probable", "Faut pas rêver", "N'y compte pas",
+         "Impossible"]
     if msg.endswith("ratio ?"):
         await ctx.reply("ratio !", mention_author=False)
     else:
@@ -452,7 +570,7 @@ async def eightball(ctx, *, msg):
 
 @client.command()
 async def ping(ctx):
-    embed=discord.Embed(color=0xf0a3ff)
+    embed = discord.Embed(color=0xf0a3ff)
     embed.set_author(name="ping", icon_url=client.user.avatar_url)
     embed.set_thumbnail(url=get_img("power"))
     embed.add_field(name="󠀮 ", value="**Je suis connecté !**", inline=True)
@@ -461,7 +579,6 @@ async def ping(ctx):
 
 @client.command()
 async def help(ctx):
-
     liste_emoji = [
         "🏠",
         "👑",
@@ -502,14 +619,14 @@ async def help(ctx):
         "🔧": {
             f"{prefix}random <nombre>": "donne un nombre aléatoire entre 0 et le nombre donné",
             f"{prefix}piece": "pile ou face",
-            f"{prefix}ping": "ping le bot",        
+            f"{prefix}ping": "ping le bot",
         },
 
         "📝": {
             f"{prefix}8ball <message>": "Boule magique",
             f"{prefix}hentai <categorie> <#nbr d'images>": "envoie des images de hentai /!\ le salon doit etre en nsfw",
             f"{prefix}pp <id du membre/mention>": "donne la pp du membre",
-            f"{prefix}reddit <subreddit> <#nbr d'images>" : "donne les images du subreddit",
+            f"{prefix}reddit <subreddit> <#nbr d'images>": "donne les images du subreddit",
         },
 
         "💬": {
@@ -524,9 +641,11 @@ async def help(ctx):
 
     choix = "🏠"
 
-    embed=discord.Embed(color=0xf0a3ff)
-    embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}", icon_url=client.user.avatar_url)
-    embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
+    embed = discord.Embed(color=0xf0a3ff)
+    embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}",
+                     icon_url=client.user.avatar_url)
+    embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ",
+                    inline=False)
 
     for key, value in dico_help[choix].items():
         embed.add_field(name=key, value=value, inline=False)
@@ -537,33 +656,39 @@ async def help(ctx):
         await msg.add_reaction(emoji)
 
     while True:
-        reaction, _ = await client.wait_for("reaction_add", check=lambda r, u: u.id != client.user.id and r.message.id == msg.id and r.emoji in liste_emoji , timeout=60.0)
+        reaction, _ = await client.wait_for("reaction_add", check=lambda r,
+                                                                         u: u.id != client.user.id and r.message.id == msg.id and r.emoji in liste_emoji,
+                                            timeout=60.0)
         choix = reaction.emoji
         await msg.remove_reaction(reaction.emoji, ctx.author)
 
-        embed=discord.Embed(color=0xf0a3ff)
-        embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}", icon_url=client.user.avatar_url)
-        embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ", inline=False)
-        
+        embed = discord.Embed(color=0xf0a3ff)
+        embed.set_author(name=f"help - Eula, serveurs: {len(dico)}, version: {version_bot}",
+                         icon_url=client.user.avatar_url)
+        embed.add_field(name="contact", value="Si vous avez des retours a faire venez DM **kojhyy#0012**\n󠀮 ",
+                        inline=False)
+
         for key, value in dico_help[choix].items():
             embed.add_field(name=key, value=value, inline=False)
 
-        await msg.edit(embed=embed)        
+        await msg.edit(embed=embed)
+
+    # - jeux
 
 
-# - jeux
 @client.command(aliases=["10fastfinger", "10ff"])
-async def jeu_reaction(ctx, limit = 5):
+async def jeu_reaction(ctx, limit=5):
     list_user, dico_points = await start_game_multi(ctx, limit, "10fastfinger")
-    if list_user == []:
+    if not list_user:
         return
 
     turn = 0
+
     def get_sentences():
         a = requests.get("https://enneagon.org/phrases").text
 
-        a = a[a.find('<div class="main">') + 23 : a.find("</div>") - 6]
-        a = replaces(a, "&nbsp", "", ";" , "", " <br>", "")
+        a = a[a.find('<div class="main">') + 23: a.find("</div>") - 6]
+        a = replaces(a, "&nbsp", "", ";", "", " <br>", "")
         for e in a:
             e = e.replace("É", "E")
 
@@ -573,7 +698,7 @@ async def jeu_reaction(ctx, limit = 5):
     while turn != limit:
 
         mot = list_question[random.randint(0, len(list_question) - 1)]
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.add_field(name="Phrase", value=mot, inline=False)
         await ctx.send(embed=embed)
         list_question.remove(mot)
@@ -581,7 +706,17 @@ async def jeu_reaction(ctx, limit = 5):
         if len(list_question) == 0:
             list_question = get_sentences()
         try:
-            msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content in [mot, "exit", "!exit", "leave", "!leave", "Exit", "!Exit", "leave", "Leave"], timeout=60)
+            msg = await client.wait_for("message",
+                                        check=lambda message: message.author in list_user and message.content in [mot,
+                                                                                                                  "exit",
+                                                                                                                  "!exit",
+                                                                                                                  "leave",
+                                                                                                                  "!leave",
+                                                                                                                  "Exit",
+                                                                                                                  "!Exit",
+                                                                                                                  "leave",
+                                                                                                                  "Leave"],
+                                        timeout=60)
         except asyncio.TimeoutError:
             await ctx.send("partie finie à cause d'inactivité")
             break
@@ -597,9 +732,9 @@ async def jeu_reaction(ctx, limit = 5):
 
 
 @client.command()
-async def calcul_mental(ctx, limit = 5):
+async def calcul_mental(ctx, limit=5):
     list_user, dico_points = await start_game_multi(ctx, limit, "calcul mental")
-    if list_user == []:
+    if not list_user:
         return
 
     turn = 0
@@ -617,11 +752,13 @@ async def calcul_mental(ctx, limit = 5):
                 calcul += f"{random.randint(-500, 500)} {list_ope[random.randint(0, 1)]} {random.randint(-500, 500)}"
             calcul = calcul[3:]
 
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.add_field(name="Calcul", value=calcul, inline=False)
         await ctx.send(embed=embed)
         try:
-            msg = await client.wait_for("message", check=lambda message: message.author in list_user and message.content.lower() in [str(eval(calcul)), "exit", "!exit", "leave", "!leave"], timeout=180)
+            msg = await client.wait_for("message", check=lambda
+                message: message.author in list_user and message.content.lower() in [str(eval(calcul)), "exit", "!exit",
+                                                                                     "leave", "!leave"], timeout=180)
         except asyncio.TimeoutError:
             await ctx.send("partie finie à cause d'inactivité")
             break
@@ -635,8 +772,9 @@ async def calcul_mental(ctx, limit = 5):
 
     await end_game(ctx, list_user, dico_points)
 
+
 @client.command()
-async def monopoly(ctx, private = None):
+async def monopoly(ctx, private=None):
     msg = await ctx.send("**Partie de Monopoly lancée !**\npour participer réagissez avec 🖐️")
     await msg.add_reaction("🖐️")
     await asyncio.sleep(12)
@@ -657,10 +795,9 @@ async def monopoly(ctx, private = None):
     elif len(list_user) == 1:
         await ctx.reply("Vous ne pouvez pas jouer seul")
 
+    # --- déclaration des classes
 
-    ### déclaration des classes
-
-    class player:
+    class Player:
         def __init__(self, discord, emote) -> None:
             # en lui meme
             self.discord = discord
@@ -705,7 +842,7 @@ async def monopoly(ctx, private = None):
         def lost_property(self, property):
             # perd une propriété
             self.properties.remove(property)
-            
+
             board.property_is_sell(property)
             property.owner = None
 
@@ -726,12 +863,12 @@ async def monopoly(ctx, private = None):
 
             remove_emote(user.last_position, self)
 
-    class property:
+    class Property:
         def __init__(self, name, rent, emote) -> None:
             self.name = name
             self.rent = rent
             self.emote = emote
-            
+
             self.owner = None
             self.x_rent = 1.0
 
@@ -750,7 +887,7 @@ async def monopoly(ctx, private = None):
 
     class _board:
         def __init__(self, list_square) -> None:
-            self.properties_left = [case for case in list_square if isinstance(case, property)]
+            self.properties_left = [case for case in list_square if isinstance(case, Property)]
             self.all_properties = self.properties_left.copy()
             self.player_same_square = {}
 
@@ -760,11 +897,10 @@ async def monopoly(ctx, private = None):
         def property_is_sell(self, property):
             self.properties_left.append(property)
 
-
-    ### déclaration des fonctions
+    # -- déclaration des fonctions
 
     def luck():
-        nbr = random.randint(min , max)
+        nbr = random.randint(min, max)
         if nbr == -1:
             user.money += 200
             return "tony à arrêté d'être gay, tu perds moins d'argent en capote, gagne 200 ₿"
@@ -913,7 +1049,6 @@ async def monopoly(ctx, private = None):
             msg += "\n"
         return msg
 
-    
     def place_emote(tupl, user):
         # place l'emoji du joueur sur la matrice
         pos = matrice_board[tupl[0]][tupl[1]]
@@ -927,20 +1062,19 @@ async def monopoly(ctx, private = None):
         elif tupl in board.player_same_square:
             board.player_same_square[tupl] = board.player_same_square[tupl] + [user]
             dico = {
-            2: "2️⃣",
-            3: "3️⃣",
-            4: "4️⃣",
-            5: "5️⃣",
-            6: "6️⃣",
-            7: "7️⃣",
-            8: "8️⃣",
-            9: "9️⃣"
+                2: "2️⃣",
+                3: "3️⃣",
+                4: "4️⃣",
+                5: "5️⃣",
+                6: "6️⃣",
+                7: "7️⃣",
+                8: "8️⃣",
+                9: "9️⃣"
             }
 
             matrice_board[tupl[0]][tupl[1]] = dico[len(board.player_same_square[tupl])]
         else:
             matrice_board[tupl[0]][tupl[1]] = user.emote
-
 
     def remove_emote(tupl, user):
         # enleve l'emoji du joueur de la matrice
@@ -969,7 +1103,6 @@ async def monopoly(ctx, private = None):
         else:
             matrice_board[tupl[0]][tupl[1]] = "⬛"
 
-
     def place_player(user):
         # actualise la position de tout les joueurs
         pos = user.position
@@ -986,11 +1119,9 @@ async def monopoly(ctx, private = None):
         else:
             pos -= 31
             pos_ = (2 + pos, 12)
-    
 
         place_emote(pos_, user)
         user.last_position = pos_
-
 
     def random_emote():
         # donne une emote aléatoire
@@ -998,7 +1129,6 @@ async def monopoly(ctx, private = None):
         prepa_emote.remove(tmp)
         list_emote.append(tmp)
         return tmp
-
 
     async def put_emotes(list_of_emotes):
         # met les emotes sur le msg
@@ -1010,40 +1140,40 @@ async def monopoly(ctx, private = None):
             for emote in list_emote_game + list_of_emotes:
                 await msg.add_reaction(emote)
 
-
     def hearder_msg():
         return f"{user.discord.mention}, ₿: {user.money}, 🏠: {len(user.properties)}"
-
 
     async def ask(dice_, action):
         await msg.edit(embed=discord_embed(hearder_msg(), dice_, action))
         await put_emotes(["✅", "❌"])
-        
+
         try:
-            emoji, user_ = await client.wait_for("reaction_add", check=lambda reaction, user_: user_.id == user.discord.id and str(reaction.emoji) in ["✅", "❌"] and reaction.message.id == msg.id, timeout=300)
+            emoji, user_ = await client.wait_for("reaction_add",
+                                                 check=lambda reaction, user_: user_.id == user.discord.id and str(
+                                                     reaction.emoji) in ["✅", "❌"] and reaction.message.id == msg.id,
+                                                 timeout=300)
         except asyncio.TimeoutError:
             pass
-    
-        await msg.remove_reaction(emoji, user_)
-        
-        return emoji, user_
 
+        await msg.remove_reaction(emoji, user_)
+
+        return emoji, user_
 
     def discord_embed(username, dice, action):
         # créer un embed discord
-        embed=discord.Embed()
-        embed.add_field(name="Plateau, cases restantes: " + str(len(board.properties_left)), value=print_board(), inline=True)
+        embed = discord.Embed()
+        embed.add_field(name="Plateau, cases restantes: " + str(len(board.properties_left)), value=print_board(),
+                        inline=True)
         embed.add_field(name="Tour de", value=username, inline=False)
         embed.add_field(name="dé", value=dice, inline=False)
         embed.add_field(name="action", value=action, inline=False)
         return embed
 
-    
     async def wait_reactions():
         # fonction main, attends une reaction
-        
+
         # for player_ in list_player:
-            # place_player(player_)
+        # place_player(player_)
 
         await msg.edit(embed=discord_embed(hearder_msg(), "en attente...", "..."))
 
@@ -1061,15 +1191,17 @@ async def monopoly(ctx, private = None):
 
             await asyncio.sleep(3)
 
-
         # si le joueur n'est pas en prison
         if user.turn_jail == 0:
             # attends que le joueur utilise une reaction
             try:
-                emoji, _ = await client.wait_for("reaction_add", check=lambda reaction, user_: user_.id == user.discord.id and str(reaction.emoji) in list_emote_game + ["🛑", "🔄"], timeout=300)
+                emoji, _ = await client.wait_for("reaction_add",
+                                                 check=lambda reaction, user_: user_.id == user.discord.id and str(
+                                                     reaction.emoji) in list_emote_game + ["🛑", "🔄"], timeout=300)
             except asyncio.TimeoutError:
                 # si le joueur est afk on passe son tour
-                await msg.edit(embed=discord_embed(hearder_msg(), "...", f"{user.discord.name} n'a pas joué on saute son tour"))
+                await msg.edit(
+                    embed=discord_embed(hearder_msg(), "...", f"{user.discord.name} n'a pas joué on saute son tour"))
                 await asyncio.sleep(3)
                 return False
 
@@ -1078,12 +1210,11 @@ async def monopoly(ctx, private = None):
             if str(emoji.emoji) == "🎲":
                 await play()
 
-
             elif str(emoji.emoji) == "ℹ️":
-                
+
                 msgs = []
                 tmp = 0
-                embed=discord.Embed(title="emote: nom, loyer, proprietaire, benefice")
+                embed = discord.Embed(title="emote: nom, loyer, proprietaire, benefice")
                 for emote in ["🚉", "🟫", "🟦", "🟪", "🟧", "🟥", "🟨", "🟩", "⬜"]:
                     text = ""
                     for property_ in [property_ for property_ in board.all_properties if property_.emote == emote]:
@@ -1092,27 +1223,27 @@ async def monopoly(ctx, private = None):
                     tmp += 1
                     if tmp == 5 or tmp == 9:
                         msgs.append(await ctx.send(embed=embed))
-                        embed=discord.Embed()
-                    
+                        embed = discord.Embed()
 
                 await put_emotes("❌")
 
                 try:
-                    num, _ = await client.wait_for("reaction_add", check=lambda reaction, user_: user_.id == user.discord.id and str(reaction.emoji) == "❌" and msg.id == reaction.message.id, timeout=300)
+                    num, _ = await client.wait_for("reaction_add",
+                                                   check=lambda reaction, user_: user_.id == user.discord.id and str(
+                                                       reaction.emoji) == "❌" and msg.id == reaction.message.id,
+                                                   timeout=300)
                 except asyncio.TimeoutError:
                     pass
-                
+
                 await msg.clear_reaction("❌")
 
                 for msg_ in msgs:
                     await msg_.delete()
                 await wait_reactions()
-            
 
             elif str(emoji.emoji) == "🛑":
                 await msg.edit(embed=discord_embed("...", "...", "partie annulée"))
                 return True
-            
 
             elif str(emoji.emoji) == "🏳️":
                 emoji, _ = await ask("...", f"**{user.discord.name}** voulez-vous vraiment abandonner ?")
@@ -1126,46 +1257,45 @@ async def monopoly(ctx, private = None):
                     for react in ["❌", "✅"]:
                         await msg.clear_reaction(react)
                     await wait_reactions()
-                
-
-            
 
             elif str(emoji.emoji) == "⬆️":
                 if len(user.properties) == 0:
                     await msg.edit(embed=discord_embed(hearder_msg(), "...", "Vous possedez aucune propriété !"))
                 price_upgrade = 75 * len(user.properties)
-                num, _ = await ask("...", f"**{user.discord.name}** voulez-vous payer {price_upgrade} ₿\n pour augmenter le loyer de toutes vos propriétés de 5 % ?")
+                num, _ = await ask("...",
+                                   f"**{user.discord.name}** voulez-vous payer {price_upgrade} ₿\n pour augmenter le loyer de toutes vos propriétés de 5 % ?")
 
                 if str(num.emoji) == "✅":
                     user.money -= price_upgrade
 
                     for property_ in user.properties:
                         property_.increase_x_rent()
-                    
+
                     text = "Le loyer de toutes vos propriétés a été augmenté !"
                 else:
                     text = "opération annulée"
                 await msg.edit(embed=discord_embed(hearder_msg(), "...", text))
-                
+
                 for react in ["❌", "✅"]:
-                        await msg.clear_reaction(react)
-                    
+                    await msg.clear_reaction(react)
+
                 await asyncio.sleep(3)
                 await wait_reactions()
 
-
             elif str(emoji.emoji) == "🏦":
-                text = "".join(f"{property_.emote}: {property_.name}, {int(property_.rent / 2)}\n" for property_ in user.properties)
+                text = "".join(f"{property_.emote}: {property_.name}, {int(property_.rent / 2)}\n" for property_ in
+                               user.properties)
                 if text == "":
                     await msg.edit(embed=discord_embed(hearder_msg(), "...", "Vous possedez aucune propriété !"))
                     await asyncio.sleep(4)
                     await wait_reactions()
                     return False
 
-
-                embed=discord.Embed()
-                embed.add_field(name=f"Argent", value=f"{user.money} ₿" , inline=False)
-                embed.add_field(name="Instructions", value=f"**{user.discord.name}** écrivez le nom des propriétés a vendre et \"leave\" pour quitter", inline=False)
+                embed = discord.Embed()
+                embed.add_field(name=f"Argent", value=f"{user.money} ₿", inline=False)
+                embed.add_field(name="Instructions",
+                                value=f"**{user.discord.name}** écrivez le nom des propriétés a vendre et \"leave\" pour quitter",
+                                inline=False)
                 embed.add_field(name="prix de vente", value=text, inline=False)
                 msg_info = await ctx.send(embed=embed)
 
@@ -1175,26 +1305,31 @@ async def monopoly(ctx, private = None):
 
                 while True:
                     try:
-                        message = await client.wait_for("message", check=lambda message: message.author.id == user.discord.id and message.channel.id == msg.channel.id, timeout=300)
+                        message = await client.wait_for("message", check=lambda
+                            message: message.author.id == user.discord.id and message.channel.id == msg.channel.id,
+                                                        timeout=300)
                     except asyncio.TimeoutError:
                         await msg_info.delete()
                         await wait_reactions()
                         return False
 
                     content = message.content.lower()
-                    
-                    text = "".join(f"{property_.emote}: {property_.name}, {int(property_.rent / 2)}\n" for property_ in user.properties)
+
+                    text = "".join(f"{property_.emote}: {property_.name}, {int(property_.rent / 2)}\n" for property_ in
+                                   user.properties)
                     if content in ["leave", "quit", "quitter", "partir"] or text == "":
                         await message.delete()
                         await msg_info.delete()
                         await wait_reactions()
                         return False
-                        
+
                     else:
-                        embed=discord.Embed()
-                        embed.add_field(name=f"Argent", value=f"{user.money} ₿" , inline=False)
-                        embed.add_field(name="Instructions", value=f"**{user.discord.name}** écrivez le nom des propriétés a vendre et leave pour arreter", inline=False)
-                        embed.add_field(name="prix de vente", value=text , inline=False)
+                        embed = discord.Embed()
+                        embed.add_field(name=f"Argent", value=f"{user.money} ₿", inline=False)
+                        embed.add_field(name="Instructions",
+                                        value=f"**{user.discord.name}** écrivez le nom des propriétés a vendre et leave pour arreter",
+                                        inline=False)
+                        embed.add_field(name="prix de vente", value=text, inline=False)
 
                         if content in name_properties:
                             index = name_properties.index(content)
@@ -1202,7 +1337,9 @@ async def monopoly(ctx, private = None):
                             embed.add_field(name="info", value=f"\"{content}\" a bien été vendu", inline=False)
 
                         else:
-                            embed.add_field(name="info", value=f"\"{content}\" n'est pas une propriété ou elle ne vous appartient pas\"" , inline=False)
+                            embed.add_field(name="info",
+                                            value=f"\"{content}\" n'est pas une propriété ou elle ne vous appartient pas\"",
+                                            inline=False)
                         await msg_info.edit(embed=embed)
                         await asyncio.sleep(3)
                         await message.delete()
@@ -1211,8 +1348,7 @@ async def monopoly(ctx, private = None):
                 await put_emotes(list_emote_game)
                 await wait_reactions()
 
-            return False       
-
+            return False
 
     async def play():
         # le joueur lance les dés
@@ -1220,7 +1356,7 @@ async def monopoly(ctx, private = None):
         dice1 = random.randint(1, 6)
         dice2 = random.randint(1, 6)
         replay = False
-        
+
         dice = dice1 + dice2
         if dice1 == dice2:
             dice = str(dice) + ", double "
@@ -1232,31 +1368,32 @@ async def monopoly(ctx, private = None):
         square = list_square[user.position]
 
         # propriété
-        if isinstance(square, property):
+        if isinstance(square, Property):
 
             # si le joueur est chez lui
             if square.owner == user:
                 square.increase_x_rent()
                 str_ = str(square.x_rent)[2:4]
-                str_nbr =  str_ + "0" if len(str_) == 1 else str_
+                str_nbr = str_ + "0" if len(str_) == 1 else str_
                 text = f"**{user.discord.name}** vous êtes chez vous !\nle loyer augmente de {str_nbr} %, ( {square.get_rent()} ₿ )"
 
             elif square.rent < user.money and square.owner is None:
-                emoji , _ = await ask(f"le dé est tombé sur ... {dice} !", f"**{user.discord.name}** voulez-vous acheter {square.name} pour {square.rent} ₿ ?")
+                emoji, _ = await ask(f"le dé est tombé sur ... {dice} !",
+                                     f"**{user.discord.name}** voulez-vous acheter {square.name} pour {square.rent} ₿ ?")
 
                 if str(emoji.emoji) == "✅":
                     user.buy(square)
                     text = f"**{user.discord.name}** vous avez acheté {square.name} !"
                 else:
                     text = f"**{user.discord.name}** vous n'avez pas acheté {square.name} !"
-                    
+
             else:
                 if user.turn_protection != 0:
                     text = f"vous devez payer {square.rent if square.owner is None else square.get_rent()} ₿\nmais vous êtes sous protection de carte chance"
-                
+
                 elif square.rent > user.money and square.owner is None:
                     text = f"**{user.discord.name}** vous n'avez pas assez d'argent pour acheter {square.name}"
-                
+
                 elif square.get_rent() < user.money and square.owner is not None:
                     user.money -= square.get_rent()
                     square.owner.money += square.get_rent()
@@ -1270,7 +1407,6 @@ async def monopoly(ctx, private = None):
                     square.benefit += user.money
                     await asyncio.sleep(3)
 
-
         # case chance
         elif callable(square):
             text = luck()
@@ -1279,7 +1415,6 @@ async def monopoly(ctx, private = None):
             await asyncio.sleep(2)
             await msg.edit(embed=discord_embed(hearder_msg(), f"le dé est tombé sur ... {dice} !", text))
             await asyncio.sleep(2)
-
 
         # case impots
         elif len(square) == 2:
@@ -1291,16 +1426,15 @@ async def monopoly(ctx, private = None):
                 user.game_over()
                 text = f"**{user.discord.name}** vous devez payer les {square[0]}, {square[1]} ₿\nmais vous n'avez pas assez d'argent, vous êtes donc éliminer !"
 
-
         # case spécial
         elif type(square) is str:
             if square == "départ":
                 text = "vous recevez 200 ₿ !"
                 user.money += 100
-            
+
             elif square == "prison":
                 text = "vous visitez la prison, bizarrement il y a que des noirs et des arabes"
-            
+
             elif square == "parc gratuit":
                 text = "vous visitez le parc gratuit"
 
@@ -1308,23 +1442,33 @@ async def monopoly(ctx, private = None):
                 text = "le policier vous a pris pour un noir ! il vous jete en prison"
                 user.jail()
 
-        
         await msg.edit(embed=discord_embed(hearder_msg(), f"le dé est tombé sur ... {dice} !", text))
 
         for react in ["❌", "✅"]:
             await msg.clear_reaction(react)
 
-
         if replay and not user.lost:
             await asyncio.sleep(4)
             await wait_reactions()
 
-    ### déclaration des variables
+    # -- déclaration des variables
 
     list_square = []
-    for values in [["départ"], ["boulevard de belleville", 60, "🟫"], [luck], ["rue lecoubre", 60, "🟫"], ["impôts sur le revenue", 200], ["gare monparnasse", 200, "🚉"], ["rue de vaugirard", 100, "🟦"], [luck], ["rue de courcelles", 100, "🟦"], ["avenue de la republique", 120, "🟦"], ["prison"], ["boulevard de la vilette", 140, "🟪"], [luck], ["avenue de neuilly", 140, "🟪"], ["rue de paradis", 160, "🟪"], ["gare de Lyon", 200, "🚉"], ["avenue mozart", 180, "🟧"], [luck], ["boulevard saint-michel", 180, "🟧"], ["place pigalle", 200, "🟧"], ["parc gratuit"], ["avenue matignon", 220, "🟥"], [luck], ["boulevard malesherbes", 220, "🟥"], ["avenue henri-martin", 240, "🟥"], ["gare du nord", 200, "🚉"], ["faurbourg saint-honoré", 260, "🟨"], ["place de la bourse", 260, "🟨"], [luck], ["rue la fayette", 280, "🟨"], ["allez en prison"], ["avenue de breteuil", 300, "🟩"], ["avenue foch", 300, "🟩"], [luck], ["boulevard des capucines", 320, "🟩"], ["gare de saint-Lazare", 200, "🚉"], [luck], ["avenue des champs-élysées", 350, "⬜"], ["taxes de luxe", 100], ["rue de la paix", 400, "⬜"]]:
+    for values in [["départ"], ["boulevard de belleville", 60, "🟫"], [luck], ["rue lecoubre", 60, "🟫"],
+                   ["impôts sur le revenue", 200], ["gare monparnasse", 200, "🚉"], ["rue de vaugirard", 100, "🟦"],
+                   [luck], ["rue de courcelles", 100, "🟦"], ["avenue de la republique", 120, "🟦"], ["prison"],
+                   ["boulevard de la vilette", 140, "🟪"], [luck], ["avenue de neuilly", 140, "🟪"],
+                   ["rue de paradis", 160, "🟪"], ["gare de Lyon", 200, "🚉"], ["avenue mozart", 180, "🟧"], [luck],
+                   ["boulevard saint-michel", 180, "🟧"], ["place pigalle", 200, "🟧"], ["parc gratuit"],
+                   ["avenue matignon", 220, "🟥"], [luck], ["boulevard malesherbes", 220, "🟥"],
+                   ["avenue henri-martin", 240, "🟥"], ["gare du nord", 200, "🚉"],
+                   ["faurbourg saint-honoré", 260, "🟨"], ["place de la bourse", 260, "🟨"], [luck],
+                   ["rue la fayette", 280, "🟨"], ["allez en prison"], ["avenue de breteuil", 300, "🟩"],
+                   ["avenue foch", 300, "🟩"], [luck], ["boulevard des capucines", 320, "🟩"],
+                   ["gare de saint-Lazare", 200, "🚉"], [luck], ["avenue des champs-élysées", 350, "⬜"],
+                   ["taxes de luxe", 100], ["rue de la paix", 400, "⬜"]]:
         if len(values) == 3:
-            list_square.append(property(values[0], values[1], values[2]))
+            list_square.append(Property(values[0], values[1], values[2]))
         elif len(values) == 2:
             list_square.append([values[0], values[1]])
         elif len(values) == 1 and type(values[0]) is str:
@@ -1332,11 +1476,10 @@ async def monopoly(ctx, private = None):
         else:
             list_square.append(values[0])
 
-
     board = _board(list_square)
 
     matrice_board = [
-        ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], 
+        ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"],
         ["⬛", "🚗", "🟥", "❔", "🟥", "🟥", "🚉", "🟨", "🟨", "❔", "🟨", "👮", "⬛"],
         ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
         ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"],
@@ -1349,27 +1492,27 @@ async def monopoly(ctx, private = None):
         ["⬛", "🟪", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬜", "⬛"],
         ["⬛", "⛓️", "🟦", "🟦", "❔", "🟦", "🚉", "💵", "🟫", "❔", "🟫", "⬅️", "⬛"],
         ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"]
-        ]
-
+    ]
 
     min = 1 if private == "normal" else -1
     max = 32
 
-    prepa_emote = ["💤", "🦑", "🦥", "♿", "🛒", "👑", "☃️", "🐷", "🐭", "🐐", "🍩", "🎏", "☄️", "🦦", "🍑", "🛺", "🦉", "🦀"]
+    prepa_emote = ["💤", "🦑", "🦥", "♿", "🛒", "👑", "☃️", "🐷", "🐭", "🐐", "🍩", "🎏", "☄️", "🦦", "🍑", "🛺", "🦉",
+                   "🦀"]
     list_emote = []
     list_emote_game = ["🎲", "ℹ️", "⬆️", "🏳️", "🏦"]
 
-    list_player = [player(_user, random_emote()) for _user in list_user]
+    list_player = [Player(_user, random_emote()) for _user in list_user]
     random.shuffle(list_player)
 
-    embed=discord.Embed()
+    embed = discord.Embed()
     for player_ in list_player:
         embed.add_field(name=player_.discord.name, value=player_.emote, inline=True)
     await ctx.send(embed=embed)
 
     msg = await ctx.send(embed=discord_embed("...", "...", "..."))
     await put_emotes(list_emote_game)
-    
+
     index_player = 0
 
     while True:
@@ -1378,7 +1521,7 @@ async def monopoly(ctx, private = None):
         if len(list_player) == 1:
             await msg.edit(embed=discord_embed("...", "...", f"Partie terminée le gagnant est {user.discord.mention}"))
             return
-        
+
         if await wait_reactions():
             return
 
@@ -1389,14 +1532,12 @@ async def monopoly(ctx, private = None):
         index_player = 0 if index_player >= len(list_player) - 1 else index_player + 1
 
 
-
 @client.command(aliases=["p4"])
 async def puissance4(ctx, member):
-
     response, member = await start_game_duo(ctx, member, "puissance 4")
     if response is False:
         return
-    
+
     rond_gris = "⚫"
     rond_rouge = "🔴"
     rond_jaune = "🟡"
@@ -1419,7 +1560,7 @@ async def puissance4(ctx, member):
     couleur = "jaune"
 
     async def send():
-        embed=discord.Embed(color=0x000000, title="Puissance 4")
+        embed = discord.Embed(color=0x000000, title="Puissance 4")
         embed.add_field(name="Preparation", value="...", inline=False)
         embed.add_field(name="Plateau", value=f"1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str_plateau(plateau)}", inline=False)
         msg = await ctx.send(embed=embed)
@@ -1429,8 +1570,8 @@ async def puissance4(ctx, member):
 
     msg = await send()
 
-    async def edit_embed(title = None, message = None):
-        embed=discord.Embed(color=dico_p4[couleur][2], title="Puissance 4")
+    async def edit_embed(title=None, message=None):
+        embed = discord.Embed(color=dico_p4[couleur][2], title="Puissance 4")
         embed.add_field(name="Tour de", value=dico_p4[couleur][0].mention, inline=False if title is None else True)
         if title is not None:
             embed.add_field(name=title, value=message, inline=True)
@@ -1439,7 +1580,9 @@ async def puissance4(ctx, member):
 
     async def end():
         try:
-            num, user = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) == "🔄" and user.id in [dico_p4["rouge"][0].id, dico_p4["jaune"][0].id], timeout=30)
+            num, user = await client.wait_for("reaction_add",
+                                              check=lambda reaction, user: str(reaction.emoji) == "🔄" and user.id in [
+                                                  dico_p4["rouge"][0].id, dico_p4["jaune"][0].id], timeout=30)
         except asyncio.TimeoutError:
             return None
         plateau = [[rond_gris for _ in range(7)] for _ in range(6)]
@@ -1449,9 +1592,14 @@ async def puissance4(ctx, member):
     while True:
         while plateau[0].count(rond_gris) != 0:
             await edit_embed()
-            
+
             try:
-                num, _ = await client.wait_for("reaction_add", check=lambda reaction, user: str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "🔄", "⬇️"] and user.id == dico_p4[couleur][0].id, timeout=180)
+                num, _ = await client.wait_for("reaction_add",
+                                               check=lambda reaction, user: str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣",
+                                                                                                    "4️⃣", "5️⃣", "6️⃣",
+                                                                                                    "7️⃣", "🔄",
+                                                                                                    "⬇️"] and user.id ==
+                                                                            dico_p4[couleur][0].id, timeout=180)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(num.emoji, dico_p4[couleur][0])
@@ -1481,25 +1629,31 @@ async def puissance4(ctx, member):
                 positionx, positiony = place()
 
                 if (positionx, positiony) == (-1, -1):
-                    await ctx.send(f"{dico_p4[couleur][0].mention} la colonne {dict_number[num.emoji] + 1} est pleine !")
+                    await ctx.send(
+                        f"{dico_p4[couleur][0].mention} la colonne {dict_number[num.emoji] + 1} est pleine !")
                 else:
 
                     listex = plateau[positionx]
                     listey = [plateau[i][positiony] for i in range(6)]
 
-                    listeDiago1 = [plateau[positionx - i][positiony - i] for i in range(0, 7) if positionx - i >= 0 and positiony - i >= 0]
+                    listeDiago1 = [plateau[positionx - i][positiony - i] for i in range(0, 7) if
+                                   positionx - i >= 0 and positiony - i >= 0]
                     listeDiago1.reverse()
-                    listeDiago1 += [plateau[positionx + i][positiony + i] for i in range(1, 7) if positiony + i < 7 and positionx + i < 6]
+                    listeDiago1 += [plateau[positionx + i][positiony + i] for i in range(1, 7) if
+                                    positiony + i < 7 and positionx + i < 6]
                     listeDiago1.reverse()
 
-                    listeDiago2 = [plateau[positionx - i][positiony + i] for i in range(0, 7) if positionx - i >= 0 and positiony + i <= 6]
+                    listeDiago2 = [plateau[positionx - i][positiony + i] for i in range(0, 7) if
+                                   positionx - i >= 0 and positiony + i <= 6]
                     listeDiago2.reverse()
-                    listeDiago2 += [plateau[positionx + i][positiony - i] for i in range(1, 7) if positionx + i < 6 and positiony - i >= 0]
+                    listeDiago2 += [plateau[positionx + i][positiony - i] for i in range(1, 7) if
+                                    positionx + i < 6 and positiony - i >= 0]
                     listeDiago2.reverse()
 
                     for liste in [listex, listey, listeDiago1, listeDiago2]:
                         tmp = "".join(liste)
-                        if tmp.count(dico_p4[couleur][1]) != tmp.replace(dico_p4[couleur][1] * 4, "").count(dico_p4[couleur][1]):
+                        if tmp.count(dico_p4[couleur][1]) != tmp.replace(dico_p4[couleur][1] * 4, "").count(
+                                dico_p4[couleur][1]):
                             await edit_embed("Vainqueur", dico_p4[couleur][0].mention)
                             plateau = await end()
 
@@ -1513,6 +1667,7 @@ async def puissance4(ctx, member):
         if plateau is None:
             return
 
+
 @puissance4.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -1521,7 +1676,7 @@ async def on_message_error(ctx, error):
 
 # - admin
 @client.command(aliases=["config", "dico"])
-async def view_config(ctx, option = None):
+async def view_config(ctx, option=None):
     if ctx.author.id != 236853417681616906:
         return
 
@@ -1531,7 +1686,7 @@ async def view_config(ctx, option = None):
         msg = dico[ctx.message.guild.id]
 
     await ctx.send(msg)
-    
+
 
 @client.command()
 @has_permissions(administrator=True)
@@ -1557,6 +1712,7 @@ async def reaction(ctx, channel, id, *, react):
             await msg.add_reaction(e)
         await ctx.message.add_reaction("✅")
 
+
 @reaction.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
@@ -1567,25 +1723,29 @@ async def on_message_error(ctx, error):
 
 @client.command()
 @has_permissions(administrator=True)
-async def toggle_welcome_message(ctx, msg = None):
+async def toggle_welcome_message(ctx, msg=None):
     if dico[ctx.guild.id]["welcome_msg"] is None:
         if msg is None:
-            await ctx.send(f"**quel message de bienvenue voulez-vous mettre ?**\npour que le bot écrive le nom du nouvel arrivant dans message écrivez $username$\nexemple: le message \"bienvenue $username$\" donnera \"bienvenue {ctx.author.name}\"")
-            response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=180)
+            await ctx.send(
+                f"**quel message de bienvenue voulez-vous mettre ?**\npour que le bot écrive le nom du nouvel arrivant dans message écrivez $username$\nexemple: le message \"bienvenue $username$\" donnera \"bienvenue {ctx.author.name}\"")
+            response = await client.wait_for("message", check=lambda
+                message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=180)
             msg = response.content
         dico[ctx.guild.id]["welcome_msg"] = msg
         dico_update()
         await ctx.send("le nouveau message de bienvenue est enregistré")
     else:
-        await ctx.send(f"Le message actuel est \n\n\"{dico[ctx.guild.id]['welcome_msg']}\" \n\nVoulez-vous désactivé le message de bienvenue ?")
-        response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id and message.content.lower() in ["o", "oui", "yes", "y", "no", "n", "non"], timeout=180)
+        await ctx.send(
+            f"Le message actuel est \n\n\"{dico[ctx.guild.id]['welcome_msg']}\" \n\nVoulez-vous désactivé le message de bienvenue ?")
+        response = await client.wait_for("message", check=lambda
+            message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id and message.content.lower() in [
+            "o", "oui", "yes", "y", "no", "n", "non"], timeout=180)
         if response.content.lower() in ["o", "oui", "yes", "y"]:
             dico[ctx.guild.id]["welcome_msg"] = None
             dico_update()
             await ctx.send("La fonction message de bienvenue est désactivée")
         else:
             await response.add_reaction("✅")
-            
 
 
 @client.command()
@@ -1601,6 +1761,7 @@ async def say(ctx, channel, *, message):
         await channel.send(message)
         await ctx.message.add_reaction("✅")
 
+
 @say.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -1609,11 +1770,12 @@ async def on_message_error(ctx, error):
 
 @client.command()
 @has_permissions(administrator=True)
-async def toggle_autorole(ctx, role : discord.Role = None):
+async def toggle_autorole(ctx, role: discord.Role = None):
     if dico[ctx.guild.id]["autorole"] is None:
         if role is None:
             await ctx.send("quel rôle voulez-vous mettre ?")
-            response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+            response = await client.wait_for("message", check=lambda
+                message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
             if "<@&" not in response.content.lower():
                 await ctx.send(f"\"{response.content}\" n'est pas un rôle")
                 return
@@ -1630,18 +1792,19 @@ async def toggle_autorole(ctx, role : discord.Role = None):
 
 @client.command(aliases=["c"])
 @has_permissions(administrator=True)
-async def clear(ctx, *, arg = "1"):
+async def clear(ctx, *, arg="1"):
     if arg.isdigit():
-        await ctx.channel.purge(limit = int(arg) + 1)
+        await ctx.channel.purge(limit=int(arg) + 1)
     else:
         tmp = 0
-        async for message in ctx.history(limit = 500):
+        async for message in ctx.history(limit=500):
             tmp += 1
             if message.jump_url == arg:
-                await ctx.send(f"{tmp - 2} messages sélectionnés jusqu'au message demandé. voulez-vous les supprimer ? (oui/non)")
-                msg = await client.wait_for("message", check = lambda message: message.author == ctx.author)
+                await ctx.send(
+                    f"{tmp - 2} messages sélectionnés jusqu'au message demandé. voulez-vous les supprimer ? (oui/non)")
+                msg = await client.wait_for("message", check=lambda message: message.author == ctx.author)
                 if msg.content.lower() in ["oui", "o", "y", "yes"]:
-                    await ctx.channel.purge(limit = tmp + 1)
+                    await ctx.channel.purge(limit=tmp + 1)
                 else:
                     await msg.add_reaction("✅")
                 return
@@ -1650,9 +1813,10 @@ async def clear(ctx, *, arg = "1"):
 @client.command()
 @has_permissions(administrator=True)
 async def nuke(ctx, channel=None):
-    if channel == None:
+    if channel is None:
         await ctx.send("quel salon voulez-vous supprimer ?")
-        channel = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+        channel = await client.wait_for("message", check=lambda
+            message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
 
     if not channel.isdigit():
         channel = replaces(channel, "<#", "", ">", "")
@@ -1661,15 +1825,18 @@ async def nuke(ctx, channel=None):
     if channel is None:
         await ctx.send("salon non trouvé")
         return
-    
+
     await ctx.send(f"Voulez-vous vraiment remettre à zéro le salon {channel.mention} ?")
     try:
-        reponse = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout = 30)
+        reponse = await client.wait_for("message", check=lambda
+            message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
     except asyncio.TimeoutError:
         await ctx.send("délai dépassé")
         return
     if reponse.content.lower() in ["yes", "y", "o", "oui"]:
-        await ctx.guild.create_text_channel(channel.name, overwrites = channel.overwrites, category = channel.category, position = channel.position, topic = channel.topic, nsfw = channel.nsfw, slowmode_delay = channel.slowmode_delay)
+        await ctx.guild.create_text_channel(channel.name, overwrites=channel.overwrites, category=channel.category,
+                                            position=channel.position, topic=channel.topic, nsfw=channel.nsfw,
+                                            slowmode_delay=channel.slowmode_delay)
         await channel.delete()
         await ctx.send(f"Le salon **{channel.name}** à été nuke !")
 
@@ -1680,7 +1847,8 @@ async def toggle_rolevocal(ctx, role: discord.Role = None):
     if dico[ctx.guild.id]["voc"] is None:
         if role is None:
             await ctx.send("quel rôle voulez-vous mettre ?")
-            response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+            response = await client.wait_for("message", check=lambda
+                message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
             if "<@&" not in response.content.lower():
                 await ctx.send(f"\"{response.content}\" n'est pas un rôle")
                 return
@@ -1688,7 +1856,8 @@ async def toggle_rolevocal(ctx, role: discord.Role = None):
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
         dico[ctx.guild.id]["voc"] = role.id
         dico_update()
-        await ctx.send(f"Le rôle **{role.name}** est maintenant donné à toutes les personnes qui rentre dans un salon vocal !")
+        await ctx.send(
+            f"Le rôle **{role.name}** est maintenant donné à toutes les personnes qui rentre dans un salon vocal !")
     else:
         dico[ctx.author.guild.id]["voc"] = None
         dico_update()
@@ -1700,7 +1869,8 @@ async def toggle_rolevocal(ctx, role: discord.Role = None):
 async def toggle_logs(ctx):
     if dico[ctx.author.guild.id]["logs"] is None:
         await ctx.send("Dans quel salon voulez-vous activer les logs ?")
-        response = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
+        response = await client.wait_for("message", check=lambda
+            message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
         if "<#" not in response.content.lower():
             await ctx.send(f"\"{response.content}\" n'est pas un salon")
             return
@@ -1717,7 +1887,8 @@ async def toggle_logs(ctx):
 
 @client.command()
 async def view(ctx):
-    reponse = await client.wait_for("message", check=lambda message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout = 30)
+    reponse = await client.wait_for("message", check=lambda
+        message: message.author.id == ctx.author.id and ctx.channel.id == message.channel.id, timeout=30)
     print(reponse.content)
 
 
@@ -1755,6 +1926,7 @@ async def shutdown(ctx):
     await client.close()
     exit()
 
+
 @client.command()
 async def dm(ctx, member, *, msg):
     if ctx.author.id != 236853417681616906:
@@ -1767,12 +1939,14 @@ async def dm(ctx, member, *, msg):
     await member.send(msg)
     await ctx.message.add_reaction("✅")
 
+
 @dm.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
         await ctx.send("Le membre n'existe pas ou est introuvable")
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
+
 
 @client.command()
 async def get_dm(ctx, member):
@@ -1789,24 +1963,28 @@ async def get_dm(ctx, member):
         str = message.author.name + ": " + message.content + "\n-----------\n\n"
         await ctx.send(str)
 
+
 @get_dm.error
 async def on_message_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
         await ctx.send("Le membre n'existe pas ou est introuvable")
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Il manque des arguments ! syntaxe: {prefix}dm <membre> <msg>")
-        
+
+
 # --- logs       
 # - message
 @client.event
 async def on_message_delete(message):
     if dico[message.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"un message de {message.author.name} a été supprimé", icon_url=message.author.avatar_url)
         embed.set_thumbnail(url=get_img("trash"))
 
         if message.embeds:
-            await channel_send(dico[message.guild.id]["logs"]).send(content=f"un message avec un embed de **{message.author.name}** à été supprimé\nCe qui à été supprimé est le embed de ce message" ,embed=message.embeds[0])
+            await channel_send(dico[message.guild.id]["logs"]).send(
+                content=f"un message avec un embed de **{message.author.name}** à été supprimé\nCe qui à été supprimé est le embed de ce message",
+                embed=message.embeds[0])
             return
         else:
             if message.content == "":
@@ -1825,10 +2003,11 @@ async def on_message_delete(message):
                 files.append(attachment.filename)
 
             for index, file in enumerate(files):
-                embed=discord.Embed(color=0xf0a3ff)
-                embed.set_author(name=f"un message de {message.author.name} a été supprimé", icon_url=message.author.avatar_url)
+                embed = discord.Embed(color=0xf0a3ff)
+                embed.set_author(name=f"un message de {message.author.name} a été supprimé",
+                                 icon_url=message.author.avatar_url)
                 embed.set_thumbnail(url=get_img("trash"))
-                    
+
                 if file.endswith(".mp4"):
                     embed.video.url = f"attachment://{file}"
                     embed.video.height = message.attachments[index]
@@ -1836,7 +2015,7 @@ async def on_message_delete(message):
 
                 elif file.endswith((".png", ".jpg", ".jpeg")):
                     embed.set_image(url=f"attachment://{file}")
-                    
+
                 embed.add_field(name=f"󠀮salon", value=message.channel.mention, inline=True)
                 embed.add_field(name="󠀮 ", value=message.author.mention + " - " + get_date_time(), inline=False)
                 ds_file = discord.File(file)
@@ -1844,19 +2023,20 @@ async def on_message_delete(message):
                 os.remove(file)
 
 
-
 @client.event
 async def on_message_edit(before, after):
     if before.author.bot or before.guild is None or before.content == after.content:
         return
     if dico[before.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{before.author.name} a modifié un message", icon_url=before.author.avatar_url)
         embed.set_thumbnail(url=get_img("edit"))
         embed.add_field(name="avant", value=before.content, inline=True)
         embed.add_field(name="󠀮salon", value=before.channel.mention, inline=True)
         embed.add_field(name="après", value=after.content, inline=False)
-        embed.add_field(name="󠀮 ", value=f"{after.author.mention + ' - '  + get_date_time()} - [link]({before.jump_url})", inline=False)
+        embed.add_field(name="󠀮 ",
+                        value=f"{after.author.mention + ' - ' + get_date_time()} - [link]({before.jump_url})",
+                        inline=False)
         await channel_send(dico[before.guild.id]["logs"]).send(embed=embed)
 
 
@@ -1864,7 +2044,7 @@ async def on_message_edit(before, after):
 @client.event
 async def on_guild_channel_create(channel):
     if dico[channel.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"channel créé", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("plus"))
         embed.add_field(name=f"󠀮salon", value=channel.name, inline=True)
@@ -1875,7 +2055,7 @@ async def on_guild_channel_create(channel):
 @client.event
 async def on_guild_channel_delete(channel):
     if dico[channel.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"channel supprimé", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("trash"))
         embed.add_field(name=f"󠀮salon", value=channel.name, inline=True)
@@ -1884,11 +2064,11 @@ async def on_guild_channel_delete(channel):
 
 
 @client.event
-async def on_guild_channel_update(before , after):
+async def on_guild_channel_update(before, after):
     if before.position != after.position:
         return
     if dico[before.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{after.name} a changé de nom", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("edit"))
         embed.add_field(name="avant", value=before.name, inline=True)
@@ -1901,7 +2081,7 @@ async def on_guild_channel_update(before , after):
 @client.event
 async def on_guild_role_create(role):
     if dico[role.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"un nouveau rôle a été créé", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("plus"))
         embed.add_field(name="nom", value=role.name, inline=True)
@@ -1914,7 +2094,7 @@ async def on_guild_role_update(before, after):
     if before.name == after.name:
         return
     if dico[before.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"le rôle {after.name} a été modifié", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("edit"))
         embed.add_field(name="avant", value=before.name, inline=True)
@@ -1926,7 +2106,7 @@ async def on_guild_role_update(before, after):
 @client.event
 async def on_guild_role_delete(role):
     if dico[role.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"le rôle {role} a été supprimer", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("trash"))
         embed.add_field(name="nom", value=role.name, inline=True)
@@ -1934,18 +2114,18 @@ async def on_guild_role_delete(role):
         await channel_send(dico[role.guild.id]["logs"]).send(embed=embed)
 
 
-# - gestion/ban/kick/gens/member
+#  - gestion/ban/kick/gens/member
 @client.event
 async def on_guild_join(guild):
     if guild.id not in dico:
-        dico[guild.id] =  {"name": guild.name, "logs": None, "voc": None, "autorole": None}
+        dico[guild.id] = {"name": guild.name, "logs": None, "voc": None, "autorole": None}
     dico_update()
 
 
 @client.event
 async def on_member_ban(guild, member):
     if dico[guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} a été banni", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("notif"))
         embed.add_field(name="membre", value=member.mention, inline=True)
@@ -1956,7 +2136,7 @@ async def on_member_ban(guild, member):
 @client.event
 async def on_member_unban(guild, member):
     if dico[guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} a été débanni", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("notif"))
         embed.add_field(name="membre", value=member.mention, inline=True)
@@ -1967,23 +2147,23 @@ async def on_member_unban(guild, member):
 @client.event
 async def on_member_join(member):
     if dico[member.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} a rejoint le serveur", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("notif"))
         embed.add_field(name="membre", value=member.mention, inline=True)
         embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
         await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
     if dico[member.guild.id]["autorole"] is not None and not member.bot:
-        role = discord.utils.get(member.guild.roles, id = dico[member.guild.id]["autorole"])
+        role = discord.utils.get(member.guild.roles, id=dico[member.guild.id]["autorole"])
         await member.add_roles(role)
     if dico[member.guild.id]["welcome_msg"] is not None:
         await member.send(dico[member.guild.id]["welcome_msg"].replace("$username$", member.name))
 
-        
+
 @client.event
 async def on_member_remove(member):
     if dico[member.guild.id]["logs"] is not None:
-        embed=discord.Embed(color=0xf0a3ff)
+        embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name=f"{member.name} a quitté le serveur", icon_url=get_img("setting"))
         embed.set_thumbnail(url=get_img("notif"))
         embed.add_field(name="membre", value=member.mention, inline=True)
@@ -1995,7 +2175,7 @@ async def on_member_remove(member):
 async def on_member_update(before, after):
     if dico[before.guild.id]["logs"] is not None:
         if before.display_name != after.display_name:
-            embed=discord.Embed(color=0xf0a3ff)
+            embed = discord.Embed(color=0xf0a3ff)
             embed.set_author(name=f"{before.name} a changé de surnom", icon_url=get_img("setting"))
             embed.set_thumbnail(url=get_img("edit"))
             embed.add_field(name="avant", value=before.display_name, inline=True)
@@ -2008,7 +2188,7 @@ async def on_member_update(before, after):
                 for role in after.roles:
                     if role not in before.roles:
                         if role.id != dico[before.guild.id]["voc"]:
-                            embed=discord.Embed(color=0xf0a3ff)
+                            embed = discord.Embed(color=0xf0a3ff)
                             embed.set_author(name=f"{before.name} a gagné un rôle", icon_url=before.avatar_url)
                             embed.set_thumbnail(url=get_img("plus"))
                             embed.add_field(name="role", value=role.mention, inline=True)
@@ -2019,7 +2199,7 @@ async def on_member_update(before, after):
                 for role in before.roles:
                     if role not in after.roles:
                         if role.id != dico[before.guild.id]["voc"]:
-                            embed=discord.Embed(color=0xf0a3ff)
+                            embed = discord.Embed(color=0xf0a3ff)
                             embed.set_author(name=f"{before.name} a perdu un rôle", icon_url=before.avatar_url)
                             embed.set_thumbnail(url=get_img("minus"))
                             embed.add_field(name="role", value=role.mention, inline=True)
@@ -2033,7 +2213,7 @@ async def on_voice_state_update(member, before, after):
     if dico[member.guild.id]["logs"] is not None:
         if before.channel != after.channel:
 
-            embed=discord.Embed(color=0xf0a3ff)
+            embed = discord.Embed(color=0xf0a3ff)
 
             if before.channel is None:
                 embed.set_author(name=f"{member.name} a rejoint un salon vocal", icon_url=member.avatar_url)
@@ -2041,7 +2221,7 @@ async def on_voice_state_update(member, before, after):
                 embed.add_field(name=f"󠀮salon", value=after.channel.mention, inline=True)
 
                 if dico[member.guild.id]["voc"] is not None:
-                    await member.add_roles(discord.utils.get(member.guild.roles, id = dico[member.guild.id]["voc"]))
+                    await member.add_roles(discord.utils.get(member.guild.roles, id=dico[member.guild.id]["voc"]))
 
             elif after.channel is None:
                 embed.set_author(name=f"{member.name} a quitté un salon vocal", icon_url=member.avatar_url)
@@ -2049,10 +2229,10 @@ async def on_voice_state_update(member, before, after):
                 embed.add_field(name=f"󠀮salon", value=before.channel.mention, inline=True)
 
                 if dico[member.guild.id]["voc"] is not None:
-                    await member.remove_roles(discord.utils.get(member.guild.roles, id = dico[member.guild.id]["voc"]))
+                    await member.remove_roles(discord.utils.get(member.guild.roles, id=dico[member.guild.id]["voc"]))
 
             else:
-                embed=discord.Embed(color=0xf0a3ff)
+                embed = discord.Embed(color=0xf0a3ff)
                 embed.set_author(name=f"{member.name} a changé de salon vocal", icon_url=member.avatar_url)
                 embed.set_thumbnail(url=get_img("shuffle"))
                 embed.add_field(name=f"󠀮avant", value=before.channel.mention, inline=True)
@@ -2060,5 +2240,6 @@ async def on_voice_state_update(member, before, after):
 
             embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
             await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
+
 
 client.run(token)
