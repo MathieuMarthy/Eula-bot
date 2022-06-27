@@ -471,7 +471,7 @@ async def on_message_error(ctx, error):
 
 @client.command()
 async def version(ctx):
-    embed = discord.Embed(color=0xf0a3ff, title="Version - Changelog", description=f"Version: {version_bot}\nChangelog:\n{changelog}")
+    embed = discord.Embed(color=0xf0a3ff, title="Version - Changelog", description=f"**Version:** {version_bot}\n\nChangelog:\n\n{changelog}")
     await ctx.send(embed=embed)
 
 
