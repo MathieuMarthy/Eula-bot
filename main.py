@@ -272,7 +272,7 @@ async def top(ctx, nbr=5):
         tmp = tmp[:nbr]
     tmp = [f"{k} : {divmod(v, 60)[0]}h {v % 60}min" for k, v in tmp]
 
-    embed = discord.Embed(title=f"Top {len(tmp)} des activités", description="\n".join(tmp), color=0xf0a3ff)
+    embed = discord.Embed(title=f"Top {len(tmp)} des activités du mois", description="\n".join(tmp), color=0xf0a3ff)
     await ctx.send(embed=embed)
 
 
