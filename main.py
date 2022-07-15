@@ -25,8 +25,8 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.5"
-changelog = "**Randomizer**\n-cardre en or sur l'objet mythique\n-ajouts des contraintes d'items (runaan + items incompatibles)"
+version_bot = "4.0.6"
+changelog = "**top**\n-les stats sont réinitialiser tous les mois"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(
@@ -34,6 +34,8 @@ client = commands.Bot(
                     "<@!914226393565499412>"], help_command=None, intents=default_intents)
 dico_activity = json.load(open(os.path.join(path, "activities.json"), "r"))
 dico_activity = {int(k): v for k, v in dico_activity.items()}
+month_file = open(os.path.join(path, "month.txt")).read()
+loop_counter_month = 0
 
 # --- dico
 dico = ast.literal_eval(open(os.path.join(path, "server.txt"), "r").read().replace("b'", "'").replace("'", '"'))
@@ -42,12 +44,13 @@ dico = ast.literal_eval(open(os.path.join(path, "server.txt"), "r").read().repla
 print("connection...")
 
 
-def utf8(string: str) -> bytes:
+def utf8(string: str) -> str:
     return string.encode("utf-8")
 
 
 @client.event
 async def on_ready():
+    global status
     print(f"connecté ! ⊂(◉‿◉)つ à {client.user.name}")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{prefix}help"))
 
@@ -70,7 +73,18 @@ async def on_ready():
 # - loop
 @tasks.loop(seconds=60)
 async def loop():
-    global dico_activity
+    global dico_activity, month_file, loop_counter_month
+
+    loop_counter_month += 1
+    if loop_counter_month >= 5:
+        loop_counter_month = 0
+
+        actual_month = str(datetime.today().month)
+        if month_file != actual_month:
+            month_file = actual_month
+
+            open(os.path.join(path, "month.txt"), "w").write(str(actual_month))
+            dico_activity = {}
 
     for server in client.guilds:
 
@@ -81,6 +95,7 @@ async def loop():
 
                 for activity in member.activities:
                     if activity.type == discord.ActivityType.playing:
+
                         dico_activity[server.id][activity.name] = dico_activity[server.id].get(activity.name, 0) + 1
 
     json.dump(dico_activity, open(os.path.join(path, "activities.json"), "w"))
@@ -135,7 +150,6 @@ async def start_game_multi(ctx, limit, name_game):
         limit = int(limit)
     else:
         limit = 5
-
     msg = await ctx.send(f"**Partie de {name_game} lancée !**\npour participer réagissez avec 🖐️")
     await msg.add_reaction("🖐️")
     await asyncio.sleep(15)
@@ -673,9 +687,8 @@ async def help(ctx):
 
         await msg.edit(embed=embed)
 
-    # - jeux
 
-
+# - jeux
 @client.command(aliases=["10fastfinger", "10ff"])
 async def jeu_reaction(ctx, limit=5):
     list_user, dico_points = await start_game_multi(ctx, limit, "10fastfinger")
@@ -1171,9 +1184,6 @@ async def monopoly(ctx, private=None):
 
     async def wait_reactions():
         # fonction main, attends une reaction
-
-        # for player_ in list_player:
-        # place_player(player_)
 
         await msg.edit(embed=discord_embed(hearder_msg(), "en attente...", "..."))
 
@@ -2114,7 +2124,7 @@ async def on_guild_role_delete(role):
         await channel_send(dico[role.guild.id]["logs"]).send(embed=embed)
 
 
-#  - gestion/ban/kick/gens/member
+# - gestion/ban/kick/gens/member
 @client.event
 async def on_guild_join(guild):
     if guild.id not in dico:
