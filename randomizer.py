@@ -43,7 +43,7 @@ def runes() -> list[str]:
 
 
 def champion() -> str:
-    return assets_path + "/champions/" + random.choice(os.listdir(assets_path + "/champions"))
+    return f"{assets_path}/champions/" + random.choice(os.listdir(f"{assets_path}/champions"))
 
 
 def lane():
@@ -78,11 +78,17 @@ def summoners(jungle: bool = False) -> list[str]:
     return random_summoners
 
 
-def build(gived_lane: str = "random") -> dict:
+def build(option: str = "random") -> dict:
     dico = {"champion": champion(), "runes": runes(), "items": [], "summoners": [], "starter": ""}
 
-    if gived_lane in [1, 2, 3, 4, 5]:
-        dico["lane"] = gived_lane
+    if option in [1, 2, 3, 4, 5]:
+        dico["lane"] = option
+    
+    option =  f"{option}.png".replace("'", "").replace("-", "").capitalize()
+    liste = data_lol.melee_champion + data_lol.range_champion
+    if option in liste:
+        dico["champion"] = f"{assets_path}/champions/{option}"
+        dico["lane"] = lane()
     else:
         dico["lane"] = lane()
 

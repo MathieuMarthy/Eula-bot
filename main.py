@@ -25,8 +25,8 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.6"
-changelog = "**top**\n-les stats sont réinitialiser tous les mois"
+version_bot = "4.0.7"
+changelog = "**rand**\non peut mettre le nom d'un champion"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(
@@ -245,7 +245,7 @@ async def randomizer(ctx, option="random"):
                             mention_author=False)
             return
 
-    if option == "team":
+    elif option == "team":
         role = [1, 2, 3, 4, 5]
         random.shuffle(role)
         for _ in range(5):
@@ -257,6 +257,7 @@ async def randomizer(ctx, option="random"):
             os.remove(image_path)
             await asyncio.sleep(0.1)
         return
+    
 
     image_path = randomizer_image(option)
     with open(image_path, "rb") as f:
