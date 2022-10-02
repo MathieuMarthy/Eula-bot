@@ -25,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.8"
+version_bot = "4.0.9"
 changelog = "**rand**\non peut mettre le nom d'un champion"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
@@ -140,9 +140,12 @@ async def check_permissions(ctx):
     guild_roles_id = [role.id for role in guild.roles]
 
     for role in [role_vocal, role_autorole]:
+        if role == None:
+            continue
+
         if guild_roles_id.index(role_eula.id) < guild_roles_id.index(role.id):
-            await ctx.send(f"Le role Eula doit être plus haut que le rôle {role.name}")
-    
+            await ctx.send(f"Le role **Eula** doit être plus haut que le rôle **{role.name}** sinon je ne peux pas le donner")
+
 
 
 # - mini jeux
@@ -629,7 +632,7 @@ async def help(ctx):
 
         "👑": {
             f"{prefix}toggle_autorole <role>": "active/désactive le fait de donner un rôle a tous les nouveaux arrivant",
-            f"{prefix}toggle_rolevocal": "active/désactive le fait de donner un rôle à chaque fois qu'un membre rejoint un salon vocal",
+            f"{prefix}toggle_rolevocal <role>": "active/désactive le fait de donner un rôle à chaque fois qu'un membre rejoint un salon vocal",
             f"{prefix}toggle_logs": "active/désactive les logs",
             f"{prefix}toggle_welcome_message": "active/désactive le message de bienvenue en message privé",
             f"{prefix}clear <nbr/texte>": "supprime le nombres de messages,\nsupprime les messages jusqu'au lien donné",
@@ -1806,7 +1809,7 @@ async def toggle_autorole(ctx, role: discord.Role = None):
                 return
             id = replaces(response.content, "<@&", "", ">", "")
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
-            await check_permissions(ctx)
+        await check_permissions(ctx)
         dico[ctx.guild.id]["autorole"] = role.id
         dico_update()
         await ctx.send(f"Le rôle **{role.name}** est maintenant donné à tous les nouveaux arrivant !")
@@ -1880,7 +1883,7 @@ async def toggle_rolevocal(ctx, role: discord.Role = None):
                 return
             id = replaces(response.content, "<@&", "", ">", "")
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
-            await check_permissions(ctx)
+        await check_permissions(ctx)
         dico[ctx.guild.id]["voc"] = role.id
         dico_update()
         await ctx.send(
@@ -2270,6 +2273,5 @@ async def on_voice_state_update(member, before, after):
 
             embed.add_field(name="󠀮 ", value=member.mention + " - " + get_date_time(), inline=False)
             await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
-
 
 client.run(token)
