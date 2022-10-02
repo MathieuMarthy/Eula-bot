@@ -25,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.7"
+version_bot = "4.0.8"
 changelog = "**rand**\non peut mettre le nom d'un champion"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
@@ -129,6 +129,20 @@ def get_member(member):
         else:
             member = replaces(member, "<@", "", ">", "")
     return client.get_user(int(member))
+
+
+async def check_permissions(ctx):
+    guild = ctx.guild
+    role_vocal = guild.get_role(dico[guild.id]["voc"])
+    role_autorole = guild.get_role(dico[guild.id]["autorole"])
+    role_eula = discord.utils.get(guild.roles, name="Eula")
+
+    guild_roles_id = [role.id for role in guild.roles]
+
+    for role in [role_vocal, role_autorole]:
+        if guild_roles_id.index(role_eula.id) < guild_roles_id.index(role.id):
+            await ctx.send(f"Le role Eula doit être plus haut que le rôle {role.name}")
+    
 
 
 # - mini jeux
@@ -264,7 +278,7 @@ async def randomizer(ctx, option="random"):
         image = discord.File(f)
         await ctx.reply(file=image, mention_author=False)
     os.remove(image_path)
-
+ 
 
 @client.command()
 async def top(ctx, nbr=5):
@@ -1792,6 +1806,7 @@ async def toggle_autorole(ctx, role: discord.Role = None):
                 return
             id = replaces(response.content, "<@&", "", ">", "")
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
+            await check_permissions(ctx)
         dico[ctx.guild.id]["autorole"] = role.id
         dico_update()
         await ctx.send(f"Le rôle **{role.name}** est maintenant donné à tous les nouveaux arrivant !")
@@ -1833,7 +1848,7 @@ async def nuke(ctx, channel=None):
         channel = replaces(channel, "<#", "", ">", "")
 
     channel = client.get_channel(int(channel))
-    if channel is None:
+    if channel not in ctx.channels:
         await ctx.send("salon non trouvé")
         return
 
@@ -1865,6 +1880,7 @@ async def toggle_rolevocal(ctx, role: discord.Role = None):
                 return
             id = replaces(response.content, "<@&", "", ">", "")
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
+            await check_permissions(ctx)
         dico[ctx.guild.id]["voc"] = role.id
         dico_update()
         await ctx.send(
@@ -2166,7 +2182,10 @@ async def on_member_join(member):
         await channel_send(dico[member.guild.id]["logs"]).send(embed=embed)
     if dico[member.guild.id]["autorole"] is not None and not member.bot:
         role = discord.utils.get(member.guild.roles, id=dico[member.guild.id]["autorole"])
-        await member.add_roles(role)
+        try:
+            await member.add_roles(role)
+        except discord.Forbidden:
+            await member.guild.owner.send(f"Je ne peut pas donner le rôle {role.name} à {member.mention}.\nLe rôle Eula doit être plus haut que le rôle {role.name}")
     if dico[member.guild.id]["welcome_msg"] is not None:
         await member.send(dico[member.guild.id]["welcome_msg"].replace("$username$", member.name))
 
