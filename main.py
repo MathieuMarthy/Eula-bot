@@ -131,7 +131,7 @@ def get_member(member):
     return client.get_user(int(member))
 
 
-async def check_permissions(ctx):
+async def check_permissions(ctx, role):
     guild = ctx.guild
     role_vocal = guild.get_role(dico[guild.id]["voc"])
     role_autorole = guild.get_role(dico[guild.id]["autorole"])
@@ -139,7 +139,7 @@ async def check_permissions(ctx):
 
     guild_roles_id = [role.id for role in guild.roles]
 
-    for role in [role_vocal, role_autorole]:
+    for role in [role_vocal, role_autorole, role]:
         if role == None:
             continue
 
@@ -1809,7 +1809,7 @@ async def toggle_autorole(ctx, role: discord.Role = None):
                 return
             id = replaces(response.content, "<@&", "", ">", "")
             role = discord.utils.get(ctx.author.guild.roles, id=int(id))
-        await check_permissions(ctx)
+        await check_permissions(ctx, role)
         dico[ctx.guild.id]["autorole"] = role.id
         dico_update()
         await ctx.send(f"Le rôle **{role.name}** est maintenant donné à tous les nouveaux arrivant !")
