@@ -25,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.0.9"
+version_bot = "4.1.0"
 changelog = "**rand**\non peut mettre le nom d'un champion"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
@@ -1851,7 +1851,7 @@ async def nuke(ctx, channel=None):
         channel = replaces(channel, "<#", "", ">", "")
 
     channel = client.get_channel(int(channel))
-    if channel not in ctx.channels:
+    if channel not in ctx.guild.channels:
         await ctx.send("salon non trouvé")
         return
 
