@@ -25,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.1.0"
+version_bot = "4.1.1"
 changelog = "**rand**\non peut mettre le nom d'un champion"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
@@ -56,7 +56,7 @@ async def on_ready():
 
     for serveur in client.guilds:
         if serveur.id not in dico:
-            dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None}
+            dico[serveur.id] = {"name": utf8(serveur.name), "logs": None, "voc": None, "autorole": None, "welcome_msg": None}
         elif utf8(serveur.name) != utf8(dico[serveur.id]["name"]):
             dico[serveur.id]["name"] = utf8(serveur.name)
 
@@ -2148,7 +2148,7 @@ async def on_guild_role_delete(role):
 @client.event
 async def on_guild_join(guild):
     if guild.id not in dico:
-        dico[guild.id] = {"name": guild.name, "logs": None, "voc": None, "autorole": None}
+        dico[guild.id] = {"name": guild.name, "logs": None, "voc": None, "autorole": None, "welcome_msg": None}
     dico_update()
 
 
