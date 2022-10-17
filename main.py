@@ -25,7 +25,7 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.1.2"
+version_bot = "4.1.3"
 changelog = "**timeout**"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
@@ -1923,7 +1923,7 @@ async def view(ctx):
 
 
 # - moi
-@client.command()
+@client.command(aliases=["TO", "to"])
 async def timeout(ctx, member, time, reason=""):
     member = await get_member(member)
     if member is None:
@@ -1963,6 +1963,8 @@ async def timeout(ctx, member, time, reason=""):
 async def timeout_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("Missing argument: member, time, reason")
+    else:
+        raise error
 
 
 
