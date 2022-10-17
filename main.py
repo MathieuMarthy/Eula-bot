@@ -4,7 +4,7 @@ import os
 import random
 from zoneinfo import ZoneInfo
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 
 import discord
@@ -25,8 +25,8 @@ reddit = Reddit(
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 path = os.path.dirname(os.path.abspath(__file__))
 prefix = "!"
-version_bot = "4.1.1"
-changelog = "**rand**\non peut mettre le nom d'un champion"
+version_bot = "4.1.2"
+changelog = "**timeout**"
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client = commands.Bot(
@@ -1923,6 +1923,49 @@ async def view(ctx):
 
 
 # - moi
+@client.command()
+async def timeout(ctx, member, time, reason=""):
+    member = await get_member(member)
+    if member is None:
+        await ctx.send("Member not found.")
+        return
+    
+    if not time.isdigit():
+        await ctx.send("Invalid time.")
+        return
+    
+    time = int(time)
+
+    kamehameha_emotes = [
+        ("<:k1:1031645200851939328>", "<:k0:1031645223580876864>"),
+        ("<:k2:1031645202475143188>", "<:k0:1031645223580876864>"),
+        ("<:k3:1031645203397869630>", "<:k0:1031645223580876864>"),
+        ("<:k4:1031645205302083604>", "<:k0:1031645223580876864>"),
+        ("<:k5a:1031645206593945702>", "<:k5b:1031645208112279582>"),
+        ("<:k6a:1031645209404117012>", "<:k6b:1031645210779861063>"),
+        ("<:k7a:1031645212352712854>", "<:k7b:1031645213652946976>"),
+        ("<:k8a:1031645215355838587>", "<:k8b:1031645216828043325>"),
+        ("<:k9a:1031645218879045783>", "<:k9b:1031645220640657489>"),
+        ("<:k10a:1031645221861199913>", "<:k0:1031645223580876864>"),
+    ]
+
+    delta = timedelta(seconds=time)
+    await member.timeout(delta, reason="")
+
+    msg = await ctx.send("".join(kamehameha_emotes[0]))
+    for emotes in kamehameha_emotes:
+        await msg.edit(content=f"{emotes[0]}{emotes[1]}{member.mention}")
+        await asyncio.sleep(1)
+
+    await msg.edit(content=f"{member.mention} got kamehameha'd for {time} seconds{' reason: ' + reason if reason != '' else ''}.")
+
+@timeout.error
+async def timeout_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Missing argument: member, time, reason")
+
+
+
 @client.command(aliases=["set_avatar", "setpp"])
 async def set_pp(ctx):
     if ctx.author.id != 236853417681616906:
