@@ -9,13 +9,17 @@ config = json.load(open("json/config.json", "r", encoding="utf-8"))
 
 default_intents = discord.Intents.default().all()
 default_intents.members = True
-client = commands.Bot(command_prefix=config["prefix"], help_command=None, intents=default_intents)
+client: discord.Client = commands.Bot(command_prefix=config["prefix"], help_command=None, intents=default_intents)
 
 
 @client.event
 async def on_ready():
 
     await load("commands")
+
+    synced = await client.tree.sync()
+    print(f"{len(synced)} commandes synchronisées")
+
     print(f"Connecté à {client.user.name}")
 
 

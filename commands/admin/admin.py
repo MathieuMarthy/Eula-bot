@@ -8,10 +8,10 @@ class Admin(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client 
 
-    @commands.command()
-    async def sync(self, ctx) -> None:
-        fmt = await ctx.bot.tree.sync()
-        await ctx.send(f"{len(fmt)} commandes synchronisées")
+    # @commands.command()
+    # async def sync(self, ctx) -> None:
+    #     fmt = await ctx.bot.tree.sync()
+    #     await ctx.send(f"{len(fmt)} commandes synchronisées")
 
     # @app_commands.command(name="ping", description="ping le bot")
     # async def ping(self, interaction=discord.Interaction):

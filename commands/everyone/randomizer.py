@@ -7,9 +7,7 @@ from discord import app_commands
 from discord.ui import Button, View
 from discord.ext import commands
 
-from functions import Utils
 from assets.League_of_legends import data_lol
-
 
 
 class Randomizer(commands.Cog):
