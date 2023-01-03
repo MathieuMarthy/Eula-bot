@@ -22,7 +22,7 @@ class Ping(commands.Cog):
 
 
     @app_commands.command(name="ping", description="ping le bot")
-    async def pingSlash(self, interaction=discord.Interaction):
+    async def pingSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx)
 

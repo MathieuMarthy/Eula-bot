@@ -88,7 +88,7 @@ class Randomizer(commands.Cog):
             app_commands.Choice(name="Support", value=5),
         ]
     )
-    async def randomizerlolSlash(self, interaction=discord.Interaction, lane: int=None, champion: str=None):
+    async def randomizerlolSlash(self, interaction: discord.Interaction, lane: int=None, champion: str=None):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx, lane, champion)
 
