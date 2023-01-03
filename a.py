@@ -1,8 +1,5 @@
-from assets.League_of_legends import data_lol
+nombre = 15
 
-champions = data_lol.melee_champion + data_lol.range_champion
-
-champions.sort()
-
-for champion in champions:
-    print(champion.replace(".png", "").capitalize())
+for i in range(0, nombre, 10):
+    i = i if i < nombre else nombre
+    print(i, i+10)
