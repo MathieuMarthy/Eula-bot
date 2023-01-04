@@ -41,8 +41,7 @@ class Reddit(commands.Cog):
         return res
 
     async def reddit_command(self, ctx, subreddit: str, nombre: int):
-        if subreddit is str:
-            subreddit = subreddit.replace("r/", "")
+        subreddit = subreddit.replace("r/", "")
         
         # si le commande a été executée avec un slash ctx.interaction != None
         if ctx.interaction is None:
@@ -50,9 +49,7 @@ class Reddit(commands.Cog):
         else:
             await ctx.interaction.response.defer()
 
-        if subreddit is str:
-            subreddit = await self.reddit_api.subreddit(subreddit)
-
+        subreddit = await self.reddit_api.subreddit(subreddit)
         posts = subreddit.hot(limit=150)
 
         try:
