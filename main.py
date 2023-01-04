@@ -1,7 +1,8 @@
 import os
+import subprocess
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 import config
 
@@ -20,6 +21,7 @@ async def on_ready():
     print(f"{len(synced)} commandes synchronisées")
 
     print(f"Connecté à {client.user.name}")
+    remove_tmp_files.start()
 
 
 async def load(folder: str):
@@ -35,5 +37,10 @@ async def load(folder: str):
             file = file.replace("\\", ".").replace("/", ".")
             await client.load_extension(file[:-3])
 
+
+@tasks.loop(minutes=1)
+async def remove_tmp_files():
+    """Remove all the files in tmp/"""
+    os.system(f"del /f /q \"{os.path.join(config.path, 'tmp', '*.*')}\"")
 
 client.run(config.token)

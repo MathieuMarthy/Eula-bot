@@ -1,13 +1,41 @@
-import discord
 import datetime
+import os
 from zoneinfo import ZoneInfo
+
+import discord
 
 class Utils:
     def __init__(self, client: discord.Client):
         self.client = client
     
+    def bot_path(self) -> str:
+        return os.path.dirname(os.path.realpath(__file__))
+
     def channel_send(self, id):
         return self.client.get_channel(id)
+    
+    async def is_member(self, member: str, guild: discord.Guild) -> bool:
+
+        for char in ["<", "@", "!", ">"]:
+            member = member.replace(char, "")
+        
+        if not member.isdigit() and len(member) != 18:
+            return False
+
+        member = await guild.fetch_member(member)
+        return member is not None
+ 
+
+    async def is_user(self, member: str) -> bool:
+
+        for char in ["<", "@", "!", ">"]:
+            member = member.replace(char, "")
+
+        if not member.isdigit() and len(member) != 18:
+            return False
+
+        member = await self.client.fetch_user(member)
+        return member is not None
 
 
     def get_date_time(self):

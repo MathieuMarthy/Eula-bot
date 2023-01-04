@@ -8,7 +8,7 @@ from discord.ui import Button, View
 from discord.ext import commands
 
 from assets.League_of_legends import data_lol
-
+import config
 
 class Randomizer(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
@@ -54,12 +54,6 @@ class Randomizer(commands.Cog):
 
         embed = await self.send_image(lane, champion)
         await ctx.reply(embed=embed, view=view, mention_author=False)
-
-        for file in os.listdir(self.assets_path):
-            try:
-                os.remove(os.path.join(self.assets_path, file))
-            except:
-                pass
 
 
     @commands.command()
@@ -297,8 +291,8 @@ class Randomizer(commands.Cog):
             x += 65
 
         name = "".join(random.sample("1234567890", 10)) + ".png"
-        image.save(self.assets_path + f"/pictures/{name}")
-        return self.assets_path + f"/pictures/{name}"
+        image.save(os.path.join(config.path, "tmp", name))
+        return os.path.join(config.path, "tmp", name)
 
 
 async def setup(bot):

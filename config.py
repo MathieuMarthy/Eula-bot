@@ -1,3 +1,6 @@
+import os
+
+path = os.path.dirname(os.path.abspath(__file__))
 token = "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A"
 prefix = [
     "!!",
