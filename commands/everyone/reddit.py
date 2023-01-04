@@ -41,7 +41,8 @@ class Reddit(commands.Cog):
         return res
 
     async def reddit_command(self, ctx, subreddit: str, nombre: int):
-        subreddit = subreddit.replace("r/", "")
+        if subreddit is str:
+            subreddit = subreddit.replace("r/", "")
         
         # si le commande a été executée avec un slash ctx.interaction != None
         if ctx.interaction is None:
@@ -49,7 +50,9 @@ class Reddit(commands.Cog):
         else:
             await ctx.interaction.response.defer()
 
-        subreddit = await self.reddit_api.subreddit(subreddit)
+        if subreddit is str:
+            subreddit = await self.reddit_api.subreddit(subreddit)
+
         posts = subreddit.hot(limit=150)
 
         try:
@@ -95,18 +98,6 @@ class Reddit(commands.Cog):
     async def redditSlash(self, interaction: discord.Interaction, subreddit: str, nombre: app_commands.Range[int, 1, 20] = 1):
         ctx = await commands.Context.from_interaction(interaction)
         await self.reddit_command(ctx, subreddit, nombre)
-    
-
-    @commands.command(aliases=["randomreddit"])
-    async def random_reddit(self, ctx, number = "1"):
-        await self.reddit(ctx, self.reddit_api.random_subreddit(nsfw=True).__name__, number)
-
-
-    @app_commands.command(name="random_reddit", description="envoie des images d'un subreddit aléatoire")
-    @app_commands.describe(nombre="le nombre d'images à envoyer")
-    async def random_redditSlash(self, interaction: discord.Interaction, nombre: app_commands.Range[int, 1, 20] = 1):
-        ctx = await commands.Context.from_interaction(interaction)
-        await self.reddit_command(ctx, self.reddit_api.random_subreddit(nsfw=True).__name__, nombre)
 
 
 async def setup(bot):
