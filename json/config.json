@@ -1,7 +1,0 @@
-{
-    "token": "OTE0MjI2MzkzNTY1NDk5NDEy.YaJ9rQ.YHLkLmSADNTjtztiWBuMMSi4g8A",
-    "prefix": ["!!", "<@914226393565499412> ", "<@914226393565499412>", "<@!914226393565499412> ",
-        "<@!914226393565499412>"],
-    "version": "5.0.0",
-    "changelog": "refonte du bot et ajout des commandes slash"
-}

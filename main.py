@@ -1,15 +1,14 @@
-import json
 import os
 
 import discord
 from discord.ext import commands
 
-# --- Setup ---
-config = json.load(open("json/config.json", "r", encoding="utf-8"))
+import config
 
+# --- Setup ---
 default_intents = discord.Intents.default().all()
 default_intents.members = True
-client: discord.Client = commands.Bot(command_prefix=config["prefix"], help_command=None, intents=default_intents)
+client: discord.Client = commands.Bot(command_prefix=config.prefix, help_command=None, intents=default_intents)
 
 
 @client.event
@@ -37,4 +36,4 @@ async def load(folder: str):
             await client.load_extension(file[:-3])
 
 
-client.run(config["token"])
+client.run(config.token)
