@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 import discord
 from discord.ext import commands, tasks
@@ -42,5 +41,6 @@ async def load(folder: str):
 async def remove_tmp_files():
     """Remove all the files in tmp/"""
     os.system(f"del /f /q \"{os.path.join(config.path, 'tmp', '*.*')}\"")
+
 
 client.run(config.token)
