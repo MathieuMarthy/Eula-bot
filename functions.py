@@ -41,8 +41,11 @@ class Utils:
 
     def get_date_time(self):
         return datetime.now(tz=ZoneInfo("Europe/Paris")).strftime("%d/%m/%Y %H:%M:%S")
+    
+    def embed_color(self):
+        return 0x989eec
 
-    def get_img(name: str) -> str:
+    def get_img(self, name: str) -> str:
         """
         power
         shuffle

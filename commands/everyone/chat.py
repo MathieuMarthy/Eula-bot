@@ -125,7 +125,7 @@ class Chat(commands.Cog):
 
 
     async def command(self, ctx, liens, msg):
-        embed = discord.Embed(title=msg, description="󠀮 ", color=0x555555)
+        embed = discord.Embed(title=msg, description="󠀮 ", color=self.utils.embed_color())
         embed.set_image(url=random.choice(liens))
         await ctx.send(embed=embed)
 

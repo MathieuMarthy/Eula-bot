@@ -9,6 +9,7 @@ from discord.ext import commands
 
 from assets.League_of_legends import data_lol
 import config
+from functions import Utils
 
 class Randomizer(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
@@ -22,9 +23,10 @@ class Randomizer(commands.Cog):
             4: "Botlane",
             5: "Support",
         }
+        self.utils = Utils(client)
 
     async def send_image(self, lane, champion) -> discord.Embed:
-        embed = discord.Embed(title=f"Randomizer{f' - {self.dict_lanes[lane]}' if lane is not None else ''}{f' - {champion}' if champion is not None else ''}")
+        embed = discord.Embed(title=f"Randomizer{f' - {self.dict_lanes[lane]}' if lane is not None else ''}{f' - {champion}' if champion is not None else ''}", color=self.utils.embed_color())
 
         # création de l'image
         image_path = self.randomizer_image(lane, champion)
