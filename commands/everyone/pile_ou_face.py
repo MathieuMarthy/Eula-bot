@@ -16,10 +16,10 @@ class PileOuFace(commands.Cog):
         embed = discord.Embed(color=self.utils.embed_color())
 
         if choice([True, False]):
-            embed.add_field(name=f"󠀮Pile", value="----", inline=True)
+            embed.add_field(name=f"󠀮Pile", value=" ", inline=True)
             embed.set_image(url=self.utils.get_img("pile"))
         else:
-            embed.add_field(name=f"󠀮Face", value="----", inline=True)
+            embed.add_field(name=f"󠀮Face", value=" ", inline=True)
             embed.set_image(url=self.utils.get_img("face"))
 
         await ctx.reply(embed=embed, mention_author=False)

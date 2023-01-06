@@ -29,7 +29,7 @@ class Send(commands.Cog):
         await self.command(ctx, channel, json)
 
 
-    @app_commands.command(name="send", description="envoie un message")
+    @app_commands.command(name="send", description="Envoie un message dans un salon")
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(channel="le salon dans lequel envoyer le message")
     @app_commands.describe(message="le message à envoyer")

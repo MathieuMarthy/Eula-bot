@@ -140,7 +140,7 @@ class Chat(commands.Cog):
         await self.command(ctx, self.links_hello, f"{ctx.author.name} dit bonjour à {member.name} !")
 
 
-    @app_commands.command(name="bonjour", description="dit bonjour à quelqu'un!")
+    @app_commands.command(name="bonjour", description="dit bonjour à quelqu'un !")
     @app_commands.describe(personne="la personne à qui tu veux dire bonjour !")
     async def bonjourSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)

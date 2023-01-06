@@ -33,7 +33,7 @@ class SendEmbed(commands.Cog):
             except discord.errors.HTTPException as e:
                 await ctx.send(f"Une erreur est survenue avec l'embed \"{embed.title}\":\n`{e}`")
         
-        await ctx.reply(f"Embed{'s' if len(embeds) else ''} envoyé", mention_author=False)
+        await ctx.reply(f"Embed{'s' if len(embeds) > 1 else ''} envoyé", mention_author=False)
 
 
     @commands.command()
@@ -49,7 +49,7 @@ class SendEmbed(commands.Cog):
         await self.command(ctx, channel, json)
 
 
-    @app_commands.command(name="send_embed", description="envoie un embed")
+    @app_commands.command(name="send_embed", description="Envoie un embed dans un salon")
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(channel="le salon dans lequel envoyer l'embed")
     @app_commands.describe(json="le json contenant les informations de l'embed, faites /help_send_embed pour plus d'informations")

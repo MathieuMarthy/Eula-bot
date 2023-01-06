@@ -8,6 +8,7 @@ class Ping(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
 
+
     async def command(self, ctx):
         embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name="ping", icon_url=self.client.user.avatar.url)

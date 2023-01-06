@@ -10,13 +10,15 @@
         ".vscode": true,
         "commands/everyone/__pycache__": true,
         "commands/admin/__pycache__": true,
-        "assets/League_of_legends/__pycache__": true
+        "assets/League_of_legends/__pycache__": true,
+        "view/__pycache__": true
     },
     "hide-files.files": [
         "__pycache__",
         ".vscode",
         "commands/everyone/__pycache__",
         "commands/admin/__pycache__",
-        "assets/League_of_legends/__pycache__"
+        "assets/League_of_legends/__pycache__",
+        "view/__pycache__"
     ]
 }
