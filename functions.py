@@ -1,5 +1,6 @@
-import datetime
 import os
+import asyncio
+import datetime
 from zoneinfo import ZoneInfo
 
 import discord
@@ -15,8 +16,13 @@ class Utils:
 
     def channel_send(self, id):
         return self.client.get_channel(id)
-        
     
+    def replaces(self, string, *args):
+        for i in range(0, len(args), 2):
+            string = string.replace(args[i], args[i + 1])
+        return string
+    
+
     async def is_member(self, member: str, guild: discord.Guild) -> bool:
 
         for char in ["<", "@", "!", ">"]:
@@ -43,10 +49,12 @@ class Utils:
 
     def get_date_time(self):
         return datetime.now(tz=ZoneInfo("Europe/Paris")).strftime("%d/%m/%Y %H:%M:%S")
-    
+
+
     def embed_color(self):
         return 0x989eec
-    
+
+
     def error_message(self, error: discord.DiscordException) -> str:
         if isinstance(error, commands.MissingRequiredArgument):
             return "Il manque un ou plusieurs arguments\nutilisez `/help` pour plus d'informations"
@@ -56,6 +64,107 @@ class Utils:
             return "Le bot n'a pas la permission d'utiliser cette commande"
         else:
             return None
+        
+
+    async def start_game_multi(self, ctx, limit, name_game):
+        """
+        Args:
+        -----
+            ctx : ctx
+            limit : le nombre de manches dans le jeu
+            name_game : nom du jeu
+
+        return:
+        -------
+            list : liste des participants
+            dict : dictionnaire des points 
+
+        """
+        if str(limit).isdigit():
+            limit = int(limit)
+        else:
+            limit = 5
+        msg = await ctx.send(f"**Partie de {name_game} lancée !**\npour participer réagissez avec 🖐️")
+        await msg.add_reaction("🖐️")
+        await asyncio.sleep(15)
+        list_user = []
+
+        async for e in ctx.channel.history(limit=100):
+            if e.id == msg.id:
+                for reaction_of_message in e.reactions:
+                    if reaction_of_message.emoji == "🖐️":
+                        async for user in reaction_of_message.users():
+                            if user.id != self.client.user.id:
+                                list_user.append(user)
+                break
+
+        if len(list_user) == 0:
+            await ctx.reply("Aucun joueur n'a rejoint la partie", mention_author=False)
+            return [], []
+
+        str_name = ""
+        dico_points = {}
+
+        for i in list_user:
+            dico_points[i.id] = 0
+            str_name += ", " + i.name
+
+        str_name = str_name.replace(", ", "", 1)
+        await ctx.send(f"Liste des participants: {str_name}\nC'est parti pour {limit} manches !")
+        await asyncio.sleep(3)
+        return list_user, dico_points
+
+
+    async def start_game_duo(self, ctx: commands.Context, member, name_game):
+        member = ctx.guild.get_member(member)
+
+        if member is None:
+            await ctx.send("Vous n'avez pas mentionné un joueur")
+            return False, None
+
+        await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
+        try:
+            msg = await self.client.wait_for("message", check=lambda message: message.author.id in [member.id,
+                                ctx.author.id] and message.content.lower() in [
+                                    "y", "o", "n", "yes", "oui", "no", "non"],
+                                    timeout=180)
+        except asyncio.TimeoutError:
+            await ctx.reply(f"**{member.name}** n'a pas répondu", mention_author=False)
+            return False, None
+
+        if msg.content.lower() in ["n", "non", "no"]:
+            await ctx.send("Partie refusée")
+            return False, None
+
+        else:
+            return True, member
+        
+    async def end_game(self, ctx, list_user, dico_points):
+        """
+        Args:
+        -----
+            ctx : ctx
+            list_user : liste de tous les participants
+            dico_points : dictionnaire des points 
+        """
+        n = (list_user[0].id, dico_points[list_user[0].id])
+
+        for id, point in dico_points.items():
+            if n[1] < point:
+                n = (id, point)
+
+        list_winner = [id for id, point in dico_points.items() if n[1] == point]
+        if len(list_winner) == 1:
+            username = self.client.get_user(list_winner[0])
+            await ctx.send(
+                f"󠀮 \n**Partie finie !**\nLe vainqueur est {username.mention} avec {dico_points[username.id]} points !")
+        else:
+            str_winner = ""
+            for e in list_winner:
+                username = self.client.get_user(e)
+                str_winner += " " + username.mention
+            await ctx.send(
+                f"󠀮 \n**Partie finie !**\nLes vainqueurs sont {str_winner} avec {dico_points[username.id]} points !")
 
 
     def get_img(self, name: str) -> str:
