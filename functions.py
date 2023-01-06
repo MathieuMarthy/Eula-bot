@@ -3,6 +3,8 @@ import os
 from zoneinfo import ZoneInfo
 
 import discord
+from discord import app_commands
+from discord.ext import commands
 
 class Utils:
     def __init__(self, client: discord.Client):
@@ -44,6 +46,17 @@ class Utils:
     
     def embed_color(self):
         return 0x989eec
+    
+    def error_message(self, error: discord.DiscordException) -> str:
+        if isinstance(error, commands.MissingRequiredArgument):
+            return "Il manque un ou plusieurs arguments\nutilisez `/help` pour plus d'informations"
+        elif isinstance(error, commands.MissingPermissions) or isinstance(error, app_commands.errors.MissingPermissions):
+            return "Vous n'avez pas la permission d'utiliser cette commande"
+        elif isinstance(error, commands.BotMissingPermissions) or isinstance(error, app_commands.errors.BotMissingPermissions):
+            return "Le bot n'a pas la permission d'utiliser cette commande"
+        else:
+            return None
+
 
     def get_img(self, name: str) -> str:
         """

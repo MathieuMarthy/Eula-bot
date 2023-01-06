@@ -2,10 +2,12 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from functions import Utils
 
 class Send(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
+        self.utils = Utils(client)
 
 
     async def command(self, ctx: commands.Context, channel: discord.TextChannel, message: str):
@@ -36,6 +38,19 @@ class Send(commands.Cog):
     async def sendSlash(self, interaction: discord.Interaction, channel: discord.TextChannel, message: str):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx, channel, message)
+    
+    @send.error
+    async def sendError(self, ctx, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await ctx.send(error_string)
+
+
+    @sendSlash.error
+    async def sendSlashError(self, interaction, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await interaction.response.send_message(error_string, ephemeral=True)
 
 
 async def setup(bot):

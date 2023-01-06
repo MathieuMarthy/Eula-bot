@@ -4,10 +4,12 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from functions import Utils
 
 class SendEmbed(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
+        self.utils = Utils(client)
 
     async def command(self, ctx: commands.Context, channel: discord.TextChannel, json: str):
         if ctx.interaction is not None:
@@ -114,6 +116,20 @@ class SendEmbed(commands.Cog):
     async def help_send_embedSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)
         await self.help_send_embed_command(ctx)
+    
+
+    @help_send_embed.error
+    async def help_send_embedError(self, ctx, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await ctx.send(error_string)
+
+
+    @help_send_embedSlash.error
+    async def help_send_embedSlashError(self, interaction, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await interaction.response.send_message(error_string, ephemeral=True)
 
 
 async def setup(bot):
