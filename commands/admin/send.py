@@ -16,6 +16,8 @@ class Send(commands.Cog):
         except discord.errors.HTTPException as e:
             await ctx.send(f"Une erreur est survenue avec le message:\n`{e}`")
             return
+        
+        await ctx.reply("✅ Message envoyé", mention_author=False)
 
 
     @commands.command()
@@ -38,12 +40,15 @@ class Send(commands.Cog):
     async def sendSlash(self, interaction: discord.Interaction, channel: discord.TextChannel, message: str):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx, channel, message)
-    
+
+
     @send.error
     async def sendError(self, ctx, error):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await ctx.send(error_string)
+        else:
+            raise error
 
 
     @sendSlash.error
@@ -51,6 +56,8 @@ class Send(commands.Cog):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await interaction.response.send_message(error_string, ephemeral=True)
+        else:
+            raise error
 
 
 async def setup(bot):

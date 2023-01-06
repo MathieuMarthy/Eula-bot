@@ -34,8 +34,8 @@ class SendEmbed(commands.Cog):
                 await channel.send(embed=embed)
             except discord.errors.HTTPException as e:
                 await ctx.send(f"Une erreur est survenue avec l'embed \"{embed.title}\":\n`{e}`")
-        
-        await ctx.reply(f"Embed{'s' if len(embeds) > 1 else ''} envoyé", mention_author=False)
+
+        await ctx.reply(f"✅ Embed{'s' if len(embeds) > 1 else ''} envoyé", mention_author=False)
 
 
     @commands.command()
@@ -123,6 +123,8 @@ class SendEmbed(commands.Cog):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await ctx.send(error_string)
+        else:
+            raise error
 
 
     @help_send_embedSlash.error
@@ -130,6 +132,8 @@ class SendEmbed(commands.Cog):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await interaction.response.send_message(error_string, ephemeral=True)
+        else:
+            raise error
 
 
 async def setup(bot):
