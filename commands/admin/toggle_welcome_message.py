@@ -12,7 +12,7 @@ class ToggleWelcomeMessage(commands.Cog):
         self.utils = Utils(client)
 
 
-    async def command(self, ctx):
+    async def command(self, ctx: commands.Context):
         welcome_message_is_active = self.utils.get_server_config(ctx.guild.id, "welcome_message", "active")
 
         # si le message de bienvenue est activé, on le désactive
@@ -59,7 +59,7 @@ class ToggleWelcomeMessage(commands.Cog):
             # on sauvegarde le message
             self.utils.set_server_config(ctx.guild.id, "welcome_message", "message", value=msg.content)
             self.utils.set_server_config(ctx.guild.id, "welcome_message", "active", value=True)
-            await ctx.send("Le message de bienvenue est maintenant activé")
+            await ctx.send("✅ Le message de bienvenue est maintenant activé")
 
 
     @commands.command()

@@ -46,8 +46,8 @@ async def load(folder: str):
 @tasks.loop(minutes=1)
 async def remove_tmp_files():
     """Remove all the files in tmp/"""
-    pass
-    # os.system(f"del /f /q \"{os.path.join(config.path, 'tmp', '*.*')}\"")
+    for file in os.listdir("tmp"):
+        os.remove(os.path.join("tmp", file))
 
 
 client.run(config.token)
