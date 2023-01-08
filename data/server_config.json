@@ -45,8 +45,8 @@
             "channel_id": 0
         },
         "autorole": {
-            "active": false,
-            "role_id": 837762704911237170
+            "active": true,
+            "role_id": 1061716176457183303
         },
         "rolevocal": {
             "active": false,

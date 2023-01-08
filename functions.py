@@ -114,9 +114,9 @@ class Utils:
         if isinstance(error, commands.MissingRequiredArgument):
             return "Il manque un ou plusieurs arguments\nutilisez `/help` pour plus d'informations"
         elif isinstance(error, commands.MissingPermissions) or isinstance(error, app_commands.errors.MissingPermissions):
-            return "Vous n'avez pas la permission d'utiliser cette commande"
+            return "Vous n'avez pas les permissions d'utiliser cette commande"
         elif isinstance(error, commands.BotMissingPermissions) or isinstance(error, app_commands.errors.BotMissingPermissions):
-            return "Le bot n'a pas la permission d'utiliser cette commande"
+            return "Le bot n'a pas les permissions d'utiliser cette commande"
         else:
             return None
         
