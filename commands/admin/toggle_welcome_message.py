@@ -13,18 +13,18 @@ class ToggleWelcomeMessage(commands.Cog):
 
 
     async def command(self, ctx):
-        welcome_message_is_active = self.utils.get_server_config(ctx.guild.id, "welcome_message_state", "active")
+        welcome_message_is_active = self.utils.get_server_config(ctx.guild.id, "welcome_message", "active")
 
         # si le message de bienvenue est activé, on le désactive
         if welcome_message_is_active:
-            self.utils.set_server_config(ctx.guild.id, "welcome_message_state", "active", value=False)
+            self.utils.set_server_config(ctx.guild.id, "welcome_message", "active", value=False)
             await ctx.send("Le message de bienvenue est maintenant désactivé")
         else:
-            msg_content = self.utils.get_server_config(ctx.guild.id, "welcome_message_state", "message")
+            msg_content = self.utils.get_server_config(ctx.guild.id, "welcome_message", "message")
 
             # si le message de bienvenue est déjà configuré, on demande si on veut le changer
-            if msg_content is not None:
-                await ctx.send(f"Le message de bienvenue est déjà configuré, message:\n\n{msg_content}\n\voulez-vous le changer ? (oui/non)")
+            if msg_content != "":
+                await ctx.send(f"Le message de bienvenue est déjà configuré, message:\n\n{msg_content}\nVoulez-vous le changer ? (oui/non)")
 
                 try:
                     msg = await self.client.wait_for(
@@ -41,9 +41,9 @@ class ToggleWelcomeMessage(commands.Cog):
                 # si on change pas le message, on sauvegarde et on quitte
                 if msg.content in ["n", "no", "non"]:
                     await ctx.send("Le message de bienvenue est maintenant activé")
-                    self.utils.set_server_config(ctx.guild.id, "welcome_message_state", "active", value=True)
+                    self.utils.set_server_config(ctx.guild.id, "welcome_message", "active", value=True)
                     return
-        
+
             # on demande le message de bienvenue
             await ctx.send("Entrez le message de bienvenue, vous pouvez utilisez la variable {user} (a mettre avec les accolades) pour écrire le nom de l'utilisateur")
             try:
@@ -51,16 +51,15 @@ class ToggleWelcomeMessage(commands.Cog):
                     "message",
                     check=lambda msg: msg.author == ctx.author and msg.channel == ctx.channel,
                     timeout=300)
-                
+
             except asyncio.TimeoutError:
                 await ctx.send("Vous avez mis trop de temps à répondre")
                 return
-            
-            # on sauvegarde le message
-            self.utils.set_server_config(ctx.guild.id, "welcome_message_state", "message", value=msg.content)
-            self.utils.set_server_config(ctx.guild.id, "welcome_message_state", "active", value=True)
-            await ctx.send("Le message de bienvenue est maintenant activé")
 
+            # on sauvegarde le message
+            self.utils.set_server_config(ctx.guild.id, "welcome_message", "message", value=msg.content)
+            self.utils.set_server_config(ctx.guild.id, "welcome_message", "active", value=True)
+            await ctx.send("Le message de bienvenue est maintenant activé")
 
 
     @commands.command()
@@ -69,7 +68,7 @@ class ToggleWelcomeMessage(commands.Cog):
         await self.command(ctx)
 
 
-    @app_commands.command(name="toggle_welcome_message", description="active ou désactive le message de bienvenue")
+    @app_commands.command(name="toggle_welcome_message", description="active ou désactive le message de bienvenue en DM")
     @app_commands.checks.has_permissions(administrator=True)
     async def toggle_welcome_messageSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)
@@ -92,6 +91,17 @@ class ToggleWelcomeMessage(commands.Cog):
             await interaction.response.send_message(error_string, ephemeral=True)
         else:
             raise error
+    
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        welcome_message_is_active = self.utils.get_server_config(member.guild.id, "welcome_message", "active")
+
+        if welcome_message_is_active:
+            welcome_message = self.utils.get_server_config(member.guild.id, "welcome_message", "message")
+            welcome_message = welcome_message.replace("{user}", member.name)
+
+            await member.send(welcome_message)
 
 
 async def setup(bot):

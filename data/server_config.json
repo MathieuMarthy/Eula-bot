@@ -2,7 +2,7 @@
     "908671694112182272": {
         "welcome_message": {
             "active": false,
-            "message": ""
+            "message": "d"
         },
         "logs": {
             "active": false,
@@ -37,8 +37,8 @@
     },
     "760073968433627146": {
         "welcome_message": {
-            "active": false,
-            "message": ""
+            "active": true,
+            "message": "Salut {user} !\nBienvenue sur le serveur de Kojhyy !\nhttps://media.discordapp.net/attachments/836943322580516904/1060984169779449916/maxresdefault.png"
         },
         "logs": {
             "active": false,

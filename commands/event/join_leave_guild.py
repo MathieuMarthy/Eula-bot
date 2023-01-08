@@ -8,15 +8,6 @@ class JoinLeaveGuild(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
         self.utils = Utils(client)
-    
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        for guild in self.client.guilds:
-            if self.utils.server_exists_in_config(guild.id):
-                continue
-
-            self.utils.add_new_server(guild.id)
 
 
     @commands.Cog.listener()
