@@ -1,3 +1,4 @@
+import json
 import os
 import asyncio
 import datetime
@@ -7,16 +8,70 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+project_path = os.path.dirname(os.path.realpath(__file__))
+
 class Utils:
     def __init__(self, client: discord.Client):
         self.client = client
+        self.server_config = json.load(open(os.path.join(project_path, "data", "server_config.json"), "r", encoding="utf-8"))
+
+
+    def server_exists_in_config(self, guild_id: int) -> bool:
+        return str(guild_id) in self.server_config
+
+
+    def add_new_server(self, guild_id: int):
+        self.server_config[str(guild_id)] = {
+            "welcome_message": {
+                "active": False,
+                "message": ""
+            },
+            "logs": {
+                "active": False,
+                "channel_id": 0
+            },
+            "autorole": {
+                "active": False,
+                "role_id": 0
+            },
+            "rolevocal": {
+                "active": False,
+                "role_id": 0
+            }
+        }
+        self._save_server_config()
+
+
+    def get_server_config(self, guild_id: int, *keys: str):
+        if len(keys) == 0:
+            return self.server_config[str(guild_id)]
+        else:
+            config = self.server_config[str(guild_id)]
+            for arg in keys:
+                config = config[arg]
+            return config
     
+    
+    def _save_server_config(self):
+        json.dump(self.server_config, open(os.path.join(self.bot_path(), "data", "server_config.json"), "w", encoding="utf-8"), indent=4)
+
+    
+    def set_server_config(self, guild_id: int, *keys: str, value):
+        config = self.server_config[str(guild_id)]
+        for key in keys[:-1]:
+            config = config[key]
+        config[keys[-1]] = value
+        self._save_server_config()
+
+
     def bot_path(self) -> str:
-        return os.path.dirname(os.path.realpath(__file__))
+        return project_path
+
 
     def channel_send(self, id):
         return self.client.get_channel(id)
-    
+
+
     def replaces(self, string, *args):
         for i in range(0, len(args), 2):
             string = string.replace(args[i], args[i + 1])
