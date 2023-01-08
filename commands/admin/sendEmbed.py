@@ -40,9 +40,9 @@ class SendEmbed(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def send_embed(self, ctx, channel, *, json: str):
+    async def send_embed(self, ctx: commands.Context, channel, *, json: str):
         channel = channel.replace("<", "").replace("#", "").replace(">", "")
-        channel = await self.client.fetch_channel(channel)
+        channel = ctx.guild.get_channel(int(channel))
 
         if channel is None:
             await ctx.send("Le salon est invalide")

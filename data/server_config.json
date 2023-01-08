@@ -49,8 +49,8 @@
             "role_id": 1061716176457183303
         },
         "rolevocal": {
-            "active": false,
-            "role_id": 0
+            "active": true,
+            "role_id": 1061716176457183303
         }
     },
     "761905086288756737": {
