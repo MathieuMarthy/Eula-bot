@@ -91,17 +91,6 @@ class ToggleWelcomeMessage(commands.Cog):
             await interaction.response.send_message(error_string, ephemeral=True)
         else:
             raise error
-    
-
-    @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member):
-        welcome_message_is_active = self.utils.get_server_config(member.guild.id, "welcome_message", "active")
-
-        if welcome_message_is_active:
-            welcome_message = self.utils.get_server_config(member.guild.id, "welcome_message", "message")
-            welcome_message = welcome_message.replace("{user}", member.name)
-
-            await member.send(welcome_message)
 
 
 async def setup(bot):

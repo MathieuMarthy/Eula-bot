@@ -6,24 +6,24 @@ from discord.ext import commands
 
 from functions import Utils
 
-class ToggleRolevocal(commands.Cog):
+class ToggleAutorole(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
         self.utils = Utils(client)
 
 
     async def command(self, ctx: commands.Context):
-        rolevocal_is_active = self.utils.get_server_config(ctx.guild.id, "rolevocal", "active")
+        autorole_is_active = self.utils.get_server_config(ctx.guild.id, "autorole", "active")
 
-        if rolevocal_is_active:
-            self.utils.set_server_config(ctx.guild.id, "rolevocal", "active", value=False)
-            await ctx.send("Le role vocal est maintenant désactivé")
+        if autorole_is_active:
+            self.utils.set_server_config(ctx.guild.id, "autorole", "active", value=False)
+            await ctx.send("L'autorôle est maintenant désactivé")
         else:
-            role_id = self.utils.get_server_config(ctx.guild.id, "rolevocal", "role_id")
+            role_id = self.utils.get_server_config(ctx.guild.id, "autorole", "role_id")
             role = ctx.guild.get_role(role_id)
 
             if role is not None:
-                await ctx.send(f"Le rôle vocal est déjà configuré\nRole: **{role.name}**\nVoulez-vous le changer ? (oui/non)")
+                await ctx.send(f"Le rôle de base est déjà configuré\nRole: **{role.name}**\nVoulez-vous le changer ? (oui/non)")
 
                 try:
                     msg = await self.client.wait_for(
@@ -44,8 +44,8 @@ class ToggleRolevocal(commands.Cog):
                         await ctx.send("Le bot n'a pas les permissions nécessaires pour donner ce rôle\nLe rôle de Eula doit être plus haut que le rôle à donner")
                         return
 
-                    await ctx.send(f"Le rôle vocal est maintenant **{role.name}**")
-                    self.utils.set_server_config(ctx.guild.id, "rolevocal", "active", value=True)
+                    await ctx.send(f"Le rôle de base est maintenant **{role.name}**")
+                    self.utils.set_server_config(ctx.guild.id, "autorole", "active", value=True)
                     return
 
             await ctx.send("Veuillez mentionner le rôle à donner")
@@ -67,33 +67,33 @@ class ToggleRolevocal(commands.Cog):
             if role is None:
                 await ctx.send("Le rôle n'existe pas")
                 return
-
+            
             # vérifie si le bot a les permissions
             if not ctx.guild.me.guild_permissions.manage_roles or ctx.guild.me.top_role < role:
                 await ctx.send("Le bot n'a pas les permissions nécessaires pour donner ce rôle\nLe rôle de Eula doit être plus haut que le rôle à donner")
                 return
 
 
-            self.utils.set_server_config(ctx.guild.id, "rolevocal", "role_id", value=role.id)
-            self.utils.set_server_config(ctx.guild.id, "rolevocal", "active", value=True)
-            await ctx.send(f"Le rôle vocal est maintenant **{role.name}**")
+            self.utils.set_server_config(ctx.guild.id, "autorole", "role_id", value=role.id)
+            self.utils.set_server_config(ctx.guild.id, "autorole", "active", value=True)
+            await ctx.send(f"Le rôle de base est maintenant **{role.name}**")
 
 
     @commands.command()
     @commands.has_permissions(manage_roles=True)
-    async def toggle_rolevocal(self, ctx):
+    async def toggle_autorole(self, ctx):
         await self.command(ctx)
 
 
-    @app_commands.command(name="toggle_rolevocal", description="active ou désactive l'assignation d'un rôle quand un utilisateur rejoint un salon vocal")
+    @app_commands.command(name="toggle_autorole", description="active ou désactive l'assignation d'un rôle de base")
     @app_commands.checks.has_permissions(manage_roles=True)
-    async def toggle_rolevocalSlash(self, interaction: discord.Interaction):
+    async def toggle_autoroleSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx)
 
 
-    @toggle_rolevocal.error
-    async def toggle_rolevocalError(self, ctx, error):
+    @toggle_autorole.error
+    async def help_send_embedError(self, ctx, error):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await ctx.send(error_string)
@@ -101,32 +101,14 @@ class ToggleRolevocal(commands.Cog):
             raise error
 
 
-    @toggle_rolevocalSlash.error
-    async def toggle_rolevocalSlashError(self, interaction, error):
+    @toggle_autoroleSlash.error
+    async def help_send_embedSlashError(self, interaction, error):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await interaction.response.send_message(error_string, ephemeral=True)
         else:
             raise error
-        
-    
-    @commands.Cog.listener()
-    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
-        if not self.utils.get_server_config(member.guild.id, "rolevocal", "active"):
-            return
-
-        role = member.guild.get_role(self.utils.get_server_config(member.guild.id, "rolevocal", "role_id"))
-        if role is not None:
-            return
-
-        # si l'utilisateur rejoint un salon
-        if before.channel is None and after.channel is not None:
-            member.add_roles(role, reason="rolevocal")
-        
-        # si l'utilisateur quitte un salon
-        elif before.channel is not None and after.channel is None:
-            member.remove_roles(role, reason="rolevocal")
 
 
 async def setup(bot):
-    await bot.add_cog(ToggleRolevocal(bot))
+    await bot.add_cog(ToggleAutorole(bot))

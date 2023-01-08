@@ -6,24 +6,24 @@ from discord.ext import commands
 
 from functions import Utils
 
-class ToggleAutorole(commands.Cog):
+class ToggleLogs(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
         self.utils = Utils(client)
 
 
     async def command(self, ctx: commands.Context):
-        autorole_is_active = self.utils.get_server_config(ctx.guild.id, "autorole", "active")
+        logs_is_active = self.utils.get_server_config(ctx.guild.id, "logs", "active")
 
-        if autorole_is_active:
-            self.utils.set_server_config(ctx.guild.id, "autorole", "active", value=False)
-            await ctx.send("L'autorôle est maintenant désactivé")
+        if logs_is_active:
+            self.utils.set_server_config(ctx.guild.id, "logs", "active", value=False)
+            await ctx.send("Les logs sont maintenant désactivées")
         else:
-            role_id = self.utils.get_server_config(ctx.guild.id, "autorole", "role_id")
-            role = ctx.guild.get_role(role_id)
+            channel_id = self.utils.get_server_config(ctx.guild.id, "logs", "channel_id")
+            channel = ctx.guild.get_channel(channel_id)
 
-            if role is not None:
-                await ctx.send(f"Le rôle de base est déjà configuré\nRole: **{role.name}**\nVoulez-vous le changer ? (oui/non)")
+            if channel is not None:
+                await ctx.send(f"Le salon de logs est déjà configuré\nChannel: **{channel.mention}**\nVoulez-vous le changer ? (oui/non)")
 
                 try:
                     msg = await self.client.wait_for(
@@ -39,16 +39,11 @@ class ToggleAutorole(commands.Cog):
 
                 # si on change pas le rôle, on sauvegarde et on quitte
                 if msg.content in ["n", "no", "non"]:
-                    # vérifie si le bot a les permissions
-                    if not ctx.guild.me.guild_permissions.manage_roles or ctx.guild.me.top_role < role:
-                        await ctx.send("Le bot n'a pas les permissions nécessaires pour donner ce rôle\nLe rôle de Eula doit être plus haut que le rôle à donner")
-                        return
-
-                    await ctx.send(f"Le rôle de base est maintenant **{role.name}**")
-                    self.utils.set_server_config(ctx.guild.id, "autorole", "active", value=True)
+                    await ctx.send(f"Le salon des logs est maintenant **{channel.mention}**")
+                    self.utils.set_server_config(ctx.guild.id, "logs", "active", value=True)
                     return
 
-            await ctx.send("Veuillez mentionner le rôle à donner")
+            await ctx.send("Veuillez mentionner le salon")
 
             try:
                 msg = await self.client.wait_for(
@@ -61,39 +56,34 @@ class ToggleAutorole(commands.Cog):
                 await ctx.send("Vous avez mis trop de temps à répondre")
                 return
 
-            role = self.utils.replaces(msg.content, "<@&", "", ">", "")
-            role = ctx.guild.get_role(int(role))
+            channel = self.utils.replaces(msg.content, "<@#", "", ">", "")
+            channel = ctx.guild.get_role(int(channel))
 
-            if role is None:
-                await ctx.send("Le rôle n'existe pas")
-                return
-            
-            # vérifie si le bot a les permissions
-            if not ctx.guild.me.guild_permissions.manage_roles or ctx.guild.me.top_role < role:
-                await ctx.send("Le bot n'a pas les permissions nécessaires pour donner ce rôle\nLe rôle de Eula doit être plus haut que le rôle à donner")
+            if channel is None:
+                await ctx.send("Le salon n'existe pas")
                 return
 
 
-            self.utils.set_server_config(ctx.guild.id, "autorole", "role_id", value=role.id)
-            self.utils.set_server_config(ctx.guild.id, "autorole", "active", value=True)
-            await ctx.send(f"Le rôle de base est maintenant **{role.name}**")
+            self.utils.set_server_config(ctx.guild.id, "logs", "channel_d", value=channel.id)
+            self.utils.set_server_config(ctx.guild.id, "logs", "active", value=True)
+            await ctx.send(f"Le salon des logs est maintenant **{channel.name}**")
 
 
     @commands.command()
     @commands.has_permissions(manage_roles=True)
-    async def toggle_autorole(self, ctx):
+    async def toggle_logs(self, ctx):
         await self.command(ctx)
 
 
-    @app_commands.command(name="toggle_autorole", description="active ou désactive l'assignation d'un rôle de base")
+    @app_commands.command(name="toggle_logs", description="active ou désactive l'assignation d'un rôle de base")
     @app_commands.checks.has_permissions(manage_roles=True)
-    async def toggle_autoroleSlash(self, interaction: discord.Interaction):
+    async def toggle_logsSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx)
 
 
-    @toggle_autorole.error
-    async def help_send_embedError(self, ctx, error):
+    @toggle_logs.error
+    async def toggle_logsError(self, ctx, error):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await ctx.send(error_string)
@@ -101,8 +91,8 @@ class ToggleAutorole(commands.Cog):
             raise error
 
 
-    @toggle_autoroleSlash.error
-    async def help_send_embedSlashError(self, interaction, error):
+    @toggle_logs.error
+    async def toggle_logsSlashError(self, interaction, error):
         error_string = self.utils.error_message(error)
         if error_string is not None:
             await interaction.response.send_message(error_string, ephemeral=True)
@@ -123,4 +113,4 @@ class ToggleAutorole(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(ToggleAutorole(bot))
+    await bot.add_cog(ToggleLogs(bot))
