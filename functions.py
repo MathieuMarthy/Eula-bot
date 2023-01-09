@@ -17,6 +17,7 @@ def is_me(ctx: commands.Context) -> bool:
 class Utils:
     def __init__(self, client: discord.Client):
         self.client = client
+        self.color = 0x989eec
         self.server_config = json.load(open(os.path.join(project_path, "data", "server_config.json"), "r", encoding="utf-8"))
 
 
@@ -111,7 +112,7 @@ class Utils:
 
 
     def embed_color(self):
-        return 0x989eec
+        return self.color
 
 
     def error_message(self, error: discord.DiscordException) -> str:

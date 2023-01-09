@@ -7,12 +7,13 @@ from functions import Utils
 class Ping(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
+        self.utils = Utils(client)
 
 
     async def command(self, ctx):
         embed = discord.Embed(color=0xf0a3ff)
         embed.set_author(name="ping", icon_url=self.client.user.avatar.url)
-        embed.set_thumbnail(url=Utils.get_img("power"))
+        embed.set_thumbnail(url=self.utils.get_img("power"))
         embed.add_field(name="󠀮 ", value="**Je suis connecté !**", inline=True)
         await ctx.reply(embed=embed, mention_author=False)
 
