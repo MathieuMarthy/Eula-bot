@@ -11,9 +11,17 @@ class PP_Banner(commands.Cog):
         self.client = client
         self.utils = Utils(self.client)
 
+        # === context menu ===
+        self.ctx_menu_pp = app_commands.ContextMenu(name="pp", callback=self.pp_context_menu)
+        self.client.tree.add_command(self.ctx_menu_pp)
+
+        self.ctx_menu_banner = app_commands.ContextMenu(name="bannière", callback=self.banner_context_menu)
+        self.client.tree.add_command(self.ctx_menu_banner)
+
+
     async def send(self, ctx: commands.Context, image: discord.Asset):
         if image is None:
-            await ctx.send("Cette personne n'a pas d'image")
+            await ctx.send("Aucune image trouvée")
             return
 
         await ctx.interaction.response.defer()
@@ -35,6 +43,12 @@ class PP_Banner(commands.Cog):
         await self.send(ctx, member.banner)
 
 
+    @app_commands.checks.has_permissions(administrator=True)
+    async def pp_context_menu(self, interaction, member: discord.Member):
+        ctx = await self.client.get_context(interaction)
+        await self.pp_command(ctx, member)
+
+
     @commands.command()
     async def pp(self, ctx: commands.Context, member: str):
         if not await self.utils.is_user(member):
@@ -50,6 +64,12 @@ class PP_Banner(commands.Cog):
     async def ppSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)
         await self.pp_command(ctx, personne)
+
+
+    @app_commands.checks.has_permissions(administrator=True)
+    async def banner_context_menu(self, interaction, member: discord.Member):
+        ctx = await self.client.get_context(interaction)
+        await self.banner_command(ctx, member)
 
 
     @commands.command(aliases=["bannière", "banner"])

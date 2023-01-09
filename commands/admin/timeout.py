@@ -14,6 +14,14 @@ class Timeout(commands.Cog):
 
 
     async def command(self, ctx: commands.Context, member: discord.Member, duration: int, reason: str):
+        if not ctx.guild.me.guild_permissions.moderate_members:
+            await ctx.send("Je n'ai pas les permissions de timeout")
+            return
+
+        if member.guild_permissions.administrator:
+            await ctx.send("Impossible de timeout un administrateur")
+            return
+
         kamehameha_emotes = [
             ("<:k1:1031645200851939328>", "<:k0:1031645223580876864>"),
             ("<:k2:1031645202475143188>", "<:k0:1031645223580876864>"),
@@ -35,14 +43,7 @@ class Timeout(commands.Cog):
             await msg.edit(content=f"{emotes[0]}{emotes[1]}{member.mention}")
             await asyncio.sleep(1)
 
-        await msg.edit(content=f"{member.mention} a été timeout pendant {duration} minutes{' pour ' + reason if reason else ''}")
-
-
-    @app_commands.context_menu(name="timeout")
-    @app_commands.checks.has_permissions(administrator=True)
-    async def timeout_context_menu(self, interaction, member: discord.Member):
-        await self.command(interaction, member, 1, "")
-
+        await msg.edit(content=f"{member.mention} a été timeout pendant {duration} minute{'s' if duration > 1 else ''}{' pour ' + reason if reason else ''}")
 
 
     @commands.command(aliases=["to"])
@@ -66,6 +67,25 @@ class Timeout(commands.Cog):
     async def timeoutSlash(self, interaction: discord.Interaction, personne: discord.Member, duree: int, raison: str = ""):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx, personne, duree, raison)
+
+
+    @timeout.error
+    async def timeoutError(self, ctx, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await ctx.send(error_string)
+        else:
+            raise error
+
+
+    @timeoutSlash.error
+    async def timeoutSlashError(self, interaction, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await interaction.response.send_message(error_string, ephemeral=True)
+        else:
+            raise error
+
 
 
 async def setup(bot):
