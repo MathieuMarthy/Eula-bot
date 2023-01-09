@@ -10,6 +10,10 @@ from discord.ext import commands
 
 project_path = os.path.dirname(os.path.realpath(__file__))
 
+def is_me(ctx: commands.Context) -> bool:
+    return ctx.author.id == 236853417681616906
+
+
 class Utils:
     def __init__(self, client: discord.Client):
         self.client = client

@@ -1,10 +1,10 @@
 import os
 
 import discord
-from discord import app_commands
 from discord.ext import commands
 
 from functions import Utils
+from functions import is_me
 
 class Setpp(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
@@ -33,8 +33,14 @@ class Setpp(commands.Cog):
 
 
     @commands.command()
+    @commands.check(is_me)
     async def set_pp(self, ctx):
         await self.command(ctx)
+
+
+    @set_pp.error
+    async def set_pp_error(self, ctx, error):
+        pass
 
 
 async def setup(bot):
