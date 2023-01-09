@@ -12,8 +12,8 @@ class Dm(commands.Cog):
         self.utils = Utils(client)
 
 
-    async def command(self, ctx: commands.Context, msg: str):
-        member = await self.client.fetch_user(ctx.message.mentions[0].id)
+    async def command(self, ctx: commands.Context, mention, msg: str):
+        member = ctx.guild.get_member(int(self.utils.replaces(mention, "<@", "", ">", "", "!", "")))
 
         if member is None:
             await ctx.send("Vous n'avez pas mentionné un joueur !")
@@ -24,13 +24,13 @@ class Dm(commands.Cog):
 
     @commands.command()
     @commands.check(is_me)
-    async def dm(self, ctx, msg):
-        await self.command(ctx, msg)
+    async def dm(self, ctx, mention, msg):
+        await self.command(ctx, mention, msg)
 
 
-    @dm.error
-    async def set_pp_error(self, ctx, error):
-        pass
+    # @dm.error
+    # async def set_pp_error(self, ctx, error):
+    #     pass
 
 
 async def setup(bot):
