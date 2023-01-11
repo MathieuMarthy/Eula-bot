@@ -1,8 +1,4 @@
-import os
-from PIL import Image
-
 import discord
-from discord import app_commands
 from discord.ext import commands
 
 from functions import Utils

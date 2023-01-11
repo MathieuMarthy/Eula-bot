@@ -1,8 +1,4 @@
-import os
-from PIL import Image
-
 import discord
-from discord import app_commands
 from discord.ext import commands
 
 from functions import Utils
@@ -85,6 +81,8 @@ class LogsMessage(commands.Cog):
         if logs_channel is None:
             return
 
+        if before.content == after.content:
+            return
 
         # création de la base de l'embed
         embed = discord.Embed(

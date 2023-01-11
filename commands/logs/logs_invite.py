@@ -1,8 +1,4 @@
-import os
-from PIL import Image
-
 import discord
-from discord import app_commands
 from discord.ext import commands
 
 from functions import Utils
@@ -23,6 +19,9 @@ class LogsInvite(commands.Cog):
         logs_channel = self.utils.get_server_config(invite.guild.id, "logs", "channel_id")
         logs_channel = self.client.get_channel(int(logs_channel))
         if logs_channel is None:
+            return
+        
+        if invite.scheduled_event is not None:
             return
 
 
