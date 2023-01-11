@@ -9,6 +9,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from data import config
+
 project_path = os.path.dirname(os.path.realpath(__file__))
 
 def is_me(ctx: commands.Context) -> bool:
@@ -110,10 +112,14 @@ class Utils:
 
         member = await self.client.fetch_user(member)
         return member is not None
+    
+
+    def apply_timezone(self, date: datetime) -> datetime:
+        return date.astimezone(pytz.timezone(config.timezone))
 
 
     def get_date_time(self):
-        return datetime.now(pytz.timezone("Europe/Paris")).strftime("%d/%m/%Y %H:%M:%S")
+        return datetime.now(pytz.timezone(config.timezone)).strftime("%d/%m/%Y %H:%M:%S")
 
 
     def embed_color(self):

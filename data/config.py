@@ -12,3 +12,4 @@ prefix = [
 version = "5.0.0"
 changelog = "refonte du bot et ajout des commandes slash"
 owner_id = 236853417681616906
+timezone = "Europe/Paris"
