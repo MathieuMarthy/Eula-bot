@@ -40,6 +40,9 @@ class LogsInvite(commands.Cog):
             timezone_expiration_date = self.utils.apply_timezone(invite.expires_at)
             embed.add_field(name="Date d'expiration", value=f"`{timezone_expiration_date.strftime('%d/%m/%Y %H:%M:%S')}` soit <t:{int(timezone_expiration_date.timestamp())}:R>", inline=False)
 
+
+        embed.add_field(name="Nombre d'utilisations", value=f"`{'illimité' if invite.max_uses == 0 else invite.max_uses}`", inline=True)
+
         embed.add_field(name=self.utils.invisible_string(), value=self.utils.get_date_time(), inline=False)
 
         # envoie du message
