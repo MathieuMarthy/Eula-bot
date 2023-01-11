@@ -102,9 +102,6 @@ class LogsMessage(commands.Cog):
     
         # envoie du message
         await logs_channel.send(embed=embed)
-    
-
-
 
 
 async def setup(bot):

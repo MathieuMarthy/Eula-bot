@@ -293,8 +293,8 @@ class Randomizer(commands.Cog):
             x += 65
 
         name = "".join(random.sample("1234567890", 10)) + ".png"
-        image.save(os.path.join(config.path, "tmp", name))
-        return os.path.join(config.path, "tmp", name)
+        image.save(os.path.join(self.utils.bot_path(), "tmp", name))
+        return os.path.join(self.utils.bot_path(), "tmp", name)
 
 
 async def setup(bot):
