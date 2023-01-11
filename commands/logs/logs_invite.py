@@ -44,6 +44,33 @@ class LogsInvite(commands.Cog):
 
         # envoie du message
         await logs_channel.send(embed=embed)
+    
+
+    @commands.Cog.listener()
+    async def on_invite_delete(self, invite: discord.Invite):
+        # Vérifications         
+        if not self.utils.get_server_config(invite.guild.id, "logs", "active"):
+            return
+        
+        logs_channel = self.utils.get_server_config(invite.guild.id, "logs", "channel_id")
+        logs_channel = self.client.get_channel(int(logs_channel))
+        if logs_channel is None:
+            return
+
+
+        # création de la base de l'embed
+        embed = discord.Embed(
+            color=self.utils.embed_color()
+        )
+        embed.set_author(name=f"Une invitation à été supprimée", icon_url=self.utils.get_img("setting"))
+        embed.set_thumbnail(url=self.utils.get_img("trash"))
+
+        embed.add_field(name="Invitation", value=invite.url, inline=True)
+        embed.add_field(name="Créateur", value=invite.inviter.mention, inline=True)
+        embed.add_field(name=self.utils.invisible_string(), value=self.utils.get_date_time(), inline=False)
+
+        # envoie du message
+        await logs_channel.send(embed=embed)
 
 
 async def setup(bot):
