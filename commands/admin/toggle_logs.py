@@ -56,8 +56,8 @@ class ToggleLogs(commands.Cog):
                 await ctx.send("Vous avez mis trop de temps à répondre")
                 return
 
-            channel = self.utils.replaces(msg.content, "<@#", "", ">", "")
-            channel = ctx.guild.get_role(int(channel))
+            channel = self.utils.replaces(msg.content, "<#", "", ">", "")
+            channel = ctx.guild.get_channel(int(channel))
 
             if channel is None:
                 await ctx.send("Le salon n'existe pas")

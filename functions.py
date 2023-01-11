@@ -1,8 +1,9 @@
 import json
 import os
 import asyncio
-import datetime
+from datetime import datetime
 from zoneinfo import ZoneInfo
+import pytz
 
 import discord
 from discord import app_commands
@@ -19,6 +20,10 @@ class Utils:
         self.client = client
         self.color = 0x989eec
         self.server_config = json.load(open(os.path.join(project_path, "data", "server_config.json"), "r", encoding="utf-8"))
+
+
+    def invisible_string(self) -> str:
+        return " "
 
 
     def server_exists_in_config(self, guild_id: int) -> bool:
@@ -108,7 +113,7 @@ class Utils:
 
 
     def get_date_time(self):
-        return datetime.now(tz=ZoneInfo("Europe/Paris")).strftime("%d/%m/%Y %H:%M:%S")
+        return datetime.now(pytz.timezone("Europe/Paris")).strftime("%d/%m/%Y %H:%M:%S")
 
 
     def embed_color(self):
