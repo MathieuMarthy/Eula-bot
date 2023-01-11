@@ -7,7 +7,7 @@ from discord.ext import commands
 
 from functions import Utils
 
-class Logs(commands.Cog):
+class LogsMessage(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
         self.utils = Utils(client)
@@ -97,13 +97,15 @@ class Logs(commands.Cog):
         embed.add_field(name="Après", value=after.content, inline=True)
 
         # ajout du salon et de la date
-        embed.add_field(name="Salon", value=before.channel.mention, inline=True)
+        embed.add_field(name="Salon", value=before.channel.mention, inline=False)
         embed.add_field(name=self.utils.invisible_string(), value=after.author.mention + " - " + self.utils.get_date_time() + " - " + f"[lien vers le message]({after.jump_url})", inline=False)
     
         # envoie du message
         await logs_channel.send(embed=embed)
+    
+
 
 
 
 async def setup(bot):
-    await bot.add_cog(Logs(bot))
+    await bot.add_cog(LogsMessage(bot))

@@ -236,13 +236,13 @@ class Utils:
         """
         power
         shuffle
-        plus
+        add
         minus
         notif
         edit
-        plus_rond
-        croix_non
-        croix_plus
+        add_rond
+        cross_no
+        cross_add
         speaker
         trash
         setting
@@ -260,13 +260,13 @@ class Utils:
 dico = {
     "power": "https://media.discordapp.net/attachments/836943322580516904/971846167078006814/unknown.png",
     "shuffle": "https://media.discordapp.net/attachments/836943322580516904/971846499443019776/unknown.png",
-    "plus": "https://media.discordapp.net/attachments/836943322580516904/971846604321599548/unknown.png",
+    "add": "https://media.discordapp.net/attachments/836943322580516904/971846604321599548/unknown.png",
     "minus": "https://media.discordapp.net/attachments/836943322580516904/971847114445443112/unknown.png",
     "notif": "https://media.discordapp.net/attachments/836943322580516904/971847177741684826/unknown.png",
     "edit": "https://media.discordapp.net/attachments/836943322580516904/971847238395498646/unknown.png",
-    "plus_rond": "https://media.discordapp.net/attachments/836943322580516904/971847381379350578/unknown.png",
-    "croix_non": "https://media.discordapp.net/attachments/836943322580516904/971847400287268924/unknown.png",
-    "croix_plus": "https://media.discordapp.net/attachments/836943322580516904/971847415143485460/unknown.png",
+    "add_rond": "https://media.discordapp.net/attachments/836943322580516904/971847381379350578/unknown.png",
+    "cross_no": "https://media.discordapp.net/attachments/836943322580516904/971847400287268924/unknown.png",
+    "cross_add": "https://media.discordapp.net/attachments/836943322580516904/971847415143485460/unknown.png",
     "speaker": "https://media.discordapp.net/attachments/836943322580516904/971847435041247385/unknown.png",
     "trash": "https://media.discordapp.net/attachments/836943322580516904/971847444780425266/unknown.png",
     "setting": "https://media.discordapp.net/attachments/836943322580516904/971847454892908614/unknown.png",
