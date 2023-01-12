@@ -94,7 +94,7 @@ class LogsChannel(commands.Cog):
             return
 
         # création de la base de l'embed
-        embed = self.create_embed(before, "delete")
+        embed = self.create_embed(before, "update")
 
         # ajout des informations
         if before.name != after.name:
