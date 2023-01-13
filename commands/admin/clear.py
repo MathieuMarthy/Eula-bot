@@ -7,7 +7,7 @@ from functions import Utils
 class Clear(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
     
     async def command(self, ctx: commands.Context, arg):
         if arg.isdigit():

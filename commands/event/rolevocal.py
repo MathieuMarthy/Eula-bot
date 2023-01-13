@@ -7,7 +7,7 @@ from functions import Utils
 class Rolevocal(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     @commands.Cog.listener()

@@ -67,7 +67,7 @@ help_dict = {
 class HelpView(View):
     def __init__(self, client):
         super().__init__(timeout=300)
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
         self.embed = discord.Embed(title="Menu d'aide", color=self.utils.embed_color())
         self.embed.set_author(name=client.user.display_name, icon_url=client.user.avatar.url)

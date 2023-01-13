@@ -9,7 +9,7 @@ from functions import Utils
 class Chat(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
         self.links_hello = [
             "https://c.tenor.com/thNxDWlG1EcAAAAC/killua-zoldyck-anime.gif",

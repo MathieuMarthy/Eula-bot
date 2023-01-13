@@ -9,7 +9,7 @@ from functions import Utils
 class ToggleAutorole(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     async def command(self, ctx: commands.Context):
@@ -92,22 +92,22 @@ class ToggleAutorole(commands.Cog):
         await self.command(ctx)
 
 
-    @toggle_autorole.error
-    async def help_send_embedError(self, ctx, error):
-        error_string = self.utils.error_message(error)
-        if error_string is not None:
-            await ctx.send(error_string)
-        else:
-            raise error
+    # @toggle_autorole.error
+    # async def help_send_embedError(self, ctx, error):
+    #     error_string = self.utils.error_message(error)
+    #     if error_string is not None:
+    #         await ctx.send(error_string)
+    #     else:
+    #         raise error
 
 
-    @toggle_autoroleSlash.error
-    async def help_send_embedSlashError(self, interaction, error):
-        error_string = self.utils.error_message(error)
-        if error_string is not None:
-            await interaction.response.send_message(error_string, ephemeral=True)
-        else:
-            raise error
+    # @toggle_autoroleSlash.error
+    # async def help_send_embedSlashError(self, interaction, error):
+    #     error_string = self.utils.error_message(error)
+    #     if error_string is not None:
+    #         await interaction.response.send_message(error_string, ephemeral=True)
+    #     else:
+    #         raise error
 
 
 async def setup(bot):

@@ -9,7 +9,7 @@ from functions import Utils
 class PileOuFace(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     async def command(self, ctx):

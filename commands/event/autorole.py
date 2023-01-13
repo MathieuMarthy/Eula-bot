@@ -1,5 +1,4 @@
 import discord
-from discord import app_commands
 from discord.ext import commands
 
 from functions import Utils
@@ -7,7 +6,7 @@ from functions import Utils
 class Autorole(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     @commands.Cog.listener()

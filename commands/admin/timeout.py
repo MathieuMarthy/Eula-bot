@@ -10,7 +10,7 @@ from functions import Utils
 class Timeout(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     async def command(self, ctx: commands.Context, member: discord.Member, duration: int, reason: str):

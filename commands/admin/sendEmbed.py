@@ -9,7 +9,7 @@ from functions import Utils
 class SendEmbed(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
     async def command(self, ctx: commands.Context, channel: discord.TextChannel, json: str):
         if ctx.interaction is not None:

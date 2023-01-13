@@ -8,7 +8,7 @@ from functions import Utils
 class LogsEvent(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
     
 
     def create_embed(self, event: discord.ScheduledEvent, type: Literal["create", "update", "delete"]) -> discord.Embed:

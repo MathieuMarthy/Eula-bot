@@ -7,12 +7,11 @@ from functions import Utils
 class JoinLeaveGuild(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
-        print("guild join")
         if self.utils.server_exists_in_config(guild.id):
             return
         
@@ -21,7 +20,6 @@ class JoinLeaveGuild(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
-        print("guild remove")
         if not self.utils.server_exists_in_config(guild.id):
             return
 

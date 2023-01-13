@@ -8,7 +8,7 @@ from functions import Utils
 class LogsInvite(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     def create_embed(self, invite: discord.Invite, type: Literal["create", "delete"]) -> discord.Embed:

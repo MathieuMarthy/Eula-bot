@@ -8,7 +8,7 @@ from functions import Utils
 class LogsThread(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
-        self.utils = Utils(client)
+        self.utils = Utils.get_instance(client)
 
 
     def checks(self, thread: discord.Thread) -> discord.TextChannel:

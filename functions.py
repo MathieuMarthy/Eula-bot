@@ -17,10 +17,18 @@ def is_me(ctx: commands.Context) -> bool:
 
 
 class Utils:
+    __instance = None
+
+    @staticmethod
+    def get_instance(client):
+        if Utils.__instance is None :
+            Utils.__instance = Utils(client)
+        return Utils.__instance
+
     def __init__(self, client: discord.Client):
         self.client = client
         self._color = 0x989eec
-        self.server_config = json.load(open(os.path.join(project_path, "data", "server_config.json"), "r", encoding="utf-8"))
+        self.server_config = self.load_server_config()
 
 
     def invisible_string(self) -> str:
@@ -61,10 +69,14 @@ class Utils:
             for arg in keys:
                 config = config[arg]
             return config
-    
-    
+
+    def load_server_config(self):
+        return json.load(open(os.path.join(project_path, "data", "server_config.json"), "r", encoding="utf-8"))
+
+
     def _save_server_config(self):
         json.dump(self.server_config, open(os.path.join(self.bot_path(), "data", "server_config.json"), "w", encoding="utf-8"), indent=4)
+        self.server_config = self.load_server_config()
 
     
     def set_server_config(self, guild_id: int, *keys: str, value):
