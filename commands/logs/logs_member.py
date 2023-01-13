@@ -9,15 +9,20 @@ class LogsMember(commands.Cog):
         self.utils = Utils(client)
 
 
+    def checks(self, guild: discord.Guild) -> discord.TextChannel|None:
+        # Vérifications         
+        if not self.utils.get_server_config(guild.id, "logs", "active"):
+            return None
+
+        logs_channel = self.utils.get_server_config(guild.id, "logs", "channel_id")
+        logs_channel = self.client.get_channel(int(logs_channel))
+        return logs_channel
+
+
     # === Member ===
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        # Vérifications         
-        if not self.utils.get_server_config(member.guild.id, "logs", "active"):
-            return
-
-        logs_channel = self.utils.get_server_config(member.guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
+        logs_channel = self.checks(member.guild)
         if logs_channel is None:
             return
 
@@ -38,12 +43,7 @@ class LogsMember(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
-        # Vérifications         
-        if not self.utils.get_server_config(member.guild.id, "logs", "active"):
-            return
-
-        logs_channel = self.utils.get_server_config(member.guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
+        logs_channel = self.checks(member.guild)
         if logs_channel is None:
             return
 
@@ -64,12 +64,7 @@ class LogsMember(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild: discord.Guild, user: discord.User):
-        # Vérifications         
-        if not self.utils.get_server_config(guild.id, "logs", "active"):
-            return
-
-        logs_channel = self.utils.get_server_config(guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
+        logs_channel = self.checks(guild)
         if logs_channel is None:
             return
 
@@ -90,12 +85,7 @@ class LogsMember(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        # Vérifications         
-        if not self.utils.get_server_config(guild.id, "logs", "active"):
-            return
-
-        logs_channel = self.utils.get_server_config(guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
+        logs_channel = self.checks(guild)
         if logs_channel is None:
             return
 
@@ -116,12 +106,7 @@ class LogsMember(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        # Vérifications         
-        if not self.utils.get_server_config(before.guild.id, "logs", "active"):
-            return
-
-        logs_channel = self.utils.get_server_config(before.guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
+        logs_channel = self.checks(before.guild)
         if logs_channel is None:
             return
 

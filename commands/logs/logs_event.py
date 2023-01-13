@@ -55,7 +55,7 @@ class LogsEvent(commands.Cog):
     def checks(self, event: discord.ScheduledEvent) -> discord.TextChannel|None:
         # Vérifications         
         if not self.utils.get_server_config(event.guild.id, "logs", "active"):
-            return
+            return None
         
         logs_channel = self.utils.get_server_config(event.guild.id, "logs", "channel_id")
         logs_channel = self.client.get_channel(int(logs_channel))
@@ -101,6 +101,8 @@ class LogsEvent(commands.Cog):
         )
         embed.set_author(name=f"Un événement à été modifié", icon_url=self.utils.get_img("setting"))
         embed.set_thumbnail(url=self.utils.get_img("edit"))
+
+        embed.add_field(name="Nom de l'événement", value=before.name, inline=True)
 
         if before.description != after.description:
             embed.add_field(name="Description de l'événement", value=f"Avant : {before.description}\nAprès : {after.description}", inline=True)

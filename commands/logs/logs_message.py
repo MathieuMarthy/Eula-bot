@@ -9,18 +9,23 @@ class LogsMessage(commands.Cog):
         self.utils = Utils(client)
 
 
-    # === Message ===
-    @commands.Cog.listener()
-    async def on_message_delete(self, message: discord.Message):
+    def checks(self, message: discord.Message) -> discord.TextChannel|None:
         # Vérifications 
         if message.author.bot or message.guild is None:
-            return
+            return None
         
         if not self.utils.get_server_config(message.guild.id, "logs", "active"):
-            return
+            return None
         
         logs_channel = self.utils.get_server_config(message.guild.id, "logs", "channel_id")
         logs_channel = self.client.get_channel(int(logs_channel))
+        return logs_channel
+
+
+    # === Message ===
+    @commands.Cog.listener()
+    async def on_message_delete(self, message: discord.Message):
+        logs_channel = self.checks(message)
         if logs_channel is None:
             return
 
@@ -69,15 +74,7 @@ class LogsMessage(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
-        # Vérifications 
-        if before.author.bot or before.guild is None:
-            return
-        
-        if not self.utils.get_server_config(before.guild.id, "logs", "active"):
-            return
-        
-        logs_channel = self.utils.get_server_config(before.guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
+        logs_channel = self.checks(before)
         if logs_channel is None:
             return
 

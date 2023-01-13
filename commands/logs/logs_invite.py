@@ -1,3 +1,5 @@
+from typing import Literal
+
 import discord
 from discord.ext import commands
 
@@ -9,28 +11,22 @@ class LogsInvite(commands.Cog):
         self.utils = Utils(client)
 
 
-    # === Invite ===
-    @commands.Cog.listener()
-    async def on_invite_create(self, invite: discord.Invite):
-        # Vérifications         
-        if not self.utils.get_server_config(invite.guild.id, "logs", "active"):
-            return
-        
-        logs_channel = self.utils.get_server_config(invite.guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
-        if logs_channel is None:
-            return
-        
-        if invite.scheduled_event is not None:
-            return
+    def create_embed(self, invite: discord.Invite, type: Literal["create", "delete"]) -> discord.Embed:
+        title = "Une invitation à été "
+        match type:
+            case "create":
+                title += "créée"
+                image = "add"
+            case "delete":
+                title += "supprimée"
+                image = "trash"
 
-
-        # création de la base de l'embed
+       # création de la base de l'embed
         embed = discord.Embed(
             color=self.utils.embed_color()
         )
-        embed.set_author(name=f"Une invitation à été créée", icon_url=self.utils.get_img("setting"))
-        embed.set_thumbnail(url=self.utils.get_img("add"))
+        embed.set_author(name=title, icon_url=self.utils.get_img("setting"))
+        embed.set_thumbnail(url=self.utils.get_img(image))
 
         embed.add_field(name="Invitation", value=invite.url, inline=True)
         embed.add_field(name="Créateur", value=invite.inviter.mention, inline=True)
@@ -43,6 +39,31 @@ class LogsInvite(commands.Cog):
         embed.add_field(name="Nombre d'utilisations", value=f"`{'illimité' if invite.max_uses == 0 else invite.max_uses}`", inline=True)
 
         embed.add_field(name=self.utils.invisible_string(), value=self.utils.get_date_time(), inline=False)
+        return embed
+
+
+    def checks(self, invite: discord.Invite) -> discord.TextChannel|None:
+        # Vérifications         
+        if not self.utils.get_server_config(invite.guild.id, "logs", "active"):
+            return None
+        
+        logs_channel = self.utils.get_server_config(invite.guild.id, "logs", "channel_id")
+        logs_channel = self.client.get_channel(int(logs_channel))
+
+        if invite.scheduled_event is not None:
+            return None
+
+        return logs_channel
+
+
+    # === Invite ===
+    @commands.Cog.listener()
+    async def on_invite_create(self, invite: discord.Invite):
+        logs_channel = self.checks(invite)
+        if logs_channel is None:
+            return
+
+        embed = self.create_embed(invite, "create")
 
         # envoie du message
         await logs_channel.send(embed=embed)
@@ -50,26 +71,11 @@ class LogsInvite(commands.Cog):
 
     @commands.Cog.listener()
     async def on_invite_delete(self, invite: discord.Invite):
-        # Vérifications         
-        if not self.utils.get_server_config(invite.guild.id, "logs", "active"):
-            return
-        
-        logs_channel = self.utils.get_server_config(invite.guild.id, "logs", "channel_id")
-        logs_channel = self.client.get_channel(int(logs_channel))
+        logs_channel = self.checks(invite)
         if logs_channel is None:
             return
 
-
-        # création de la base de l'embed
-        embed = discord.Embed(
-            color=self.utils.embed_color()
-        )
-        embed.set_author(name=f"Une invitation à été supprimée", icon_url=self.utils.get_img("setting"))
-        embed.set_thumbnail(url=self.utils.get_img("trash"))
-
-        embed.add_field(name="Invitation", value=invite.url, inline=True)
-        embed.add_field(name="Créateur", value=invite.inviter.mention, inline=True)
-        embed.add_field(name=self.utils.invisible_string(), value=self.utils.get_date_time(), inline=False)
+        embed = self.create_embed(invite, "delete")
 
         # envoie du message
         await logs_channel.send(embed=embed)
