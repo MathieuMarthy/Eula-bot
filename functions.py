@@ -2,7 +2,6 @@ import json
 import os
 import asyncio
 from datetime import datetime
-from zoneinfo import ZoneInfo
 import pytz
 
 import discord

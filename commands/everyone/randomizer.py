@@ -1,7 +1,7 @@
 import os
 import random
-from PIL import Image
 
+from PIL import Image
 import discord
 from discord import app_commands
 from discord.ui import Button, View

@@ -9,7 +9,7 @@ class LogsMessage(commands.Cog):
         self.utils = Utils(client)
 
 
-    def checks(self, message: discord.Message) -> discord.TextChannel|None:
+    def checks(self, message: discord.Message) -> discord.TextChannel:
         # Vérifications 
         if message.author.bot or message.guild is None:
             return None

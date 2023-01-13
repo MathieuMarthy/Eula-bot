@@ -9,7 +9,7 @@ class LogsMember(commands.Cog):
         self.utils = Utils(client)
 
 
-    def checks(self, guild: discord.Guild) -> discord.TextChannel|None:
+    def checks(self, guild: discord.Guild) -> discord.TextChannel:
         # Vérifications         
         if not self.utils.get_server_config(guild.id, "logs", "active"):
             return None
