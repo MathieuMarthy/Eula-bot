@@ -14,8 +14,9 @@ from functions import Utils
 class Randomizer(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
+        self.utils = Utils.get_instance(client)
         self.secret_channel = 1023522913825071195
-        self.assets_path = "assets/League_of_legends/images"
+        self.assets_path = os.path.join(self.utils.bot_path(), "assets/League_of_legends/images")
         self.dict_lanes = {
             1: "Toplane",
             2: "Jungle",
@@ -23,7 +24,6 @@ class Randomizer(commands.Cog):
             4: "Botlane",
             5: "Support",
         }
-        self.utils = Utils.get_instance(client)
 
     async def send_image(self, lane, champion) -> discord.Embed:
         embed = discord.Embed(title=f"Randomizer{f' - {self.dict_lanes[lane]}' if lane is not None else ''}{f' - {champion}' if champion is not None else ''}", color=self.utils.embed_color())
