@@ -15,7 +15,7 @@ utils = Utils(client)
 @client.event
 async def on_ready():
     # === general ===
-    await load("commands")
+    await load(os.path.join(utils.bot_path(), "commands"))
 
     synced = await client.tree.sync()
     print(f"{len(synced)} commandes synchronisées")
@@ -39,7 +39,8 @@ async def load(folder: str):
             await load(file)
 
         elif file.endswith(".py"):
-            file = file.replace("\\", ".").replace("/", ".")
+            file = file.replace(utils.bot_path() + "/", "")
+            file = file.replace("\\", ".").replace("/", ".").replace(":", ".")
             await client.load_extension(file[:-3])
 
 
