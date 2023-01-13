@@ -129,10 +129,20 @@ class LogsMember(commands.Cog):
         if before.roles != after.roles:
             roles_diff = list(set(before.roles) - set(after.roles))
 
+            # le rôle qui est ajouter ou retirer
+            role = roles_diff[0] if len(roles_diff) > 0 else list(set(after.roles) - set(before.roles))[0]
+
+            # si le rôle changé correspond au rôle automatique du vocal
+            # on quitte
+            if self.utils.get_server_config(before.guild.id, "rolevocal", "active"):
+                vocal_role = before.guild.get_role(self.utils.get_server_config(before.guild.id, "rolevocal", "role_id"))
+                if role.id == vocal_role.id:
+                    return
+
             if len(roles_diff) > 0:
-                embed.add_field(name="Rôle retiré", value=roles_diff[0].mention, inline=True)
+                embed.add_field(name="Rôle retiré", value=role.mention, inline=True)
             else:
-                embed.add_field(name="Rôle ajouté", value=list(set(after.roles) - set(before.roles))[0].mention, inline=True)
+                embed.add_field(name="Rôle ajouté", value=role.mention, inline=True)
 
         embed.add_field(name=self.utils.invisible_string(), value=after.mention + " - " + self.utils.get_date_time(), inline=False)
 

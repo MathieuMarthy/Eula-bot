@@ -16,16 +16,17 @@ class Rolevocal(commands.Cog):
             return
 
         role = member.guild.get_role(self.utils.get_server_config(member.guild.id, "rolevocal", "role_id"))
-        if role is not None:
+        if role is None:
             return
+        
 
         # si l'utilisateur rejoint un salon
-        if before.channel is None and after.channel is not None:
-            member.add_roles(role, reason="rolevocal")
-        
+        if before.channel is None:
+            await member.add_roles(role, reason="rolevocal")
+
         # si l'utilisateur quitte un salon
-        elif before.channel is not None and after.channel is None:
-            member.remove_roles(role, reason="rolevocal")
+        elif after.channel is None:
+            await member.remove_roles(role, reason="rolevocal")
 
 
 async def setup(bot):
