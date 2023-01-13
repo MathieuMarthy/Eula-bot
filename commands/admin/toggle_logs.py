@@ -75,7 +75,7 @@ class ToggleLogs(commands.Cog):
         await self.command(ctx)
 
 
-    @app_commands.command(name="toggle_logs", description="active ou désactive l'assignation d'un rôle de base")
+    @app_commands.command(name="toggle_logs", description="ADMIN, active ou désactive les logs")
     @app_commands.checks.has_permissions(manage_roles=True)
     async def toggle_logsSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)

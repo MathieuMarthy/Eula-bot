@@ -60,7 +60,7 @@ class Nuke(commands.Cog):
         await self.command(ctx, channel)
 
 
-    @app_commands.command(name="nuke", description="supprimer un salon et le recréer avec les mêmes permissions")
+    @app_commands.command(name="nuke", description="ADMIN, supprimer un salon et le recréer avec les mêmes paramètres")
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(channel="le salon à supprimer et recréer")
     async def nukeSlash(self, interaction: discord.Interaction, channel: discord.TextChannel):

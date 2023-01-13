@@ -51,7 +51,7 @@ class SendEmbed(commands.Cog):
         await self.command(ctx, channel, json)
 
 
-    @app_commands.command(name="send_embed", description="Envoie un embed dans un salon")
+    @app_commands.command(name="send_embed", description="ADMIN, Envoie un embed dans un salon")
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(channel="le salon dans lequel envoyer l'embed")
     @app_commands.describe(json="le json contenant les informations de l'embed, faites /help_send_embed pour plus d'informations")

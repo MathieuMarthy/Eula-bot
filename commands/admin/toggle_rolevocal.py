@@ -85,7 +85,7 @@ class ToggleRolevocal(commands.Cog):
         await self.command(ctx)
 
 
-    @app_commands.command(name="toggle_rolevocal", description="active ou désactive l'assignation d'un rôle quand un utilisateur rejoint un salon vocal")
+    @app_commands.command(name="toggle_rolevocal", description="ADMIN, active ou désactive l'assignation d'un rôle quand un utilisateur rejoint un salon vocal")
     @app_commands.checks.has_permissions(manage_roles=True)
     async def toggle_rolevocalSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)

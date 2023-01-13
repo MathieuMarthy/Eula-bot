@@ -45,7 +45,7 @@ class Reaction(commands.Cog):
         await self.command(ctx, message, emojis)
 
 
-    @app_commands.command(name="reaction", description="Mets des réactions sur un message")
+    @app_commands.command(name="reaction", description="ADMIN, Mets des réactions sur un message")
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(message_link="le lien du message sur lequel réagir")
     @app_commands.describe(emojis="tous les emojis à ajouter au message séparés par des espaces")

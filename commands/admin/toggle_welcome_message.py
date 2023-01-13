@@ -68,7 +68,7 @@ class ToggleWelcomeMessage(commands.Cog):
         await self.command(ctx)
 
 
-    @app_commands.command(name="toggle_welcome_message", description="active ou désactive le message de bienvenue en DM")
+    @app_commands.command(name="toggle_welcome_message", description="ADMIN, active ou désactive le message de bienvenue en DM")
     @app_commands.checks.has_permissions(administrator=True)
     async def toggle_welcome_messageSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)

@@ -85,7 +85,7 @@ class ToggleAutorole(commands.Cog):
         await self.command(ctx)
 
 
-    @app_commands.command(name="toggle_autorole", description="active ou désactive l'assignation d'un rôle de base")
+    @app_commands.command(name="toggle_autorole", description="ADMIN, active ou désactive l'assignation d'un rôle quand on rentre dans le serveur")
     @app_commands.checks.has_permissions(manage_roles=True)
     async def toggle_autoroleSlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)

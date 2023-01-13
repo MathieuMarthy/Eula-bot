@@ -3,6 +3,7 @@ from discord.ui import View
 
 from functions import Utils
 
+
 help_dict = {
     "🏠 Accueil": {
         "commandes": {
@@ -16,6 +17,14 @@ help_dict = {
             "send": "Envoie un message dans un salon",
             "send_embed": "Envoie un embed dans un salon",
             "help_send_embed": "envoi un message d'aide pour la commande send_embed",
+            "clear": "Supprime un nombre de messages, ou jusqu'à un message donné",
+            "nuke": "supprimer un salon et le recréer avec les mêmes paramètres",
+            "reaction": "Mets des réactions sur un message",
+            "timeout": "timeout une personne pendant une durée",
+            "toggle_autorole": "active ou désactive l'assignation d'un rôle quand on rentre dans le serveur",
+            "toggle_logs": "active ou désactive les logs",
+            "toggles_logs": "active ou désactive l'assignation d'un rôle quand un utilisateur rejoint un salon vocal",
+            "toggle_welcome_message": "active ou désactive le message de bienvenue en DM"
         },
         "image": "https://media.discordapp.net/attachments/836943322580516904/1060984169779449916/maxresdefault.png"
     },
@@ -46,6 +55,12 @@ help_dict = {
             "randomizer_lol": "donne un champion, stuff et runes aléatoire",
         },
         "image": "https://media.discordapp.net/attachments/836943322580516904/1060991182748008600/E09Nv5fWEAIeiy2.png"
+    },
+    "🎮 Jeux": {
+        "commandes": {
+            "10fastfingers": "multijoueur: dans ce jeu, vous devez taper le plus de mots possible"
+        },
+        "image": "https://media.discordapp.net/attachments/836943322580516904/1063440044364402698/5ech2agzst1a1.png"
     }
 }
 

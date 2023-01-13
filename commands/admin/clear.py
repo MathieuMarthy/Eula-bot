@@ -38,7 +38,7 @@ class Clear(commands.Cog):
         await self.command(ctx, arg)
 
 
-    @app_commands.command(name="clear", description="Supprime un nombre de messages, ou jusqu'à un message donné")
+    @app_commands.command(name="clear", description="ADMIN, Supprime un nombre de messages, ou jusqu'à un message donné")
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(nombre_ou_url_message="nombre de messages à supprimer ou url du message jusqu'auquel supprimer. Par défaut, 1 message")
     async def clearSlash(self, interaction: discord.Interaction, nombre_ou_url_message: str = "1"):

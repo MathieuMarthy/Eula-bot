@@ -59,7 +59,7 @@ class Timeout(commands.Cog):
         await self.command(ctx, member, int(duration), reason)
 
 
-    @app_commands.command(name="timeout", description="timeout une personne pendant une durée")
+    @app_commands.command(name="timeout", description="ADMIN, timeout une personne pendant une durée")
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(personne="La personne à timeout")
     @app_commands.describe(duree="La durée du timeout en minutes")
