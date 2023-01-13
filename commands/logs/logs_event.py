@@ -13,13 +13,12 @@ class LogsEvent(commands.Cog):
 
     def create_embed(self, event: discord.ScheduledEvent, type: Literal["create", "update", "delete"]) -> discord.Embed:
         title = "Un événement à été "
-        match type:
-            case "create":
-                title += "créé"
-                image = "add"
-            case "delete":
-                title += "supprimé"
-                image = "trash"
+        if type == "create":
+            title += "créé"
+            image = "add"
+        elif type == "delete":
+            title += "supprimé"
+            image = "trash"
 
         # création de la base de l'embed
         embed = discord.Embed(
@@ -52,7 +51,7 @@ class LogsEvent(commands.Cog):
 
         return embed
 
-    def checks(self, event: discord.ScheduledEvent) -> discord.TextChannel|None:
+    def checks(self, event: discord.ScheduledEvent) -> discord.TextChannel:
         # Vérifications         
         if not self.utils.get_server_config(event.guild.id, "logs", "active"):
             return None

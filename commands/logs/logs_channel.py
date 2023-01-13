@@ -11,7 +11,7 @@ class LogsChannel(commands.Cog):
         self.utils = Utils(client)
 
 
-    def checks(self, channel) -> discord.abc.GuildChannel|None:
+    def checks(self, channel) -> discord.abc.GuildChannel:
             if channel.guild is None:
                 return None
 
@@ -33,16 +33,15 @@ class LogsChannel(commands.Cog):
         Returns:
             discord.Embed: L'embed entier
         """
-        match type:
-            case "create":
-                title = "Salon créé"
-                image = "add"
-            case "delete":
-                title = "Salon supprimé"
-                image = "trash"
-            case "update":
-                title = "Salon modifié"
-                image = "edit"
+        if type == "create":
+            title = "Salon créé"
+            image = "add"
+        elif type =="delete":
+            title = "Salon supprimé"
+            image = "trash"
+        elif type =="update":
+            title = "Salon modifié"
+            image = "edit"
 
         # création de la base de l'embed
         embed = discord.Embed(
@@ -125,15 +124,14 @@ class LogsChannel(commands.Cog):
 
     
     def translate_type(self, type: str) -> str:
-        match type:
-            case "text":
-                return "Textuel"
-            case "voice":
-                return "Vocal"
-            case "category":
-                return "Catégorie"
-            case _:
-                return "Inconnu"
+        if type == "text":
+            return "Textuel"
+        elif type == "voice":
+            return "Vocal"
+        elif type == "category":
+            return "Catégorie"
+        else:
+            return "Inconnu"
 
 
 async def setup(bot):

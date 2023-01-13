@@ -11,7 +11,7 @@ class LogsThread(commands.Cog):
         self.utils = Utils(client)
 
 
-    def checks(self, thread: discord.Thread) -> discord.TextChannel|None:
+    def checks(self, thread: discord.Thread) -> discord.TextChannel:
             if not self.utils.get_server_config(thread.guild.id, "logs", "active"):
                 return None
 
@@ -31,16 +31,15 @@ class LogsThread(commands.Cog):
             discord.Embed: L'embed entier
         """
         title = "Un Thread a été "
-        match type:
-            case "create":
-                title += "créé"
-                image = "add"
-            case "delete":
-                title += "supprimé"
-                image = "trash"
-            case "update":
-                title += "modifié"
-                image = "edit"
+        if type == "create":
+            title += "créé"
+            image = "add"
+        elif type == "delete":
+            title += "supprimé"
+            image = "trash"
+        elif type == "update":
+            title += "modifié"
+            image = "edit"
 
         # création de la base de l'embed
         embed = discord.Embed(

@@ -13,13 +13,12 @@ class LogsInvite(commands.Cog):
 
     def create_embed(self, invite: discord.Invite, type: Literal["create", "delete"]) -> discord.Embed:
         title = "Une invitation à été "
-        match type:
-            case "create":
-                title += "créée"
-                image = "add"
-            case "delete":
-                title += "supprimée"
-                image = "trash"
+        if type == "create":
+            title += "créée"
+            image = "add"
+        elif type == "delete":
+            title += "supprimée"
+            image = "trash"
 
        # création de la base de l'embed
         embed = discord.Embed(
@@ -42,7 +41,7 @@ class LogsInvite(commands.Cog):
         return embed
 
 
-    def checks(self, invite: discord.Invite) -> discord.TextChannel|None:
+    def checks(self, invite: discord.Invite) -> discord.TextChannel:
         # Vérifications         
         if not self.utils.get_server_config(invite.guild.id, "logs", "active"):
             return None

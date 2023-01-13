@@ -11,18 +11,17 @@ class LogsRole(commands.Cog):
         self.utils = Utils(client)
 
 
-    def create_embed(self, role: discord.Role, type: Literal["create", "update", "delete"]) -> discord.TextChannel|None:
+    def create_embed(self, role: discord.Role, type: Literal["create", "update", "delete"]) -> discord.TextChannel:
         title = "Un rôle à été "
-        match type:
-            case "create":
-                title += "créé"
-                image = "add"
-            case "update":
-                title += "modifié"
-                image = "edit"
-            case "delete":
-                title += "supprimé"
-                image = "trash"
+        if type == "create":
+            title += "créé"
+            image = "add"
+        elif type == "update":
+            title += "modifié"
+            image = "edit"
+        elif type == "delete":
+            title += "supprimé"
+            image = "trash"
             
         # création de la base de l'embed
         embed = discord.Embed(
@@ -35,7 +34,7 @@ class LogsRole(commands.Cog):
         return embed
 
 
-    def checks(self, role: discord.Role) -> discord.TextChannel|None:
+    def checks(self, role: discord.Role) -> discord.TextChannel:
         # Vérifications         
         if not self.utils.get_server_config(role.guild.id, "logs", "active"):
             return None
