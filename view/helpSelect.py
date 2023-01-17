@@ -53,6 +53,8 @@ help_dict = {
             "8ball": "la boule magique répond à vos questions",
             "pile_ou_face": "pile_ou_face",
             "randomizer_lol": "donne un champion, stuff et runes aléatoire",
+            "image_sfw": "envoie une image d'animé aléatoire",
+            "image_nsfw": "envoie une d'animé image nsfw aléatoire"
         },
         "image": "https://media.discordapp.net/attachments/836943322580516904/1060991182748008600/E09Nv5fWEAIeiy2.png"
     },

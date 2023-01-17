@@ -39,7 +39,7 @@ async def load(folder: str):
             await load(file)
 
         elif file.endswith(".py"):
-            file = file.replace(utils.bot_path() + "/", "")
+            file = file.replace(utils.bot_path() + os.sep, "")
             file = file.replace("\\", ".").replace("/", ".").replace(":", ".")
             await client.load_extension(file[:-3])
 
