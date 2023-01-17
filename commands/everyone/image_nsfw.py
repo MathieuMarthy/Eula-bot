@@ -37,6 +37,9 @@ class ImageNsfw(ImageNekos):
 
         for _ in range(nb):
             text = self.get_image(tag, True)
+            if "\n" in text:
+                break
+
             await ctx.send(text)
 
 

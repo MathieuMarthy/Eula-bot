@@ -9,7 +9,7 @@ prefix = [
     "<@!914226393565499412> ",
     "<@!914226393565499412>"
 ]
-version = "5.0.1"
+version = "5.0.2"
 creator_id = 236853417681616906
 owner_id = 236853417681616906
 timezone = "Europe/Paris"

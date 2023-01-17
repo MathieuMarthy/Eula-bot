@@ -5,6 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from parentsClasses.imageNekos import ImageNekos
+from data import config
 
 
 class Tags(enum.Enum):
@@ -30,21 +31,34 @@ class ImageSfw(ImageNekos):
         self.error_msg = "\n".join(self.sfw_tags)
 
 
-    async def command(self, ctx: commands.Context, tag: str):
-        text = self.get_image(tag, False)
-        await ctx.send(text)
+    async def command(self, ctx: commands.Context, tag: str, nb: str = "1"):
+         for _ in range(nb):
+            text = self.get_image(tag, False)
+            if "\n" in text:
+                break
+
+            await ctx.send(text)
 
 
     @commands.command()
-    async def image_sfw(self, ctx: commands.Context, tag: str):
+    async def image_sfw(self, ctx: commands.Context, tag: str, nb: str = "1"):
+        if not nb.isdigit():
+            await ctx.send("Nb doit être un nombre !")
+            return
+
+        nb = int(nb)
+        if nb > 20 or ctx.author.id != config.creator_id:
+            nb = 20
+            await ctx.send("Le maximum est de 20")
         await self.command(ctx, tag)
 
 
     @app_commands.command(name="image_sfw", description="envoie une image d'animé aléatoire")
     @app_commands.describe(tag="La catégorie de l'image")
-    async def image_sfwSlash(self, interaction: discord.Interaction, tag: Tags):
+    @app_commands.describe(nombre_images="le nombre d'images à envoyer")
+    async def image_sfwSlash(self, interaction: discord.Interaction, tag: Tags, nombre_images: app_commands.Range[int, 1, 20] = 1):
         ctx = await commands.Context.from_interaction(interaction)
-        await self.command(ctx, tag.value)
+        await self.command(ctx, tag.value, nombre_images)
 
 
 async def setup(bot):

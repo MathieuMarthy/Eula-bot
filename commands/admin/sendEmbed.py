@@ -25,7 +25,7 @@ class SendEmbed(commands.Cog):
         for json_embed in json["embeds"]:
             try:
                 embeds.append(discord.Embed.from_dict(json_embed))
-            except discord.errors.HTTPException as e:
+            except Exception as e:
                 await ctx.send(f"Une erreur est survenue avec l'embed \"{json_embed['title']}\":\n`{e}`")
                 return
 
