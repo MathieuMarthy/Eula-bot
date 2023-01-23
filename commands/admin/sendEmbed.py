@@ -40,7 +40,7 @@ class SendEmbed(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def send_embed(self, ctx: commands.Context, channel, *, json: str):
+    async def send_embed(self, ctx: commands.Context, channel, json: str):
         channel = channel.replace("<", "").replace("#", "").replace(">", "")
         channel = ctx.guild.get_channel(int(channel))
 

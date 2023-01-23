@@ -11,6 +11,9 @@ class Autorole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
+        if member.bot:
+            return
+
         autorole_is_active = self.utils.get_server_config(member.guild.id, "autorole", "active")
 
         if autorole_is_active:
