@@ -82,22 +82,22 @@ class ToggleLogs(commands.Cog):
         await self.command(ctx)
 
 
-    # @toggle_logs.error
-    # async def toggle_logsError(self, ctx, error):
-    #     error_string = self.utils.error_message(error)
-    #     if error_string is not None:
-    #         await ctx.send(error_string)
-    #     else:
-    #         raise error
+    @toggle_logs.error
+    async def toggle_logsError(self, ctx, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await ctx.send(error_string)
+        else:
+            raise error
 
 
-    # @toggle_logs.error
-    # async def toggle_logsSlashError(self, interaction, error):
-    #     error_string = self.utils.error_message(error)
-    #     if error_string is not None:
-    #         await interaction.response.send_message(error_string, ephemeral=True)
-    #     else:
-    #         raise error
+    @toggle_logs.error
+    async def toggle_logsSlashError(self, interaction, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await interaction.response.send_message(error_string, ephemeral=True)
+        else:
+            raise error
 
 
 

@@ -21,13 +21,8 @@ class Dm(commands.Cog):
 
     @commands.command()
     @commands.check(is_me)
-    async def dm(self, ctx, mention, msg):
+    async def dm(self, ctx, mention, *, msg):
         await self.command(ctx, mention, msg)
-
-
-    # @dm.error
-    # async def set_pp_error(self, ctx, error):
-    #     pass
 
 
 async def setup(bot):

@@ -75,22 +75,22 @@ class ToggleWelcomeMessage(commands.Cog):
         await self.command(ctx)
 
 
-    # @toggle_welcome_message.error
-    # async def help_send_embedError(self, ctx, error):
-    #     error_string = self.utils.error_message(error)
-    #     if error_string is not None:
-    #         await ctx.send(error_string)
-    #     else:
-    #         raise error
+    @toggle_welcome_message.error
+    async def help_send_embedError(self, ctx, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await ctx.send(error_string)
+        else:
+            raise error
 
 
-    # @toggle_welcome_messageSlash.error
-    # async def help_send_embedSlashError(self, interaction, error):
-    #     error_string = self.utils.error_message(error)
-    #     if error_string is not None:
-    #         await interaction.response.send_message(error_string, ephemeral=True)
-    #     else:
-    #         raise error
+    @toggle_welcome_messageSlash.error
+    async def help_send_embedSlashError(self, interaction, error):
+        error_string = self.utils.error_message(error)
+        if error_string is not None:
+            await interaction.response.send_message(error_string, ephemeral=True)
+        else:
+            raise error
 
 
 async def setup(bot):
