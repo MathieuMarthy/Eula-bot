@@ -47,7 +47,7 @@ class ImageSfw(ImageNekos):
             return
 
         nb = int(nb)
-        if nb > 20 or ctx.author.id != config.owner_id:
+        if nb > 20 and ctx.author.id != config.owner_id:
             nb = 20
             await ctx.send("Le maximum est de 20")
         await self.command(ctx, tag)
