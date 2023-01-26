@@ -1,4 +1,4 @@
 **/__pycache__
 **/.vscode
 /tmp
-data/config.py
+data/*.py
