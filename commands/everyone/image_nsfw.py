@@ -31,7 +31,7 @@ class ImageNsfw(ImageNekos):
 
 
     async def command(self, ctx: commands.Context, tag: str, nb: int):
-        if not ctx.channel.is_nsfw() and ctx.author.id != config.creator_id:
+        if not ctx.channel.is_nsfw() and ctx.author.id != config.owner_id:
             await ctx.send("Le salon doit être nsfw !")
             return
 
@@ -50,7 +50,7 @@ class ImageNsfw(ImageNekos):
             return
 
         nb = int(nb)
-        if nb > 20 or ctx.author.id != config.creator_id:
+        if nb > 20 or ctx.author.id != config.owner_id:
             nb = 20
             await ctx.send("Le maximum est de 20")
 
