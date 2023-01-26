@@ -121,8 +121,8 @@
             "role_id": 0
         },
         "rolevocal": {
-            "active": false,
-            "role_id": 0
+            "active": true,
+            "role_id": 974314151453270046
         }
     },
     "976451130601132112": {
