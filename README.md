@@ -3,7 +3,7 @@
   <img src="https://media.discordapp.net/attachments/836943322580516904/1060614756458840134/1159087.png" alt="Eula Bot" height="300">
 </p>
 <h1 align="center">Eula Bot</h1>
-<h3 align="center">Moderation, Fun et Utilitaires</h3>
+<h3 align="center">Fun, Moderation et Utilitaires</h3>
 <p align="center">
     <a href="https://discord.gg/s5hrMzGCb8">
         <img src="https://media.discordapp.net/attachments/836943322580516904/1068238918182522900/discord-button.png" alt="Discord Server" height="40">
@@ -15,7 +15,7 @@
 ## Présentation
 Eula est un bot Discord qui a pour but de vous aider dans votre serveur. Il est capable de modérer votre serveur, de vous amuser et de vous aider dans votre quotidien.
 
-Si vous avez des propositions ou si vous trouvé des bugs, contactez moi (kojhyy#0012).
+Si vous avez des propositions ou si vous trouver des bugs, contactez-moi (kojhyy#0012).
 
 ## Commandes
 
