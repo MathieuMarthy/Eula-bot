@@ -6,7 +6,10 @@
 <h3 align="center">Fun, Moderation et Utilitaires</h3>
 <p align="center">
     <a href="https://discord.gg/s5hrMzGCb8">
-        <img src="https://media.discordapp.net/attachments/836943322580516904/1068238918182522900/discord-button.png" alt="Discord Server" height="40">
+        <img src="https://media.discordapp.net/attachments/836943322580516904/1069240170446073927/rejoignezleserveur.png" alt="rejoignez le serveur" height="40">
+    </a>
+    <a href="https://discord.com/api/oauth2/authorize?client_id=914226393565499412&permissions=8&scope=applications.commands%20bot">
+        <img src="https://media.discordapp.net/attachments/836943322580516904/1069240937689125027/invitezlebot.png" alt="invitez le bot" height="40">
     </a>
 </p>
 
