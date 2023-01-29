@@ -44,6 +44,7 @@ Si vous avez des propositions ou si vous trouver des bugs, contactez-moi (kojhyy
 - `pp` : Envoie la pp d'une personne
 - `bannière` : Envoie la bannière d'une personne
 - `ping` : Ping le bot
+- `choisis` : Choisis entre plusieurs propositions (séparées par des virgules)
 
 ### 🌍 General
 - `reddit` : Envoie des images d'un subreddit
