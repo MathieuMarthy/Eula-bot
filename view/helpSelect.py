@@ -44,6 +44,7 @@ help_dict = {
             "pp": "envoie la pp d'une personne",
             "bannière": "envoie la bannière d'une personne",
             "ping": "ping le bot",
+            "choisis": "choisis entre plusieurs propositions (séparées par des virgules)",
         },
         "image": "https://media.discordapp.net/attachments/836943322580516904/1060986942377959484/image.png"
     },
