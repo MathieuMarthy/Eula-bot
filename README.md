@@ -30,6 +30,7 @@ Si vous avez des propositions ou si vous trouver des bugs, contactez-moi (kojhyy
 - `nuke` : Supprime un salon et le recrée avec les mêmes paramètres.
 - `reaction` : Met des réactions sur un message.
 - `timeout` : Timeout une personne pendant une durée.
+- `sondage`: Crée un sondage avec jusqu'à 5 choix.
 - `toggle_autorole` : Active ou désactive l'assignation d'un rôle quand on rentre dans le serveur.
 - `toggle_logs` : Active ou désactive les logs.
 - `toggle_logs_voice`: Active ou désactive l'assignation d'un rôle quand un utilisateur rejoint un salon vocal.

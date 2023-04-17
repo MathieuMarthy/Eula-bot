@@ -29,6 +29,7 @@ class Utils:
         self.client = client
         self._color = 0x989eec
         self.server_config = self.load_server_config()
+        self.poll_file = json.load(open("data/poll.json", "r", encoding="utf-8"))
 
 
     def invisible_string(self) -> str:
@@ -89,10 +90,6 @@ class Utils:
 
     def bot_path(self) -> str:
         return project_path
-
-
-    def channel_send(self, id):
-        return self.client.get_channel(id)
 
 
     def replaces(self, string, *args):
@@ -272,6 +269,31 @@ class Utils:
         pile
         """
         return dico[name]
+    
+
+    def save_poll_file(self):
+        json.dump(self.poll_file, open("data/poll.json", "w", encoding="utf-8"), indent=4)
+    
+
+    def create_poll(self, guild: int, channel: int, poll_msg_id: int):
+        if str(guild) not in self.poll_file:
+            self.poll_file[str(guild)] = {}
+
+        if str(channel) not in self.poll_file[str(guild)]:
+            self.poll_file[str(guild)][str(channel)] = {}
+        
+        self.poll_file[str(guild)][str(channel)][str(poll_msg_id)] = {}
+        self.save_poll_file()
+
+
+    def add_member_poll(self, guild: int, channel: int, poll_msg_id: int, member_id: int, choix: int):
+        self.poll_file[str(guild)][str(channel)][str(poll_msg_id)][str(member_id)] = choix
+        self.save_poll_file()
+
+
+    def get_poll(self, guild: int, channel: int, poll_msg_id: int):
+        return self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]
+        
 
 
 dico = {

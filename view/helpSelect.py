@@ -21,6 +21,7 @@ help_dict = {
             "nuke": "supprimer un salon et le recréer avec les mêmes paramètres",
             "reaction": "Mets des réactions sur un message",
             "timeout": "timeout une personne pendant une durée",
+            "sondage": "Crée un sondage avec jusqu'à 5 choix",
             "toggle_autorole": "active ou désactive l'assignation d'un rôle quand on rentre dans le serveur",
             "toggle_logs": "active ou désactive les logs",
             "toggles_logs": "active ou désactive l'assignation d'un rôle quand un utilisateur rejoint un salon vocal",
@@ -105,6 +106,3 @@ class HelpView(View):
     
     async def default_embed(self) -> discord.Embed:
         return await self.embed_from_category(list(help_dict.keys())[0])
-
-
-    
