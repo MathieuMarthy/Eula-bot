@@ -24,7 +24,7 @@ class Poll(commands.Cog):
 
         msg = await channel.send("Sondage en chargement...")
 
-        self.pollDao.create_poll(channel.guild.id, channel.id, msg.id)
+        self.pollDao.create_poll(channel.guild.id, channel.id, msg.id, question, tous_choix)
         view = pollView(self.client, ctx.guild.id, channel.id, ctx.message.id, question, tous_choix)
 
         await msg.edit(content="", view=view, embed=view.embed)
@@ -32,6 +32,7 @@ class Poll(commands.Cog):
 
 
     @commands.command()
+    @commands.has_permissions(administrator=True)
     async def sondage(self, ctx: commands.Context, channel: discord.TextChannel, question: str, choix1: str, choix2: str, choix3: str = None, choix4: str = None, choix5: str = None):
 
         channel = channel.replace("<", "").replace("#", "").replace(">", "")
@@ -45,6 +46,7 @@ class Poll(commands.Cog):
 
 
     @app_commands.command(name="sondage", description="créer un sondage")
+    @commands.has_permissions(administrator=True)
     @app_commands.describe(channel="le channel où le sondage sera envoyé")
     @app_commands.describe(question="la question du sondage")
     @app_commands.describe(choix1="choix1")
