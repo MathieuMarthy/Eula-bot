@@ -271,7 +271,7 @@ class Utils:
     
 
     def save_poll_file(self):
-        json.dump(self.poll_file, open("data/poll.json", "w", encoding="utf-8"), indent=4)
+        json.dump(self.poll_file, open(os.path.join(project_path, "data", "poll.json"), "r", encoding="utf-8"), indent=4)
     
 
     def create_poll(self, guild: int, channel: int, poll_msg_id: int):
