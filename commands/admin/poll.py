@@ -25,7 +25,7 @@ class Poll(commands.Cog):
         msg = await channel.send("Sondage en chargement...")
 
         self.pollDao.create_poll(channel.guild.id, channel.id, msg.id, question, tous_choix)
-        view = pollView(self.client, ctx.guild.id, channel.id, ctx.message.id, question, tous_choix)
+        view = pollView(self.client, ctx.guild.id, channel.id, msg.id, question, tous_choix)
 
         await msg.edit(content="", view=view, embed=view.embed)
         await ctx.send(f"Le sondage a été envoyé dans le salon {channel.mention}")
