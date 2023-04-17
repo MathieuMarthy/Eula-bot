@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from dao.pollDao import pollDao
 
 from functions import Utils
 from view.poll import pollView
@@ -9,7 +10,7 @@ class Poll(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
         self.utils = Utils.get_instance(client)
-
+        self.pollDao = pollDao()
 
     async def command(self, ctx: commands.Context, channel: discord.TextChannel, question: str, choix1, choix2, choix3, choix4, choix5):
         tous_choix = [choix1, choix2, choix3, choix4, choix5]
@@ -21,8 +22,12 @@ class Poll(commands.Cog):
                 await ctx.send(f"Vous ne pouvez pas avoir 2 choix identiques\n{choix} est présent {tous_choix.count(choix)} fois")
                 return
 
-        view = pollView(self.client, ctx, question, tous_choix)
-        await channel.send(embed=view.embed, view=view)
+        msg = await channel.send("Sondage en chargement...")
+
+        self.pollDao.create_poll(channel.guild.id, channel.id, msg.id)
+        view = pollView(self.client, ctx.guild.id, channel.id, ctx.message.id, question, tous_choix)
+
+        await msg.edit(content="", view=view, embed=view.embed)
         await ctx.send(f"Le sondage a été envoyé dans le salon {channel.mention}")
 
 

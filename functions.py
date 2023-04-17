@@ -7,8 +7,10 @@ import pytz
 import discord
 from discord import app_commands
 from discord.ext import commands
+from dao.pollDao import pollDao
 
 from data import config
+from view.poll import pollView
 
 project_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -29,7 +31,8 @@ class Utils:
         self.client = client
         self._color = 0x989eec
         self.server_config = self.load_server_config()
-        self.poll_file = json.load(open(os.path.join(project_path, "data", "poll.json"), "r", encoding="utf-8"))
+        self.poll_file = json.load(open(os.path.join(project_path, "data", "poll.json"), "r", encoding="utf-8"))*
+        self.pollDao = pollDao()
 
     def invisible_string(self) -> str:
         return " "
@@ -268,31 +271,11 @@ class Utils:
         pile
         """
         return dico[name]
-    
-
-    def save_poll_file(self):
-        json.dump(self.poll_file, open(os.path.join(project_path, "data", "poll.json"), "w", encoding="utf-8"), indent=4)
-    
-
-    def create_poll(self, guild: int, channel: int, poll_msg_id: int):
-        if str(guild) not in self.poll_file:
-            self.poll_file[str(guild)] = {}
-
-        if str(channel) not in self.poll_file[str(guild)]:
-            self.poll_file[str(guild)][str(channel)] = {}
-        
-        self.poll_file[str(guild)][str(channel)][str(poll_msg_id)] = {}
-        self.save_poll_file()
 
 
-    def add_member_poll(self, guild: int, channel: int, poll_msg_id: int, member_id: int, choix: int):
-        self.poll_file[str(guild)][str(channel)][str(poll_msg_id)][str(member_id)] = choix
-        self.save_poll_file()
-
-
-    def get_poll(self, guild: int, channel: int, poll_msg_id: int):
-        return self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]
-        
+    def get_poll_object(self, guild: int, channel: int, poll_msg_id: int):
+        json_poll = self.pollDao.get_poll(guild, channel, poll_msg_id)
+        return pollView(self.client, guild, channel, poll_msg_id, json_poll["question"], json_poll["choix"])
 
 
 dico = {

@@ -2,15 +2,15 @@ import discord
 from discord.ui import View, Select
 from discord.ext import commands
 
-from functions import Utils
+from dao.pollDao import pollDao
 
 class pollView(View):
-    def __init__(self, client, ctx: commands.Context, question: str, choix: list):
+    def __init__(self, client, guild_id: int, channel_id: int, message_id, question: str, choix: list):
         super().__init__(timeout=None)
-        self.utils = Utils.get_instance(client)
+        self.pollDao = pollDao()
         self.question = question
         self.choix = choix
-        self.infos = (ctx.guild.id, ctx.channel.id, ctx.message.id)
+        self.infos = (guild_id, channel_id, message_id)
 
         options = [
             discord.SelectOption(label=key, value=key)
@@ -21,7 +21,6 @@ class pollView(View):
         select.callback = self.select_callback
         self.add_item(select)
 
-        self.utils.create_poll(self.infos[0], self.infos[1], self.infos[2])
         self.embed = self.create_embed(self.calculate_results())
 
     async def select_callback(self, interaction: discord.Interaction):
@@ -30,7 +29,7 @@ class pollView(View):
         value_selected = interaction.data["values"][0]
         value_selected_index = self.choix.index(value_selected)
 
-        self.utils.add_member_poll(self.infos[0], self.infos[1], self.infos[2], interaction.user.id, value_selected_index)
+        self.pollDao.add_member_poll(self.infos[0], self.infos[1], self.infos[2], interaction.user.id, value_selected_index)
 
         self.embed = self.create_embed(self.calculate_results())
         await interaction.message.edit(embed=self.embed, view=self)
@@ -43,7 +42,7 @@ class pollView(View):
             [(5, 50), (2, 20), (3, 30)]
         """
 
-        poll_json = self.utils.get_poll(self.infos[0], self.infos[1], self.infos[2])
+        poll_json = self.pollDao.get_vote_poll(self.infos[0], self.infos[1], self.infos[2])
         # josn syntax:
         # {
         #    member_id: choix_index
@@ -69,7 +68,7 @@ class pollView(View):
         embed = discord.Embed(
             title=self.question,
             description=description,
-            color=self.utils.embed_color()
+            color=0x989eec
         )
 
         return embed
