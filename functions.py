@@ -31,7 +31,6 @@ class Utils:
         self.client = client
         self._color = 0x989eec
         self.server_config = self.load_server_config()
-        self.poll_file = json.load(open(os.path.join(project_path, "data", "poll.json"), "r", encoding="utf-8"))*
         self.pollDao = pollDao()
 
     def invisible_string(self) -> str:
