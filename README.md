@@ -6,7 +6,10 @@
 <h3 align="center">Fun, Moderation et Utilitaires</h3>
 <p align="center">
     <a href="https://discord.gg/s5hrMzGCb8">
-        <img src="https://media.discordapp.net/attachments/836943322580516904/1068238918182522900/discord-button.png" alt="Discord Server" height="40">
+        <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592545415249/rejoindreleserveur.png" alt="rejoindre le serveur" height="40">
+    </a>
+    <a href="https://discord.com/api/oauth2/authorize?client_id=914226393565499412&permissions=8&scope=applications.commands%20bot">
+        <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592356667422/inviterlebot.png" alt="inviter le bot" height="40">
     </a>
 </p>
 
@@ -44,6 +47,7 @@ Si vous avez des propositions ou si vous trouver des bugs, contactez-moi (kojhyy
 - `pp` : Envoie la pp d'une personne
 - `bannière` : Envoie la bannière d'une personne
 - `ping` : Ping le bot
+- `choisis` : Choisis entre plusieurs propositions (séparées par des virgules)
 
 ### 🌍 General
 - `reddit` : Envoie des images d'un subreddit
