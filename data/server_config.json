@@ -113,8 +113,8 @@
             "message": ""
         },
         "logs": {
-            "active": false,
-            "channel_id": 0
+            "active": true,
+            "channel_id": 968040930324140073
         },
         "autorole": {
             "active": false,
@@ -209,6 +209,42 @@
         "autorole": {
             "active": true,
             "role_id": 1060611943435604090
+        },
+        "rolevocal": {
+            "active": false,
+            "role_id": 0
+        }
+    },
+    "1095271000398114830": {
+        "welcome_message": {
+            "active": false,
+            "message": ""
+        },
+        "logs": {
+            "active": true,
+            "channel_id": 1095480555874824354
+        },
+        "autorole": {
+            "active": true,
+            "role_id": 1095654876702322708
+        },
+        "rolevocal": {
+            "active": false,
+            "role_id": 0
+        }
+    },
+    "1097287642820923414": {
+        "welcome_message": {
+            "active": false,
+            "message": ""
+        },
+        "logs": {
+            "active": true,
+            "channel_id": 1097290977544245338
+        },
+        "autorole": {
+            "active": false,
+            "role_id": 0
         },
         "rolevocal": {
             "active": false,
