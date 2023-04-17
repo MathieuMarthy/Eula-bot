@@ -144,6 +144,11 @@ class LogsMember(commands.Cog):
             else:
                 embed.add_field(name="Rôle ajouté", value=role.mention, inline=True)
 
+        if before.display_avatar != after.display_avatar:
+            embed.add_field(name="Ancien avatar", value=f"[lien]({before.display_avatar.url})", inline=True)
+            embed.add_field(name="Nouveau avatar", value=f"[lien]({after.display_avatar.url})", inline=True)
+
+
         embed.add_field(name=self.utils.invisible_string(), value=after.mention + " - " + self.utils.get_date_time(), inline=False)
 
         # envoie du message
