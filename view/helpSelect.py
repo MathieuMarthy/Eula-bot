@@ -2,6 +2,7 @@ import discord
 from discord.ui import View
 
 from functions import Utils
+from data import config
 
 
 help_dict = {
@@ -101,6 +102,7 @@ class HelpView(View):
         for name, description in category["commandes"].items():
             category_embed.add_field(name=name, value=description, inline=False)
         
+        category_embed.set_footer(text=f"version: {config.version}")
         return category_embed
 
     

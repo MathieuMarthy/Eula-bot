@@ -5,6 +5,13 @@ project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
 class pollDao:
+    __instance = None
+
+    @staticmethod
+    def get_instance():
+        if pollDao.__instance is None :
+            pollDao.__instance = pollDao()
+        return pollDao.__instance
 
     def __init__(self) -> None:
         self.poll_file = json.load(open(os.path.join(project_path, "data", "poll.json"), "r", encoding="utf-8"))
@@ -14,7 +21,7 @@ class pollDao:
         json.dump(self.poll_file, open(os.path.join(project_path, "data", "poll.json"), "w", encoding="utf-8"), indent=4)
 
 
-    def create_poll(self, guild: int, channel: int, poll_msg_id: int, question: str, choix: list):
+    def create_poll(self, guild: int, channel: int, poll_msg_id: int, end_timestamp: int, question: str, choix: list):
         if str(guild) not in self.poll_file:
             self.poll_file[str(guild)] = {}
 
@@ -23,6 +30,7 @@ class pollDao:
         
         self.poll_file[str(guild)][str(channel)][str(poll_msg_id)] = {
             "question": question,
+            "end_date": end_timestamp,
             "choix": choix,
             "vote": {}
         }
@@ -44,3 +52,15 @@ class pollDao:
 
     def get_all_poll(self):
         return self.poll_file
+
+
+    def remove_poll(self, guild: int, channel: int, poll_msg_id: int):
+        del self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]
+
+        if self.poll_file[str(guild)][str(channel)] == {}:
+            del self.poll_file[str(guild)][str(channel)]
+        
+        if self.poll_file[str(guild)] == {}:
+            del self.poll_file[str(guild)]
+
+        self.save_poll_file()

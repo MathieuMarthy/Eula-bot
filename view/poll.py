@@ -1,15 +1,16 @@
+from datetime import datetime
 import discord
 from discord.ui import View, Select
-from discord.ext import commands
 
 from dao.pollDao import pollDao
 
 class pollView(View):
-    def __init__(self, client, guild_id: int, channel_id: int, message_id, question: str, choix: list):
+    def __init__(self, client, guild_id: int, channel_id: int, message_id, end_timestamp: int, question: str, choix: list):
         super().__init__(timeout=None)
-        self.pollDao = pollDao()
+        self.pollDao = pollDao.get_instance()
         self.question = question
         self.choix = choix
+        self.end_timestamp = end_timestamp
         self.infos = (guild_id, channel_id, message_id)
 
         options = [
@@ -22,6 +23,7 @@ class pollView(View):
         self.add_item(select)
 
         self.embed = self.create_embed(self.calculate_results())
+
 
     async def select_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -70,6 +72,12 @@ class pollView(View):
             description=description,
             color=0x989eec
         )
+        now = datetime.now().timestamp()
+
+        if now > self.end_timestamp:
+            embed.add_field(name=" ", value="Ce sondage est terminé")
+        else:
+            embed.add_field(name=" ", value=f"se termine <t:{self.end_timestamp}:R>")
 
         return embed
 

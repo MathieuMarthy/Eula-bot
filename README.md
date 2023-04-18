@@ -11,7 +11,7 @@
     <a href="https://discord.com/api/oauth2/authorize?client_id=914226393565499412&permissions=8&scope=applications.commands%20bot">
         <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592356667422/inviterlebot.png" alt="inviter le bot" height="40">
     </a>
-    <p align="center">version: 5.0.6</p>
+    <p align="center">version: 5.0.7</p>
 </p>
 
 

@@ -2,6 +2,7 @@ import json
 import os
 import asyncio
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import pytz
 
 import discord
@@ -31,7 +32,7 @@ class Utils:
         self.client = client
         self._color = 0x989eec
         self.server_config = self.load_server_config()
-        self.pollDao = pollDao()
+        self.pollDao = pollDao.get_instance()
 
     def invisible_string(self) -> str:
         return " "
@@ -274,8 +275,36 @@ class Utils:
 
     def get_poll_object(self, guild: int, channel: int, poll_msg_id: int):
         json_poll = self.pollDao.get_poll(guild, channel, poll_msg_id)
-        return pollView(self.client, guild, channel, poll_msg_id, json_poll["question"], json_poll["choix"])
+        return pollView(self.client, guild, channel, poll_msg_id, json_poll["end_date"], json_poll["question"], json_poll["choix"])
 
+
+    def string_duration_to_datetime(self, duration: str) -> datetime:
+        duration = duration.split(" ")
+
+        # on considère que la duréer est au format "x jour(s) y heure(s) z minute(s)"
+
+        now = datetime.now()
+        
+        # on prend les éléments de la liste par 2
+        for i in range(0, len(duration), 2):
+            number, unit = duration[i], duration[i + 1]
+
+            if unit in ["années", "année", "a", "an", "ans" "years", "year", "yr", "y"]:
+                now += relativedelta(years=int(number))
+            elif unit in ["mois", "m", "months", "month", "mn", "mns"]:
+                now += relativedelta(months=int(number))
+            elif unit in ["semaines", "semaine", "w", "weeks", "week", "wk", "wks"]:
+                now += relativedelta(weeks=int(number))
+            elif unit in ["jours", "jour", "j", "days", "day", "d"]:
+                now += relativedelta(days=int(number))
+            elif unit in ["heures", "heure", "h", "hours", "hour", "hr", "hrs"]:
+                now += relativedelta(hours=int(number))
+            elif unit in ["minutes", "minute", "min", "mins"]:
+                now += relativedelta(minutes=int(number))
+            elif unit in ["secondes", "seconde", "s", "seconds", "second", "sec", "secs"]:
+                now += relativedelta(seconds=int(number))
+
+        return now
 
 dico = {
     "power": "https://media.discordapp.net/attachments/836943322580516904/971846167078006814/unknown.png",

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import discord
 from discord.ext import commands, tasks
@@ -12,7 +13,7 @@ default_intents = discord.Intents.default().all()
 default_intents.members = True
 client: discord.Client = commands.Bot(command_prefix=config.prefix, help_command=None, intents=default_intents)
 utils = Utils(client)
-pollDao = pollDao()
+pollDao = pollDao.get_instance()
 
 
 @client.event
@@ -24,7 +25,7 @@ async def on_ready():
     print(f"{len(synced)} commandes synchronisées")
 
     print(f"Connecté à {client.user.name}")
-    remove_tmp_files.start()
+
 
     # === guilds ===
     for guild in client.guilds:
@@ -32,9 +33,10 @@ async def on_ready():
             utils.add_new_server(guild.id)
 
     # === polls ===
-    print("Chargement des sondages...")
     await load_polls()
 
+    periodic_check.start()
+    print("Initialisation terminée")
 
 async def load(folder: str):
     """Load all the cogs"""
@@ -61,6 +63,7 @@ async def load_polls():
                     channel = await client.fetch_channel(int(channel_id))
                     msg = await channel.fetch_message(int(message_id))
                 except:
+                    pollDao.remove_poll(int(guild_id), int(channel_id), int(message_id))
                     continue
 
                 poll = utils.get_poll_object(int(guild_id), int(channel_id), int(message_id))
@@ -68,10 +71,32 @@ async def load_polls():
 
 
 @tasks.loop(minutes=1)
-async def remove_tmp_files():
-    """Remove all the files in tmp/"""
-    for file in os.listdir("tmp"):
-        os.remove(os.path.join("tmp", file))
+async def periodic_check():
+    # Remove all the files in tmp/
+    try:
+        for file in os.listdir("tmp"):
+            os.remove(os.path.join("tmp", file))
+    except:
+        pass
+    
 
+    # Remove all the polls that are finished
+    polls = pollDao.get_all_poll()
+    now = datetime.now().timestamp()
+
+    list_to_remove = []
+    for guild_id in polls:
+        for channel_id in polls[guild_id]:
+            for message_id in polls[guild_id][channel_id]:
+                poll = utils.get_poll_object(int(guild_id), int(channel_id), int(message_id))
+
+                if poll.end_timestamp < now:
+                    list_to_remove.append((guild_id, channel_id, message_id))
+                    channel = await client.fetch_channel(int(channel_id))
+                    msg = await channel.fetch_message(int(message_id))
+                    await msg.edit(view=None, embed=poll.embed)
+
+    for guild_id, channel_id, message_id in list_to_remove:
+        pollDao.remove_poll(int(guild_id), int(channel_id), int(message_id))
 
 client.run(config.token)
