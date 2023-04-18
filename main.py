@@ -34,6 +34,7 @@ async def on_ready():
 
     # === polls ===
     await load_polls()
+    print("fini dans on_ready")
 
     periodic_check.start()
     print("Initialisation terminée")
@@ -56,9 +57,9 @@ async def load(folder: str):
 async def load_polls():
     polls = pollDao.get_all_poll()
 
-    for guild_id in polls:
-        for channel_id in polls[guild_id]:
-            for message_id in polls[guild_id][channel_id]:
+    for guild_id in polls.copy():
+        for channel_id in polls[guild_id].copy():
+            for message_id in polls[guild_id][channel_id].copy():
                 try:
                     channel = await client.fetch_channel(int(channel_id))
                     msg = await channel.fetch_message(int(message_id))
@@ -68,6 +69,7 @@ async def load_polls():
 
                 poll = utils.get_poll_object(int(guild_id), int(channel_id), int(message_id))
                 await msg.edit(view=poll, embed=poll.embed)
+
 
 
 @tasks.loop(minutes=1)
