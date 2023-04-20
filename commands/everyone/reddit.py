@@ -13,8 +13,8 @@ class Reddit(commands.Cog):
         self.client = client
 
         self.reddit_api = RedditAPI(
-            client_id="3usCZAVHZYrTM8mbKK6_8Q",
-            client_secret="mEmBiSuJFpaBCAioFOE1k4qk4wKlzQ",
+            client_id=config.reddit_id,
+            client_secret=config.reddit_secret,
             user_agent="Eula bot discord"
         )
 
