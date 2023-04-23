@@ -145,8 +145,13 @@ class LogsMember(commands.Cog):
                 embed.add_field(name="Rôle ajouté", value=role.mention, inline=True)
 
         if before.display_avatar != after.display_avatar:
-            embed.add_field(name="Nouvel avatar", value=f"[lien]({after.display_avatar.url})", inline=True)
+            user = await self.client.fetch_user(after.id)
 
+            if user.avatar != after.display_avatar:
+                embed.add_field(name="Nouvel avatar sur le serveur", value=f"[lien]({after.display_avatar.url})", inline=True)
+
+        if len(embed.fields) == 1:
+            return
 
         embed.add_field(name=self.utils.invisible_string(), value=after.mention + " - " + self.utils.get_date_time(), inline=False)
 
