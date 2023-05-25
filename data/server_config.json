@@ -250,5 +250,23 @@
             "active": false,
             "role_id": 0
         }
+    },
+    "1101191622781308939": {
+        "welcome_message": {
+            "active": false,
+            "message": ""
+        },
+        "logs": {
+            "active": false,
+            "channel_id": 0
+        },
+        "autorole": {
+            "active": false,
+            "role_id": 0
+        },
+        "rolevocal": {
+            "active": false,
+            "role_id": 0
+        }
     }
 }
