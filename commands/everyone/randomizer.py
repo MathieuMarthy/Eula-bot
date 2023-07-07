@@ -8,7 +8,6 @@ from discord.ui import Button, View
 from discord.ext import commands
 
 from assets.League_of_legends import data_lol
-import data.config as config
 from functions import Utils
 
 class Randomizer(commands.Cog):
@@ -72,7 +71,7 @@ class Randomizer(commands.Cog):
         await self.command(ctx, lane, champion)
 
 
-    @app_commands.command(name="randomizer_lol", description="donne un champion, stuff et runes aléatoire")
+    @app_commands.command(name="randomizer_lola", description="donne un champion, stuff et runes aléatoire")
     @app_commands.describe(lane="forcé le choix d'une lane")
     @app_commands.describe(champion="forcé le choix d'un champion")
     @app_commands.choices(
@@ -199,23 +198,34 @@ class Randomizer(commands.Cog):
 
         if dico["champion"].split("/")[-1] not in data_lol.range_champion:
             list_of_all_item.remove("Runaans_Hurricane_item.png")
+        
+        if dico["lane"] != 5:
+            list_of_all_item.remove("Vigilant_Wardstone_item.png")
+
 
         while len(dico["items"]) != 6:
             item = random.choice(list_of_all_item)
 
-            dico["items"].append(self.assets_path + "/items/Other/" + item)
+            if self.can_i_add_this_item(dico["items"], item):
+                dico["items"].append(self.assets_path + "/items/Other/" + item)
+
             list_of_all_item.remove(item)
-
-            for list_of_item in data_lol.incompatible_items:
-                if item in list_of_item:
-
-                    for incompatible_item in list_of_item:
-                        if incompatible_item in list_of_all_item:
-                            list_of_all_item.remove(incompatible_item)
-
+            
         dico["lane"] = self.assets_path + f"/lane/{dico['lane']}.png"
 
         return dico
+
+
+    def can_i_add_this_item(self, my_items: list[str], item: str) -> bool:
+        if item in data_lol.incompatible_items:
+            
+            items_constraint = data_lol.incompatible_items[item]
+
+            for item_constraint in items_constraint:
+                if item_constraint in my_items:
+                    return False
+
+        return True
 
 
     def randomizer_image(self, lane, champion):
