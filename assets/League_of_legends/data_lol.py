@@ -1,9 +1,20 @@
-incompatible_items = [["Guinsoos_Rageblade_item.png", "Infinity_Edge_item.png"],
-                      ["Ravenous_Hydra_item.png", "Titanic_Hydra_item.png"],
-                      ["Seryldas_Grudge_item.png", "Lord_Dominiks_Regards_item.png"],
-                      ["Maw_of_Malmortius_item.png", "Steraks_Gage_item.png"],
-                      ["Silvermere_Dawn_item.png", "Mercurial_Scimitar_item.png"],
-                      ["Archangels_Staff_item.png", "Manamune_item.png", "Winters_Approach_item.png"]]
+incompatible_items = {
+    "Archangels_Staff_item.png": ["Winters_Approach_item.png", "Manamune_item.png", "Maw_Of_Malmortius_item.png", "Steraks_Gage_item.png"],
+    "Winters_Approach_item.png": ["Archangels_Staff_item.png", "Manamune_item.png"],
+    "Manamune_item.png": ["Winters_Approach_item.png", "Archangels_Staff_item.png"],
+    "Titanic_Hydra_item.png": ["Ravenous_Hydra_item.png"],
+    "Spear_Of_Shojin_item.png": ["Navori_Quickblades_item.png"],
+    "Mercurial_Scimitar_item.png": ["Silvermere_dawn_item.png"],
+    "Silvermere_dawn_item.png": ["Mercurial_Scimitar_item.png"],
+    "Maw_Of_Malmortius_item.png": ["Steraks_Gage_item.png", "Immortal_Shieldbow_item.png"],
+    "Steraks_Gage_item.png": ["Maw_Of_Malmortius_item.png", "Immortal_Shieldbow_item.png"],
+    "Immortal_Shieldbow_item.png": ["Maw_Of_Malmortius_item.png", "Steraks_Gage_item.png"],
+    "Ravenous_Hydra_item.png": ["Titanic_Hydra_item.png"],
+    "Seryldas_Grudge_item.png": ["Lord_Dominiks_Regards_item.png", "Mortal_Reminder_item.png"],
+    "Lord_Dominiks_Regards_item.png": ["Seryldas_Grudge_item.png", "Mortal_Reminder_item.png"],
+    "Mortal_Reminder_item.png": ["Seryldas_Grudge_item.png", "Lord_Dominiks_Regards_item.png"]
+}
+
 
 champions = [
     "Aatrox",
@@ -187,6 +198,7 @@ range_champion = ["ahri.png", "akshan.png", "anivia.png",
                   "lissandra.png",
                   "lucian.png", "lulu.png", "lux.png",
                   "malzahar.png", "missfortune.png",
+                  "milio.png"
                   "morgana.png", "nami.png", "neeko.png",
                   "nidalee.png", "orianna.png",
                   "quinn.png", "rakan.png", "renata.png",
