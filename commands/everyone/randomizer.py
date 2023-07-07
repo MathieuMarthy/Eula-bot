@@ -71,7 +71,7 @@ class Randomizer(commands.Cog):
         await self.command(ctx, lane, champion)
 
 
-    @app_commands.command(name="randomizer_lola", description="donne un champion, stuff et runes aléatoire")
+    @app_commands.command(name="randomizer_lol", description="donne un champion, stuff et runes aléatoire")
     @app_commands.describe(lane="forcé le choix d'une lane")
     @app_commands.describe(champion="forcé le choix d'un champion")
     @app_commands.choices(
