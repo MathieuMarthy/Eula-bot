@@ -198,6 +198,10 @@ class Randomizer(commands.Cog):
 
         if dico["champion"].split("/")[-1] not in data_lol.range_champion:
             list_of_all_item.remove("Runaans_Hurricane_item.png")
+        
+        if dico["lane"] != 5:
+            list_of_all_item.remove("Vigilant_Wardstone_item.png")
+
 
         while len(dico["items"]) != 6:
             item = random.choice(list_of_all_item)
