@@ -198,6 +198,20 @@ class Randomizer(commands.Cog):
         # mythique aléatoire
         dico["items"].append(self.assets_path + "/items/Mythic/" + random.choice(os.listdir(self.assets_path + "/items/Mythic")))
 
+        ## objets à ajouter à cause d'autre éléments du build
+
+        # starter = tear -> manamune ou archangel
+        if dico["starter"].split("/")[-1] == "tear.png":
+            dico["items"].append(self.assets_path + "/items/Other/" + random.choice(["Manamune_item.png", "Archangels_Staff_item.png"]))
+
+        # rune timing parfait -> zhonya ou GA
+        runes_names = [rune.split("/")[-1] for rune in dico["runes"][1:6]]
+        for rune_name in runes_names:
+            if rune_name == "Perfect_Timing_rune.png":
+                dico["items"].append(self.assets_path + "/items/Other/" + random.choice(["Zhonyas_Hourglass_item.png", "Guardian_Angel_item.png"]))
+                break
+
+
         list_of_all_item = os.listdir(self.assets_path + "/items/Other")
 
         if dico["champion"].split("/")[-1] not in data_lol.range_champion:
