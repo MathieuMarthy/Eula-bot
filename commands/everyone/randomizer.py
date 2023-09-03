@@ -170,7 +170,7 @@ class Randomizer(commands.Cog):
             dico["lane"] = lane
 
         if champion is not None:
-            champion =  champion.replace("'", "").replace("-", "").replace(".", "").lower() + ".png"
+            champion =  champion.replace("'", "").replace("-", "").replace(".", "").replace(" ", "").lower() + ".png"
             liste = data_lol.melee_champion + data_lol.range_champion
             if champion in liste:
                 dico["champion"] = f"{self.assets_path}/champions/{champion}"
