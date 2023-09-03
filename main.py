@@ -34,7 +34,6 @@ async def on_ready():
 
     # === polls ===
     await load_polls()
-    print("fini dans on_ready")
 
     periodic_check.start()
     print("Initialisation terminée")

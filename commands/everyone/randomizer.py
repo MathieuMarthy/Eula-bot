@@ -46,8 +46,12 @@ class Randomizer(commands.Cog):
         button = Button(style=discord.ButtonStyle.blurple, emoji="🔄")
         view.add_item(button)
 
-        # callback fonction
+        # callback fonction / actualisation de l'image
         async def callback_button_refresh(interaction: discord.Interaction):
+            if interaction.user.id != ctx.author.id:
+                await interaction.response.send_message("Vous n'avez pas le droit de relancer pour les autres", ephemeral=True)
+                return
+
             embed = await self.send_image(lane, champion)
             await interaction.response.edit_message(embed=embed)
 
