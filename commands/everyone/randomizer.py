@@ -262,7 +262,7 @@ class Randomizer(commands.Cog):
         x = 72
         if dico["lane"].split("/")[-1] == "5.png":
             x += 65
-        if dico["champion"].split("/")[-1] == "Cassiopeia.png":
+        if dico["champion"].split("/")[-1] == "cassiopeia.png":
             x -= 65
         cadre_image = Image.open(self.assets_path + "/images_background/cadre.png")
         image.paste(cadre_image, (x, 347))
