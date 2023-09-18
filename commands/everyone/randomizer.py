@@ -220,7 +220,6 @@ class Randomizer(commands.Cog):
         if dico["lane"] != 5:
             list_of_all_item.remove("Vigilant_Wardstone_item.png")
 
-
         while len(dico["items"]) != 6:
             item = random.choice(list_of_all_item)
 
@@ -228,7 +227,7 @@ class Randomizer(commands.Cog):
                 dico["items"].append(self.assets_path + "/items/Other/" + item)
 
             list_of_all_item.remove(item)
-            
+
         dico["lane"] = self.assets_path + f"/lane/{dico['lane']}.png"
 
         return dico
@@ -237,6 +236,8 @@ class Randomizer(commands.Cog):
     def can_i_add_this_item(self, my_items: list[str], item: str) -> bool:
         my_items = [item.split("/")[-1] for item in my_items]
 
+        if item in my_items:
+            return False
         
         if item in data_lol.incompatible_items:
             
@@ -270,7 +271,7 @@ class Randomizer(commands.Cog):
         cadre_image = Image.open(self.assets_path + "/images_background/cadre.png")
         image.paste(cadre_image, (x, 347))
 
-        # image des summoners
+        # images des summoners
         x = 7
         for summoner in dico["summoners"]:
             summoner_image = Image.open(summoner).resize((50, 50))
