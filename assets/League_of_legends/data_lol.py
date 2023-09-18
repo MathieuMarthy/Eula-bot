@@ -96,6 +96,7 @@ champions = [
     "Malzahar",
     "Maokai",
     "Masteryi",
+    "Milio",
     "Miss Fortune",
     "Mordekaiser",
     "Morgana",
