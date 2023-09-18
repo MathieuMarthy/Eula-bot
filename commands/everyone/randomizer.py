@@ -235,6 +235,9 @@ class Randomizer(commands.Cog):
 
 
     def can_i_add_this_item(self, my_items: list[str], item: str) -> bool:
+        my_items = [item.split("/")[-1] for item in my_items]
+
+        
         if item in data_lol.incompatible_items:
             
             items_constraint = data_lol.incompatible_items[item]
