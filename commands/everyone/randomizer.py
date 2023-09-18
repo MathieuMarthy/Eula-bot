@@ -192,7 +192,7 @@ class Randomizer(commands.Cog):
             dico["starter"] = self.assets_path + f"/starter/" + random.choice(os.listdir(self.assets_path + f"/starter"))
 
         # bottes aléatoire
-        if dico["champion"].split("/")[-1] != "Cassiopeia.png":
+        if dico["champion"].split("/")[-1] != "cassiopeia.png":
             dico["items"].append(self.assets_path + "/items/Boots/" + random.choice(os.listdir(self.assets_path + "/items/Boots")))
 
         # mythique aléatoire
