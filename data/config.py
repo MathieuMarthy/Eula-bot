@@ -1,6 +1,6 @@
 import os
 
-path = os.path.dirname(os.path.abspath(__file__))
+path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 with (open(f"{path}/token.txt", "r")) as f:
     token = f.read()
