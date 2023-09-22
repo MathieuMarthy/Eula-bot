@@ -200,7 +200,7 @@ range_champion = ["ahri.png", "akshan.png", "anivia.png",
                   "lissandra.png",
                   "lucian.png", "lulu.png", "lux.png",
                   "malzahar.png", "missfortune.png",
-                  "milio.png"
+                  "milio.png",
                   "morgana.png", "nami.png", "neeko.png",
                   "nidalee.png", "orianna.png",
                   "quinn.png", "rakan.png", "renata.png",
