@@ -75,11 +75,11 @@ async def load_polls():
 async def periodic_check():
     # Remove all the files in tmp/
     try:
-        for file in os.listdir("tmp"):
-            os.remove(os.path.join("tmp", file))
+        for file in os.listdir(os.path.join(config.path, "tmp")):
+            os.remove(os.path.join(config.path, "tmp", file))
     except:
         pass
-    
+
 
     # Remove all the polls that are finished
     polls = pollDao.get_all_poll()
