@@ -1,0 +1,5 @@
+
+
+class CONST:
+    MULTIPLIER_COLOR_GROUP = 2
+    MORTGAGE_DIVIDER = 2

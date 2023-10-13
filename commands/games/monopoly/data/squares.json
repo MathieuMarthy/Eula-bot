@@ -1,0 +1,264 @@
+[
+    {
+        "name": "Départ",
+        "type": 6,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Boulevard de Belleville",
+        "type": 1,
+        "price": 60,
+        "rent": 2,
+        "color": 1
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Rue Lecourbe",
+        "type": 1,
+        "price": 60,
+        "rent": 4,
+        "color": 1
+    },
+    {
+        "name": "Impôts sur le revenu",
+        "type": 4,
+        "price": 0,
+        "rent": 200
+    },
+    {
+        "name": "Gare Montparnasse",
+        "type": 2,
+        "price": 200,
+        "rent": 25
+    },
+    {
+        "name": "Rue Vaugirard",
+        "type": 1,
+        "price": 100,
+        "rent": 6,
+        "color": 2
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Rue de Courcelles",
+        "type": 1,
+        "price": 100,
+        "rent": 6,
+        "color": 2
+    },
+    {
+        "name": "Avenue de la République",
+        "type": 1,
+        "price": 120,
+        "rent": 8,
+        "color": 2
+    },
+    {
+        "name": "Prison",
+        "type": 5,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Boulevard de la Villette",
+        "type": 1,
+        "price": 140,
+        "rent": 10,
+        "color": 3
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Avenue de Neuilly",
+        "type": 1,
+        "price": 140,
+        "rent": 10,
+        "color": 3
+    },
+    {
+        "name": "Rue de Paradis",
+        "type": 1,
+        "price": 160,
+        "rent": 12,
+        "color": 3
+    },
+    {
+        "name": "Gare de Lyon",
+        "type": 2,
+        "price": 200,
+        "rent": 25
+    },
+    {
+        "name": "Avenue Mozart",
+        "type": 1,
+        "price": 180,
+        "rent": 14,
+        "color": 4
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Boulevard Saint-Michel",
+        "type": 1,
+        "price": 180,
+        "rent": 14,
+        "color": 4
+    },
+    {
+        "name": "Place Pigalle",
+        "type": 1,
+        "price": 200,
+        "rent": 16,
+        "color": 4
+    },
+    {
+        "name": "Taxe de feur",
+        "type": 4,
+        "price": 0,
+        "rent": 200
+    },
+    {
+        "name": "Avenue Matignon",
+        "type": 1,
+        "price": 220,
+        "rent": 18,
+        "color": 5
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Boulevard Malesherbes",
+        "type": 1,
+        "price": 220,
+        "rent": 18,
+        "color": 5
+    },
+    {
+        "name": "Avenue Henri-Martin",
+        "type": 1,
+        "price": 240,
+        "rent": 20,
+        "color": 5
+    },
+    {
+        "name": "Gare du Nord",
+        "type": 2,
+        "price": 200,
+        "rent": 25
+    },
+    {
+        "name": "Faubourg Saint-Honoré",
+        "type": 1,
+        "price": 260,
+        "rent": 22,
+        "color": 6
+    },
+    {
+        "name": "Place de la Bourse",
+        "type": 1,
+        "price": 260,
+        "rent": 22,
+        "color": 6
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 150,
+        "rent": 4
+    },
+    {
+        "name": "Rue de la Fayette",
+        "type": 1,
+        "price": 280,
+        "rent": 24,
+        "color": 6
+    },
+    {
+        "name": "Aller en prison",
+        "type": 7,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Avenue de Breteuil",
+        "type": 1,
+        "price": 300,
+        "rent": 26,
+        "color": 7
+    },
+    {
+        "name": "Avenue Foch",
+        "type": 1,
+        "price": 300,
+        "rent": 26,
+        "color": 7
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Boulevard des Capucines",
+        "type": 1,
+        "price": 320,
+        "rent": 28,
+        "color": 7
+    },
+    {
+        "name": "Gare Saint-Lazare",
+        "type": 2,
+        "price": 200,
+        "rent": 25
+    },
+    {
+        "name": "Chance",
+        "type": 3,
+        "price": 0,
+        "rent": 0
+    },
+    {
+        "name": "Avenue des Champs-Élysées",
+        "type": 1,
+        "price": 350,
+        "rent": 35,
+        "color": 8
+    },
+    {
+        "name": "Taxe de luxe",
+        "type": 4,
+        "price": 0,
+        "rent": 100
+    },
+    {
+        "name": "Rue de la Paix",
+        "type": 1,
+        "price": 400,
+        "rent": 50,
+        "color": 8
+    }
+]
