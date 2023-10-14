@@ -1,8 +1,4 @@
-from typing import Optional
-from commands.games.monopoly.data.squareData import SquareType
-
-from commands.games.monopoly.player import Player
-
+from commands.games.monopolyClasses.data.squareData import SquareType
 
 
 class Square:
@@ -17,7 +13,6 @@ class Square:
 
 
 class Property(Square):
-    owner: Optional[Player]
     price: int
     rent: int
     color: str

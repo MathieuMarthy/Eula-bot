@@ -38,14 +38,14 @@ async def on_ready():
     periodic_check.start()
     print("Initialisation terminée")
 
-async def load(folder: str):
+async def load(folder: str, first: bool = True):
     """Load all the cogs"""
 
     for file in os.listdir(folder):
         file = os.path.join(folder, file)
 
-        if os.path.isdir(file):
-            await load(file)
+        if os.path.isdir(file) and first:
+            await load(file, False)
 
         elif file.endswith(".py"):
             file = file.replace(utils.bot_path() + os.sep, "")

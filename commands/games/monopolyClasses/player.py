@@ -1,33 +1,42 @@
 from typing import Optional
 
 from discord import Member
-from commands.games.monopoly.data.const import CONST
-from commands.games.monopoly.data.squareData import numberPropertiesInColor
+from commands.games.monopolyClasses.square import Property
+from commands.games.monopolyClasses.data.const import CONST
+from commands.games.monopolyClasses.data.squareData import numberPropertiesInColor
 
-from commands.games.monopoly.square import Property
+
 
 
 class Player:
     discord: Member
+    emoji: str
     money: int
     position: int
     properties: list[Property]
     jail: bool
     jailTurn: int
     jailCard: bool
+    lap: int
     
-    def __init__(self, discord: Member) -> None:
+    def __init__(self, discord: Member, emoji: str) -> None:
         self.discord = discord
+        self.emoji = emoji
         self.money = 1500
         self.position = 0
         self.properties = []
         self.jail = False
         self.jailTurn = 0
         self.jailCard = False
+        self.lap = 1
 
 
     def addMoney(self, amount: int):
         self.money -= amount
+
+    
+    def addLap(self):
+        self.lap += 1
 
 
     def loseMoney(self, amount: int):
