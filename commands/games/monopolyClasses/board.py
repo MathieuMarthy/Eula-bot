@@ -39,9 +39,9 @@ class Board:
         ]
 
         # Load squares 
-        squares_json = json.load(open("commands/games/monopolyClasses/data/squares.json"))
+        squares_json = json.load(open("commands/games/monopolyClasses/data/squares.json", "r", encoding="utf-8"))
         for i, square in enumerate(squares_json):
-            if square["type"] == SquareType.PROPERTY:
+            if square["type"] == SquareType.PROPERTY.value:
                 self.squares.append(
                     Property(
                         i,
@@ -49,6 +49,22 @@ class Board:
                         square["price"],
                         square["rent"],
                         square["color"]
+                    )
+                )
+            elif square["type"] == SquareType.TAX.value:
+                self.squares.append(
+                    Tax(
+                        i,
+                        square["name"],
+                        square["price"]
+                    )
+                )
+            elif square["type"] == SquareType.RAILROAD.value:
+                self.squares.append(
+                    Railroad(
+                        i,
+                        square["name"],
+                        square["price"]
                     )
                 )
             else:
@@ -59,7 +75,7 @@ class Board:
                         square["name"]
                     )
                 )
-        
+
         # init players
         emojis = CONST.PLAYERS_EMOJIS
         random.shuffle(emojis)
@@ -80,6 +96,34 @@ class Board:
         return dice
     
 
+    def playerPayRent(self, player: Player, square: Property) -> bool:
+        """Player pay the rent to the owner of the square
+
+        Args:
+            player (Player): player who pay
+            square (Property): square where the player is
+        Returns:
+            bool: if the player has enough money to pay the rent
+        """
+        owner = self.getOwner(square)
+        rent = owner.getRentOfaProperty(square.position)
+
+        if player.money < rent:
+            return False
+
+        owner.addMoney(rent)
+        player.loseMoney(rent)
+
+        return True
+
+
+    def nextPlayer(self):
+        self._currentPlayer += 1
+
+        if self._currentPlayer >= len(self.players):
+            self._currentPlayer = 0
+
+
     def getSquareUnderPlayer(self, player: Player) -> Square:
         return self.squares[player.position]
 
@@ -88,6 +132,14 @@ class Board:
         return self.players[self._currentPlayer]
     
 
+    def getOwner(self, Property: Square):
+        for player in self.players:
+            if Property in player.properties:
+                return player
+        
+        return None
+
+
     def movePlayerOnBoard(self, player: Player, old_position: int):
         old_index = self.getIndexInBoardWithPosition(old_position)
         self.board[old_index[0]][old_index[1]] = self.getEmojiOnSquare(old_position)
@@ -95,7 +147,6 @@ class Board:
         new_index = self.getIndexInBoardWithPosition(player.position)
         self.board[new_index[0]][new_index[1]] = self.getEmojiOnSquare(player.position)
 
-    
 
     def getPlayersOnSquare(self, square: int) -> list[Player]:
         return [player for player in self.players if player.position == square]
@@ -110,6 +161,10 @@ class Board:
             return CONST.NUMBERS_EMOJIS[len(players) - 2]
         else:
             return "⬛"
+        
+
+    def getLap(self) -> int:
+        return max([player.lap for player in self.players])
 
 
     def getBoardStr(self) -> str:

@@ -15,7 +15,7 @@ numberPropertiesInColor = {
 class SquareType(Enum):
     PROPERTY = 1
     RAILROAD = 2
-    CHANCE = 3
+    LUCK = 3
     TAX = 4
     JAIL = 5
     START = 6

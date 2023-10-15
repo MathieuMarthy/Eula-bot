@@ -1,9 +1,9 @@
 from typing import Optional
 
 from discord import Member
-from commands.games.monopolyClasses.square import Property
+from commands.games.monopolyClasses.square import Property, Square
 from commands.games.monopolyClasses.data.const import CONST
-from commands.games.monopolyClasses.data.squareData import numberPropertiesInColor
+from commands.games.monopolyClasses.data.squareData import SquareType, numberPropertiesInColor
 
 
 
@@ -33,10 +33,6 @@ class Player:
 
     def addMoney(self, amount: int):
         self.money -= amount
-
-    
-    def addLap(self):
-        self.lap += 1
 
 
     def loseMoney(self, amount: int):
@@ -79,6 +75,7 @@ class Player:
 
         if self.position >= 40:
             self.position -= 40
+            self.lap += 1
 
 
     def addPosition(self, amount: int):
@@ -90,22 +87,28 @@ class Player:
         self.loseMoney(property.price)
 
 
-    def getRentOfaProperty(self, position: int) -> int:
+    def getRentOfaProperty(self, square: Square) -> int:
         """Get the rent of a property
         calculate with the multiplier and the number of properties in the color
 
         Args:
-            position (int): position of the property
-
+            position (Square): the square
         Returns:
             int: the rent
         """
-        property = self.getPropertyByPosition(position)
 
-        if self.getPropertiesByColor(property.color) == numberPropertiesInColor[property.color]:
-            return property.rent * CONST.MULTIPLIER_COLOR_GROUP * property.multiplier
+        if square.type == SquareType.PROPERTY.value:
+            property: Property = square
 
-        return property.rent * property.multiplier
+            if self.getPropertiesByColor(property.color) == numberPropertiesInColor[property.color]:
+                return property.rent * CONST.MULTIPLIER_COLOR_GROUP * property.multiplier
+
+            return property.rent * property.multiplier
+
+        elif square.type == SquareType.RAILROAD.value:
+            return CONST.RENT_RAILROAD * len([property for property in self.properties if property.type == SquareType.RAILROAD.value])
+        
+        return 0
 
 
     def getPropertyByPosition(self, position: int) -> Optional[Property]:

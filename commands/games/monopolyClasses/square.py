@@ -12,6 +12,22 @@ class Square:
         self.name = name
 
 
+class Tax(Square):
+    price: int
+
+    def __init__(self, position: int, name: str, price: int) -> None:
+        super().__init__(position, SquareType.TAX.value, name)
+        self.price = price
+
+
+class Railroad(Square):
+    price: int
+
+    def __init__(self, position: int, name: str, price: int) -> None:
+        super().__init__(position, SquareType.RAILROAD.value, name)
+        self.price = price
+
+
 class Property(Square):
     price: int
     rent: int
@@ -19,8 +35,7 @@ class Property(Square):
     multiplier: int
 
     def __init__(self, position: int, name: str, price: int, rent: int, color: str) -> None:
-        super().__init__(position, SquareType.PROPERTY, name)
-        self.owner = None
+        super().__init__(position, SquareType.PROPERTY.value, name)
         self.price = price
         self.rent = rent
         self.color = color

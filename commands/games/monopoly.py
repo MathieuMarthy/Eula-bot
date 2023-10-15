@@ -12,7 +12,7 @@ class Monopoly(commands.Cog):
 
 
     async def command(self, ctx: commands.Context):
-        players = [ctx.author]
+        players = [ctx.author, ctx.guild.get_member(826029326893842463)]
         board = Board(10, players)
         
         # show players emoji
@@ -27,7 +27,7 @@ class Monopoly(commands.Cog):
 
         # show the board / game begin
         await game_msg.edit(content="", embed=view.getEmbed(), view=view)
-   
+
 
     def embedPlayersEmojis(self, board: Board) -> discord.Embed:
         embed = discord.Embed(title="Joueurs", color=0x989eec)
