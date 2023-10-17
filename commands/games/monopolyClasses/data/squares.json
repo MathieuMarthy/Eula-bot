@@ -28,8 +28,8 @@
     {
         "name": "Impôts sur le revenu",
         "type": 4,
-        "price": 0,
-        "rent": 200
+        "price": 200,
+        "rent": 0
     },
     {
         "name": "Gare Montparnasse",

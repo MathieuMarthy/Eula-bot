@@ -39,7 +39,6 @@ class BoardView(View):
             return
 
         self.can_roll_dice = False
-        self.userHasRolled = True
         await interaction.response.defer()
         dice = self.board.rollDice()
 
@@ -72,7 +71,7 @@ class BoardView(View):
         
         await interaction.response.defer()
         self.can_roll_dice = False
-        embed = discord.Embed(title=f"Amélioration", description=f"Voulez-vous améliorer le loyer de 20% pour toutes vos propriétés pour **{upgradePrice} $** ?", color=self.embed_color)
+        embed = discord.Embed(title=f"Amélioration", description=f"Voulez-vous améliorer le loyer de 20% pour toutes vos propriétés actuelles pour **{upgradePrice} $** ?", color=self.embed_color)
         self.popup_msg = await self.game_msg.channel.send(embed=embed, view=UpgradeView(self.upgradeFunc, self.noFunc))
 
 
@@ -100,9 +99,9 @@ class BoardView(View):
         if square.type == SquareType.PROPERTY.value or square.type == SquareType.RAILROAD.value:
             
             if self.board.getOwner(square) != None:
-                playerHasPaid = self.board.playerPayRent(self.board.getCurrentPlayer(), square)
+                playerHasPaid, square_rent = self.board.playerPayRent(self.board.getCurrentPlayer(), square)
 
-                await self.showAction(f"Vous avez payé **{square.rent} $** de loyer à {self.board.getOwner(square).discord.display_name} !")
+                await self.showAction(f"Vous avez payé **{square_rent} $** de loyer à {self.board.getOwner(square).discord.display_name} !")
                 
                 if not playerHasPaid:
                     # TODO : player has not enough money
@@ -138,6 +137,7 @@ class BoardView(View):
             self.board.getCurrentPlayer().loseMoney(square.price)
             await self.showAction(f"Vous avez payé **{square.price} $** de taxe !")
 
+        self.userHasRolled = True
         await async_sleep(3)
         await self.showAction("...")
 
@@ -173,11 +173,14 @@ class BoardView(View):
 
         user = self.board.getCurrentPlayer()
         square = self.board.getSquareUnderPlayer(user)
-        user.buyProperty(square)
+        self.board.buyProperty(user, square)
+        
         await self.popup_msg.delete()
 
         await self.showAction(f"Vous avez acheté **{square.name}** !")
         await async_sleep(3)
+        await self.showAction("...")
+        self.userHasRolled = True
 
 
     async def upgradeFunc(self, interaction: discord.Interaction, button: discord.ui.Button):

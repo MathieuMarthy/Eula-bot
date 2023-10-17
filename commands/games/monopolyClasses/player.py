@@ -22,7 +22,7 @@ class Player:
         self.discord = discord
         self.emoji = emoji
         self.money = 1500
-        self.position = 0
+        self.position = 10
         self.properties = []
         self.jail = False
         self.jailTurn = 0
@@ -109,7 +109,7 @@ class Player:
         if square.type == SquareType.PROPERTY.value:
             property: Property = square
 
-            if self.getPropertiesByColor(property.color) == numberPropertiesInColor[property.color]:
+            if self.hasAllPropertiesInColor(property.color):
                 return property.rent * CONST.MULTIPLIER_COLOR_GROUP * property.multiplier
 
             return property.rent * property.multiplier
@@ -118,6 +118,18 @@ class Player:
             return CONST.RENT_RAILROAD * len([property for property in self.properties if property.type == SquareType.RAILROAD.value])
         
         return 0
+
+
+    def hasAllPropertiesInColor(self, color: str) -> bool:
+        """Check if the player has all the properties in a color
+
+        Args:
+            color (str): the color
+
+        Returns:
+            bool: if the player has all the properties in a color
+        """
+        return len(self.getPropertiesByColor(color)) == numberPropertiesInColor[color]
 
 
     def getPropertyByPosition(self, position: int) -> Optional[Property]:
@@ -150,7 +162,7 @@ class Player:
         Returns:
             int: the price
         """
-        return sum([property.price * CONST.UPGRADE_PORCENTAGE for property in self._getProperties()])
+        return round(sum([property.price * CONST.UPGRADE_PORCENTAGE for property in self._getProperties()]))
 
 
     def upgradeProperties(self) -> int:

@@ -1,7 +1,9 @@
 import json
 import random
+from typing import Tuple
 
 from discord import Member
+from commands.games.monopolyClasses.data.SquareEmoji import SquareEmoji
 from commands.games.monopolyClasses.data.const import CONST
 
 from commands.games.monopolyClasses.player import Player
@@ -82,6 +84,7 @@ class Board:
 
     def rollDice(self):
         dice = random.randint(1, 12)
+        dice = 1
 
         currentPlayer = self.getCurrentPlayer()
         old_postion = currentPlayer.position
@@ -92,7 +95,7 @@ class Board:
         return dice
 
 
-    def playerPayRent(self, player: Player, square: Property) -> bool:
+    def playerPayRent(self, player: Player, square: Property) -> Tuple[bool, int]:
         """Player pay the rent to the owner of the square
 
         Args:
@@ -100,17 +103,18 @@ class Board:
             square (Property): square where the player is
         Returns:
             bool: if the player has enough money to pay the rent
+            int: the rent
         """
         owner = self.getOwner(square)
         rent = owner.getRentOfaProperty(square)
 
         if player.money < rent:
-            return False
+            return (False, rent)
 
         owner.addMoney(rent)
         player.loseMoney(rent)
 
-        return True
+        return (True, rent)
 
 
     def nextPlayer(self):
@@ -135,12 +139,21 @@ class Board:
         
         return None
 
+    def buyProperty(self, player: Player, square: Property):
+        player.buyProperty(square)
+
+        if isinstance(square, Property) and player.hasAllPropertiesInColor(square.color):
+            for square in player.getPropertiesByColor(square.color):
+                index = self.getIndexInBoardSquare(square)
+                self.board[index[0]][index[1]] = SquareEmoji[square.color]
+
+
 
     def movePlayerOnBoard(self, player: Player, old_position: int):
-        old_index = self.getIndexInBoardWithPosition(old_position)
+        old_index = self.getIndexInBoard(old_position)
         self.board[old_index[0]][old_index[1]] = self.getEmojiOnSquare(old_position)
 
-        new_index = self.getIndexInBoardWithPosition(player.position)
+        new_index = self.getIndexInBoard(player.position)
         self.board[new_index[0]][new_index[1]] = self.getEmojiOnSquare(player.position)
 
 
@@ -163,18 +176,33 @@ class Board:
         return "\n".join(["".join(line) for line in self.board])
 
 
-    def getIndexInBoardWithPosition(self, position: int) -> int:
-        index = (12, 11)
+    def getIndexInBoard(self, position: int) -> int:
+        index = [12, 11]
 
         if 1 <= position <= 9:
-            index = (12, 11 - position)
+            index = [12, 11 - position]
         elif 10 <= position <= 19:
-            index = (11 - position % 10 , 0)
+            index = [11 - position % 10 , 0]
         elif 20 <= position <= 29:
-            index = (0, 1 + position % 10)
+            index = [0, 1 + position % 10]
         elif 30 <= position <= 39:
-            index = (1 + position % 10, 12)
+            index = [1 + position % 10, 12]
 
+        return index
+
+
+    def getIndexInBoardSquare(self, square: Square) -> list[int, int]:
+        index = self.getIndexInBoard(square.position)
+
+        if 1 <= square.position <= 9:
+            index[0] = index[0] - 1
+        elif 10 <= square.position <= 19:
+            index[1] = index[1] + 1
+        elif 20 <= square.position <= 29:
+            index[0] = index[0] - 1
+        elif 30 <= square.position <= 39:
+            index[1] = index[1] + 1
+        
         return index
 
 
