@@ -17,7 +17,6 @@ class Player:
     jail: bool
     jailTurn: int
     jailCard: bool
-    lap: int
     
     def __init__(self, discord: Member, emoji: str) -> None:
         self.discord = discord
@@ -28,15 +27,14 @@ class Player:
         self.jail = False
         self.jailTurn = 0
         self.jailCard = False
-        self.lap = 1
 
 
     def addMoney(self, amount: int):
-        self.money -= amount
+        self.money += amount
 
 
     def loseMoney(self, amount: int):
-        self.money += amount
+        self.money -= amount
 
     
     def addProperty(self, property: Property):
@@ -71,11 +69,11 @@ class Player:
 
 
     def changePosition(self, newPosition: int):
-        self.position += newPosition
+        self.position = newPosition
 
         if self.position >= 40:
             self.position -= 40
-            self.lap += 1
+            self.addMoney(CONST.SALARY)
 
 
     def addPosition(self, amount: int):
@@ -85,6 +83,17 @@ class Player:
     def buyProperty(self, property: Property):
         self.addProperty(property)
         self.loseMoney(property.price)
+
+    def _getProperties(self) -> list[Property]:
+        return [property for property in self.properties if isinstance(property, Property)]
+
+    
+    def getNumberOfProperties(self) -> int:
+        return len(self._getProperties())
+    
+    
+    def getNumberOfPropertiesAndRailroads(self) -> int:
+        return len(self.properties)
 
 
     def getRentOfaProperty(self, square: Square) -> int:
@@ -127,9 +136,27 @@ class Player:
 
 
     def getPropertiesByColor(self, color: str) -> list[Property]:
-        return [property for property in self.properties if property.color == color]
+        return [property for property in self._getProperties() if property.color == color]
 
 
-    def mortgageProperties(self, properties: list[Property]):
+    def getMortgageProperties(self, properties: list[Property]):
         for property in properties:
             self.addMoney(property.price / CONST.MORTGAGE_DIVIDER)
+
+
+    def getPriceForUpgrade(self) -> int:
+        """Get the price for upgrade all the properties
+
+        Returns:
+            int: the price
+        """
+        return sum([property.price * CONST.UPGRADE_PORCENTAGE for property in self._getProperties()])
+
+
+    def upgradeProperties(self) -> int:
+        """Upgrade all the properties"""
+
+        for property in self._getProperties():
+            property.upgrade()
+
+        self.loseMoney(self.getPriceForUpgrade())

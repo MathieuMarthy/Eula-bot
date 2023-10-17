@@ -17,4 +17,4 @@ class BuyView(View):
 
     @discord.ui.button(label="Ne pas acheter", custom_id="no", style=discord.ButtonStyle.red)
     async def nobuy_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.no_func(interaction, button)
+        await self.no_func(interaction, button, "Vous n'avez pas acheté la case", True)

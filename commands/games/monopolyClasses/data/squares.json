@@ -133,8 +133,8 @@
     {
         "name": "Taxe de feur",
         "type": 4,
-        "price": 0,
-        "rent": 200
+        "price": 200,
+        "rent": 0
     },
     {
         "name": "Avenue Matignon",
@@ -251,8 +251,8 @@
     {
         "name": "Taxe de luxe",
         "type": 4,
-        "price": 0,
-        "rent": 100
+        "price": 100,
+        "rent": 0
     },
     {
         "name": "Rue de la Paix",

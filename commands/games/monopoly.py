@@ -13,7 +13,7 @@ class Monopoly(commands.Cog):
 
     async def command(self, ctx: commands.Context):
         players = [ctx.author, ctx.guild.get_member(826029326893842463)]
-        board = Board(10, players)
+        board = Board(players)
         
         # show players emoji
         await ctx.send(embed=self.embedPlayersEmojis(board))

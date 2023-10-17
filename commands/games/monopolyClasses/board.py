@@ -1,7 +1,6 @@
 import json
 import random
 
-import discord
 from discord import Member
 from commands.games.monopolyClasses.data.const import CONST
 
@@ -11,15 +10,12 @@ from commands.games.monopolyClasses.square import *
 
 class Board:
     squares: list[Square] = []
-    lap: int = 1
-    maxLap: int
     players: list[Player] = []
     _currentPlayer: int
     board: list[str] = []
 
 
-    def __init__(self, maxLap: int, players: list[Member]) -> None:
-        self.maxLap = maxLap
+    def __init__(self, players: list[Member]) -> None:
         self._currentPlayer = 0
         self.board = [
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], # 0
@@ -89,12 +85,12 @@ class Board:
 
         currentPlayer = self.getCurrentPlayer()
         old_postion = currentPlayer.position
-        
+
         currentPlayer.addPosition(dice)
         self.movePlayerOnBoard(currentPlayer, old_postion)
-        
+
         return dice
-    
+
 
     def playerPayRent(self, player: Player, square: Property) -> bool:
         """Player pay the rent to the owner of the square
@@ -106,7 +102,7 @@ class Board:
             bool: if the player has enough money to pay the rent
         """
         owner = self.getOwner(square)
-        rent = owner.getRentOfaProperty(square.position)
+        rent = owner.getRentOfaProperty(square)
 
         if player.money < rent:
             return False
@@ -127,10 +123,10 @@ class Board:
     def getSquareUnderPlayer(self, player: Player) -> Square:
         return self.squares[player.position]
 
-    
+
     def getCurrentPlayer(self) -> Player:
         return self.players[self._currentPlayer]
-    
+
 
     def getOwner(self, Property: Square):
         for player in self.players:
@@ -161,10 +157,6 @@ class Board:
             return CONST.NUMBERS_EMOJIS[len(players) - 2]
         else:
             return "⬛"
-        
-
-    def getLap(self) -> int:
-        return max([player.lap for player in self.players])
 
 
     def getBoardStr(self) -> str:
@@ -174,17 +166,26 @@ class Board:
     def getIndexInBoardWithPosition(self, position: int) -> int:
         index = (12, 11)
 
-        if 1 <= position <= 10:
+        if 1 <= position <= 9:
             index = (12, 11 - position)
-        elif 11 <= position <= 19:
+        elif 10 <= position <= 19:
             index = (11 - position % 10 , 0)
-        elif 20 <= position <= 30:
+        elif 20 <= position <= 29:
             index = (0, 1 + position % 10)
-        elif 31 <= position <= 39:
+        elif 30 <= position <= 39:
             index = (1 + position % 10, 12)
 
         return index
 
-    
+
     def luck(self, player: Player):
-        pass
+        num = random.randint(1, 1)
+
+        action: str
+        if num == 1:
+            action = "Tu es très beau donc tu gagne une concours de beauté. Tu gagne 250$. Non Tony cette carte ne fonctionne pas avec toi"
+            
+            if player.discord.id != 481528251605581854: # ID de Tony
+                player.addMoney(250)
+
+        return action

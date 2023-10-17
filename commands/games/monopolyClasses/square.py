@@ -40,3 +40,11 @@ class Property(Square):
         self.rent = rent
         self.color = color
         self.multiplier = 1
+
+    
+    def upgrade(self):
+        self.multiplier += 0.2
+
+
+    def isSold(self):
+        self.multiplier = 1
