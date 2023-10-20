@@ -21,7 +21,7 @@ class Player:
     def __init__(self, discord: Member, emoji: str) -> None:
         self.discord = discord
         self.emoji = emoji
-        self.money = 1500
+        self.money = CONST.START_MONEY
         self.position = 10
         self.properties = []
         self.jail = False

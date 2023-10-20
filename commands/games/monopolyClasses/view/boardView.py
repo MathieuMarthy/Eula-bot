@@ -3,11 +3,10 @@ import discord
 from discord.ui import View
 
 from commands.games.monopolyClasses.board import Board
+from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import SquareType
 from commands.games.monopolyClasses.square import Tax
-from commands.games.monopolyClasses.view.BuyView import BuyView
-from commands.games.monopolyClasses.view.jailView import JailView
-from commands.games.monopolyClasses.view.upgradeView import UpgradeView
+from commands.games.monopolyClasses.view.popupView import PopupView
 
 
 class BoardView(View):
@@ -83,7 +82,7 @@ class BoardView(View):
         
         await interaction.response.defer()
         embed = discord.Embed(title=f"Amélioration", description=f"Voulez-vous améliorer le loyer de 20% pour toutes vos propriétés actuelles pour **{upgradePrice} $** ?", color=self.embed_color)
-        self.popup_msg = await self.game_msg.channel.send(embed=embed, view=UpgradeView(self.upgradeFunc, self.noFunc))
+        self.popup_msg = await self.game_msg.channel.send(embed=embed, view=PopupView(self.upgradeFunc, self.noFunc))
 
 
     @discord.ui.button(label="Finir le tour", custom_id="next", style=discord.ButtonStyle.red, emoji="⏭️", disabled=True)
@@ -125,7 +124,7 @@ class BoardView(View):
 
             else:
                 embed = discord.Embed(title=f"Achat", description=f"Voulez-vous acheter **{square.name}** pour **{square.price} $**", color=self.embed_color)
-                view = BuyView(self.buyFunc, self.noFunc)
+                view = PopupView(self.buyFunc, self.noFunc)
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
                 return
@@ -187,6 +186,7 @@ class BoardView(View):
 
 
     async def nextPlayer(self):
+        # reset
         self.board.nextPlayer()
         self.can_roll_dice = True
         self.userHasRolled = False
@@ -196,20 +196,30 @@ class BoardView(View):
         self.enableButton("dice")
 
         user = self.board.getCurrentPlayer()
+
+        # jail
+        if user.jailTurn == 2:
+            user.leaveJail()
+            await self.showAction("Vous êtes libéré de prison !")
+            await async_sleep(2)
+            await self.showAction("...")
+
         if user.jail:
             user.jailTurn += 1
+            await self.showAction("Vous êtes en prison !")
+            
             if user.jailCard:
                 embed = discord.Embed(title=f"Sortie de prison", description=f"Voulez-vous utiliser votre carte de sortie de prison ?", color=self.embed_color)
-                view = JailView(self.buyFunc, self.noFunc)
+                view = PopupView(self.buyFunc, self.noJailFunc)
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
+                return 
             else:
-                await self.showAction("Vous êtes en prison !")
-                await async_sleep(2)
-                self.disableButton("dice")
-                self.enableButton("next")
-                self.can_roll_dice = False
-                self.userHasRolled = True
+                embed = discord.Embed(title=f"Sortie de prison", description=f"Voulez-vous payer **{CONST.JAIL_FEE} $** pour sortir de prison ?", color=self.embed_color)
+                view = PopupView(self.payJailFunc, self.noJailFunc)
+
+                self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
+
 
         await self.updateView()
 
@@ -258,6 +268,19 @@ class BoardView(View):
         self.enableButton("dice")
         await self.updateView()
 
+    
+    async def payJailFunc(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if interaction.user != self.board.getCurrentPlayer().discord:
+            await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
+            return
+
+        user = self.board.getCurrentPlayer()
+        user.leaveJail()
+        user.loseMoney(CONST.JAIL_FEE)
+        await self.deletePopup()
+        await self.showAction(f"Vous avez payé **{CONST.JAIL_FEE} $** pour sortir de prison !")
+        await async_sleep(2)
+
 
     async def noFunc(self, interaction: discord.Interaction, button: discord.ui.Button, text: str):
         if interaction.user != self.board.getCurrentPlayer().discord:
@@ -267,6 +290,22 @@ class BoardView(View):
         await self.showAction(text)
         await self.deletePopup()
         await async_sleep(3)
+
+
+    async def noJailFunc(self, interaction: discord.Interaction, button: discord.ui.Button, _):
+        if interaction.user != self.board.getCurrentPlayer().discord:
+            await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
+            return
+
+        self.disableButton("dice")
+        self.enableButton("next")
+        self.can_roll_dice = False
+        self.userHasRolled = True
+        await self.updateView()
+
+        await self.deletePopup()
+        await self.showAction("Vous restez en prison !")
+        await async_sleep(2)
 
 
     def disableButton(self, button_id: str):
