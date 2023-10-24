@@ -84,8 +84,7 @@ class Board:
 
     def rollDice(self):
         dice = random.randint(1, 12)
-        dice = 1
-
+        
         currentPlayer = self.getCurrentPlayer()
         old_postion = currentPlayer.position
 
@@ -138,6 +137,7 @@ class Board:
                 return player
         
         return None
+
 
     def buyProperty(self, player: Player, square: Property):
         player.buyProperty(square)

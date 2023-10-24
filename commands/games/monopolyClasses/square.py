@@ -1,3 +1,4 @@
+from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import SquareType
 
 
@@ -46,5 +47,11 @@ class Property(Square):
         self.multiplier += 0.2
 
 
-    def isSold(self):
+    def sell(self) -> int:
+        """Sell the property
+
+        Returns:
+            int: the money earned
+        """
         self.multiplier = 1
+        return self.price / CONST.MORTGAGE_DIVIDER

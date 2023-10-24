@@ -151,9 +151,24 @@ class Player:
         return [property for property in self._getProperties() if property.color == color]
 
 
-    def getMortgageProperties(self, properties: list[Property]):
+    def sellProperties(self, properties: list[Property]) -> int:
+        """Sell properties
+
+        Args:
+            properties (list[Property]): the properties to sell
+
+        Returns:
+            int: the money earned
+        """
+
+        totalPrice = 0
         for property in properties:
-            self.addMoney(property.price / CONST.MORTGAGE_DIVIDER)
+            price = property.sell()
+            totalPrice += price
+            
+            self.addMoney(price)
+
+        return totalPrice
 
 
     def getPriceForUpgrade(self) -> int:
