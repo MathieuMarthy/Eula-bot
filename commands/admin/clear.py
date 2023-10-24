@@ -11,7 +11,12 @@ class Clear(commands.Cog):
     
     async def command(self, ctx: commands.Context, arg):
         if arg.isdigit():
-            await ctx.channel.purge(limit=int(arg) + 1)
+            nb = int(arg) + 1 # for the command message
+
+            if ctx.interaction is not None:
+                await ctx.interaction.response.defer()
+
+            await ctx.channel.purge(limit=nb)
         else:
             if ctx.interaction is not None:
                 await ctx.interaction.response.defer()

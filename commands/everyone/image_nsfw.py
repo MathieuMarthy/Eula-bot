@@ -4,7 +4,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from parentsClasses.imageNekos import ImageNekos
+from Utils.imageNekos import ImageNekos
 from data import config
 
 class Tags(enum.Enum):
