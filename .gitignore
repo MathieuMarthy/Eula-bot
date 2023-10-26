@@ -2,5 +2,4 @@
 **/.vscode
 /tmp
 data/token.txt
-data/poll.json
 data/reddit.txt
