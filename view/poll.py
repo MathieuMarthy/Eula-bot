@@ -1,6 +1,7 @@
 from datetime import datetime
 import discord
 from discord.ui import View, Select
+from Utils.viewPages.ViewPages import View_pages
 
 from dao.pollDao import pollDao
 
@@ -23,6 +24,20 @@ class pollView(View):
         self.add_item(select)
 
         self.embed = self.create_embed(self.calculate_results())
+
+
+    @discord.ui.button(custom_id="check", emoji="🔍", row=2)
+    async def checkButton(self, interaction: discord.Interaction, button: discord.ui.Button):
+        view = View_pages(
+            interaction,
+            "Participants au sondages", 
+            self.pollDao.get_members_poll(self.infos[0], self.infos[1], self.infos[2]),
+            10,
+            lambda memberPoll: f"<@{memberPoll.memberId}> - {memberPoll.vote}",
+            True
+        )
+
+        await view.start()
 
 
     async def select_callback(self, interaction: discord.Interaction):

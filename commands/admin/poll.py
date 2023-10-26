@@ -13,7 +13,14 @@ class Poll(commands.Cog):
         self.utils = Utils.get_instance(client)
         self.pollDao = pollDao.get_instance()
 
-    async def command(self, ctx: commands.Context, channel: discord.TextChannel, duree: str, question: str, choix1, choix2, choix3, choix4, choix5):
+    async def command(
+            self,
+            ctx: commands.Context,
+            channel: discord.TextChannel,
+            duree: str,
+            question: str,
+            choix1, choix2, choix3, choix4, choix5
+            ):
         tous_choix = [choix1, choix2, choix3, choix4, choix5]
         tous_choix = [choix for choix in tous_choix if choix is not None]
 
@@ -28,12 +35,15 @@ class Poll(commands.Cog):
 
         msg = await channel.send("Sondage en chargement...")
 
-        
+
         self.pollDao.create_poll(channel.guild.id, channel.id, msg.id, end_timestamp, question, tous_choix)
         view = pollView(self.client, ctx.guild.id, channel.id, msg.id, end_timestamp, question, tous_choix)
 
         await msg.edit(content="", view=view, embed=view.embed)
-        await ctx.send(f"Le sondage a été envoyé dans le salon {channel.mention}")
+        if ctx.interaction is not None:
+            await ctx.interaction.response.send_message(f"Le sondage a été envoyé dans le salon {channel.mention}", ephemeral=True)
+        else:
+            await ctx.send(f"Le sondage a été envoyé dans le salon {channel.mention}")
 
 
     @commands.command()

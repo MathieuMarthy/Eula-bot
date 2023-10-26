@@ -1,6 +1,8 @@
 import json
 import os
 
+from models.memberPoll import MemberPoll
+
 project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
@@ -48,6 +50,17 @@ class pollDao:
 
     def get_poll(self, guild: int, channel: int, poll_msg_id: int):
         return self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]
+
+
+    def get_members_poll(self, guild: int, channel: int, poll_msg_id: int):
+        questions = self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]["choix"]
+
+        members = [
+            MemberPoll(memberId, questions[vote])
+            for memberId, vote in self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]["vote"].items()
+        ]
+        members.sort()
+        return members
 
 
     def get_all_poll(self):
