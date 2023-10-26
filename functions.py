@@ -275,13 +275,13 @@ class Utils:
 
     def get_poll_object(self, guild: int, channel: int, poll_msg_id: int):
         json_poll = self.pollDao.get_poll(guild, channel, poll_msg_id)
-        return pollView(self.client, guild, channel, poll_msg_id, json_poll["end_date"], json_poll["question"], json_poll["choix"])
+        return pollView(guild, channel, poll_msg_id, json_poll["end_date"], json_poll["question"], json_poll["choix"])
 
 
     def string_duration_to_datetime(self, duration: str) -> datetime:
         duration = duration.split(" ")
 
-        # on considère que la duréer est au format "x jour(s) y heure(s) z minute(s)"
+        # on considère que la durée est au format "x jour(s) y heure(s) z minute(s)"
 
         now = datetime.now()
         

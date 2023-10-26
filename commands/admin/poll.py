@@ -17,17 +17,17 @@ class Poll(commands.Cog):
             self,
             ctx: commands.Context,
             channel: discord.TextChannel,
-            duree: str,
+            duration: str,
             question: str,
             choix1, choix2, choix3, choix4, choix5
             ):
         tous_choix = [choix1, choix2, choix3, choix4, choix5]
         tous_choix = [choix for choix in tous_choix if choix is not None]
 
-        duree: datetime = self.utils.string_duration_to_datetime(duree)
-        end_timestamp = round(duree.timestamp())
+        end_time: datetime = self.utils.string_duration_to_datetime(duration)
+        end_timestamp = round(end_time.timestamp())
 
-        # check if 2 choices is similar
+        # check if 2 choices are the same
         for choix in tous_choix:
             if tous_choix.count(choix) > 1:
                 await ctx.send(f"Vous ne pouvez pas avoir 2 choix identiques\n{choix} est présent {tous_choix.count(choix)} fois")
@@ -37,7 +37,7 @@ class Poll(commands.Cog):
 
 
         self.pollDao.create_poll(channel.guild.id, channel.id, msg.id, end_timestamp, question, tous_choix)
-        view = pollView(self.client, ctx.guild.id, channel.id, msg.id, end_timestamp, question, tous_choix)
+        view = pollView(ctx.guild.id, channel.id, msg.id, end_timestamp, question, tous_choix)
 
         await msg.edit(content="", view=view, embed=view.embed)
         if ctx.interaction is not None:

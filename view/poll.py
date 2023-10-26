@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import discord
 from discord.ui import View, Select
 from Utils.viewPages.ViewPages import View_pages
@@ -6,7 +6,7 @@ from Utils.viewPages.ViewPages import View_pages
 from dao.pollDao import pollDao
 
 class pollView(View):
-    def __init__(self, client, guild_id: int, channel_id: int, message_id, end_timestamp: int, question: str, choix: list):
+    def __init__(self, guild_id: int, channel_id: int, message_id, end_timestamp: int, question: str, choix: list):
         super().__init__(timeout=None)
         self.pollDao = pollDao.get_instance()
         self.question = question
@@ -19,9 +19,10 @@ class pollView(View):
             for key in self.choix
         ]
         
-        select = Select(placeholder="Choisissez une option", options=options)
-        select.callback = self.select_callback
-        self.add_item(select)
+        if self.end_timestamp > datetime.datetime.now().timestamp():
+            select = Select(placeholder="Choisissez une option", options=options)
+            select.callback = self.select_callback
+            self.add_item(select)
 
         self.embed = self.create_embed(self.calculate_results())
 
@@ -87,17 +88,18 @@ class pollView(View):
             description=description,
             color=0x989eec
         )
-        now = datetime.now().timestamp()
+        endTime = datetime.datetime.now().timestamp()
 
-        if now > self.end_timestamp:
+        if endTime > self.end_timestamp:
             embed.add_field(name=" ", value="Ce sondage est terminé")
         else:
-            embed.add_field(name=" ", value=f"se termine <t:{self.end_timestamp}:R>")
+            embed.add_field(name=" ", value=f"fin: <t:{self.end_timestamp}:R>")
 
         return embed
 
+
     def create_bar(self, pourcentage: int):
         pourcentage //= 10
-        bar = "⬛" * pourcentage
-        bar += "⬜" * (10 - pourcentage)
+        bar = "<:EulaSquare:1167199462490386544>" * pourcentage
+        bar += "⬛" * (10 - pourcentage)
         return bar

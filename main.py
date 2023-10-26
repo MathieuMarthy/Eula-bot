@@ -1,12 +1,11 @@
 import os
-from datetime import datetime
+import datetime
 
 import discord
 from discord.ext import commands, tasks
 
 import data.config as config
 from functions import Utils
-from view.poll import pollView
 from dao.pollDao import pollDao
 # --- Setup ---
 default_intents = discord.Intents.default().all()
@@ -66,8 +65,8 @@ async def load_polls():
                     pollDao.remove_poll(int(guild_id), int(channel_id), int(message_id))
                     continue
 
-                poll = utils.get_poll_object(int(guild_id), int(channel_id), int(message_id))
-                await msg.edit(view=poll, embed=poll.embed)
+                pollView = utils.get_poll_object(int(guild_id), int(channel_id), int(message_id))
+                await msg.edit(view=pollView, embed=pollView.embed)
 
 
 
@@ -83,21 +82,38 @@ async def periodic_check():
 
     # Remove all the polls that are finished
     polls = pollDao.get_all_poll()
-    now = datetime.now().timestamp()
+    now = datetime.datetime.now().timestamp()
 
     list_to_remove = []
     for guild_id in polls:
         for channel_id in polls[guild_id]:
             for message_id in polls[guild_id][channel_id]:
-                poll = utils.get_poll_object(int(guild_id), int(channel_id), int(message_id))
+                poll = utils.get_poll_object(guild_id, channel_id, message_id)
 
-                if poll.end_timestamp < now:
+                if poll.end_timestamp < now and not pollDao.is_finish(guild_id, channel_id, message_id):
+                    try:
+                        channel = await client.fetch_channel(channel_id)
+                        msg = await channel.fetch_message(message_id)
+                    except:
+                        list_to_remove.append((guild_id, channel_id, message_id))
+                        continue
+
+                    await msg.edit(view=poll, embed=poll.embed)
+                    pollDao.set_finish(guild_id, channel_id, message_id)
+
+                if round(poll.end_timestamp + datetime.timedelta(weeks=1).total_seconds()) < now:
                     list_to_remove.append((guild_id, channel_id, message_id))
-                    channel = await client.fetch_channel(int(channel_id))
-                    msg = await channel.fetch_message(int(message_id))
+                    
+                    try:
+                        channel = await client.fetch_channel(channel_id)
+                        msg = await channel.fetch_message(message_id)
+                    except:
+                        pollDao.remove_poll(guild_id, channel_id, message_id)
+                        continue
+
                     await msg.edit(view=None, embed=poll.embed)
 
     for guild_id, channel_id, message_id in list_to_remove:
-        pollDao.remove_poll(int(guild_id), int(channel_id), int(message_id))
+        pollDao.remove_poll(guild_id, channel_id, message_id)
 
 client.run(config.token)

@@ -34,7 +34,8 @@ class pollDao:
             "question": question,
             "end_date": end_timestamp,
             "choix": choix,
-            "vote": {}
+            "vote": {},
+            "finish": False
         }
         self.save_poll_file()
 
@@ -50,6 +51,15 @@ class pollDao:
 
     def get_poll(self, guild: int, channel: int, poll_msg_id: int):
         return self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]
+    
+    
+    def is_finish(self, guild: int, channel: int, poll_msg_id: int):
+        return self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]["finish"]
+
+
+    def set_finish(self, guild: int, channel: int, poll_msg_id: int):
+        self.poll_file[str(guild)][str(channel)][str(poll_msg_id)]["finish"] = True
+        self.save_poll_file()
 
 
     def get_members_poll(self, guild: int, channel: int, poll_msg_id: int):
