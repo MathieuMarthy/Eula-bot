@@ -124,10 +124,10 @@ class Chat(commands.Cog):
         ]
 
 
-    async def command(self, ctx, liens, msg):
+    async def command(self, ctx, liens, msg, member: discord.Member):
         embed = discord.Embed(title=msg, description="󠀮 ", color=self.utils.embed_color())
         embed.set_image(url=random.choice(liens))
-        await ctx.send(embed=embed)
+        await ctx.send(content=member.mention, embed=embed)
 
 
     @commands.command(aliases=["hello"])
@@ -137,14 +137,14 @@ class Chat(commands.Cog):
             await ctx.send("Utilisateur introuvable")
             return
 
-        await self.command(ctx, self.links_hello, f"{ctx.author.name} dit bonjour à {member.name} !")
+        await self.command(ctx, self.links_hello, f"{ctx.author.name} dit bonjour à {member.name} !", member)
 
 
     @app_commands.command(name="bonjour", description="dit bonjour à quelqu'un !")
     @app_commands.describe(personne="la personne à qui tu veux dire bonjour !")
     async def bonjourSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)
-        await self.command(ctx, self.links_hello, f"{interaction.user.name} dit bonjour à {personne.name} !")
+        await self.command(ctx, self.links_hello, f"{interaction.user.name} dit bonjour à {personne.name} !", personne)
 
 
     @commands.command(aliases=["bite"])
@@ -154,14 +154,14 @@ class Chat(commands.Cog):
             await ctx.send("Utilisateur introuvable")
             return
 
-        await self.command(ctx, self.links_bite, f"{ctx.author.name} mord {member.name}")
+        await self.command(ctx, self.links_bite, f"{ctx.author.name} mord {member.name}", member)
 
 
     @app_commands.command(name="mord", description="mords quelqu'un !")
     @app_commands.describe(personne="la personne que tu veux mordre !")
     async def mordSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)
-        await self.command(ctx, self.links_bite, f"{interaction.user.name} mord {personne.name} !")
+        await self.command(ctx, self.links_bite, f"{interaction.user.name} mord {personne.name} !", personne)
     
 
     @commands.command(aliases=["kiss"])
@@ -171,14 +171,14 @@ class Chat(commands.Cog):
             await ctx.send("Utilisateur introuvable")
             return
 
-        await self.command(ctx, self.links_kiss, f"{ctx.author.name} fait un bisous à {member.name} <3")
+        await self.command(ctx, self.links_kiss, f"{ctx.author.name} fait un bisous à {member.name} <3", member)
 
 
     @app_commands.command(name="bisous", description="fait un bisous à quelqu'un !")
     @app_commands.describe(personne="l'élu de ton coeur !")
     async def bisousSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)
-        await self.command(ctx, self.links_kiss, f"{interaction.user.name} fait un bisous à {personne.name} <3")
+        await self.command(ctx, self.links_kiss, f"{interaction.user.name} fait un bisous à {personne.name} <3", personne)
     
 
     @commands.command(aliases=["pat"])
@@ -188,14 +188,14 @@ class Chat(commands.Cog):
             await ctx.send("Utilisateur introuvable")
             return
 
-        await self.command(ctx, self.links_pat, f"{ctx.author.name} tapote la tête de {member.name}")
+        await self.command(ctx, self.links_pat, f"{ctx.author.name} tapote la tête de {member.name}", member)
 
 
     @app_commands.command(name="tapoter", description="*pat pat*")
     @app_commands.describe(personne="la personne à qui tu veux tapoter la tête !")
     async def tapoterSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)
-        await self.command(ctx, self.links_pat, f"{interaction.user.name} tapote la tête de {personne.name}")
+        await self.command(ctx, self.links_pat, f"{interaction.user.name} tapote la tête de {personne.name}", personne)
     
 
     @commands.command(aliases=["hug"])
@@ -205,14 +205,14 @@ class Chat(commands.Cog):
             await ctx.send("Utilisateur introuvable")
             return
 
-        await self.command(ctx, self.links_hug, f"{ctx.author.name} fait un calin à {member.name}")
+        await self.command(ctx, self.links_hug, f"{ctx.author.name} fait un calin à {member.name}", member)
 
 
     @app_commands.command(name="calin", description="🤗")
     @app_commands.describe(personne="la personne que tu veux serrer dans tes bras !")
     async def calinSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)
-        await self.command(ctx, self.links_hug, f"{interaction.user.name} fait un calin à {personne.name}")
+        await self.command(ctx, self.links_hug, f"{interaction.user.name} fait un calin à {personne.name}", personne)
     
 
     @commands.command()
@@ -222,14 +222,14 @@ class Chat(commands.Cog):
             await ctx.send("Utilisateur introuvable")
             return
 
-        await self.command(ctx, self.links_baka, f"{member.name} est trop un ba..baka ! ૮₍ ˃ ⤙ ˂ ₎ა")
+        await self.command(ctx, self.links_baka, f"{member.name} est trop un ba..baka ! ૮₍ ˃ ⤙ ˂ ₎ა", member)
 
 
     @app_commands.command(name="baka", description="ba...baka !")
     @app_commands.describe(personne="un baka")
     async def bakaSlash(self, interaction: discord.Interaction, personne: discord.Member):
         ctx = await commands.Context.from_interaction(interaction)
-        await self.command(ctx, self.links_baka, f"{personne.name} est trop un ba..baka ! ૮₍ ˃ ⤙ ˂ ₎ა")
+        await self.command(ctx, self.links_baka, f"{personne.name} est trop un ba..baka ! ૮₍ ˃ ⤙ ˂ ₎ა", personne)
 
 
 async def setup(bot):

@@ -27,16 +27,12 @@ class ImageNekos(commands.Cog):
         ]
 
         self.nsfw_tags = [
-            "4K",
-            "ass",
             "blowjob",
             "boobs",
             "cum",
             "feet",
             "hentai",
-            "wallpapers",
             "spank",
-            "gasm",
             "lesbian",
             "lewd",
             "pussy",

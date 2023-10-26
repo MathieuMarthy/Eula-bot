@@ -18,6 +18,10 @@ class Timeout(commands.Cog):
             await ctx.send("Je n'ai pas les permissions de timeout")
             return
 
+        if member.roles[-1].position >= ctx.guild.me.roles[-1].position:
+            await ctx.send("Le membre a un rôle égal ou supérieur au mien. Je ne peux pas le timeout")
+            return
+
         if member.guild_permissions.administrator:
             await ctx.send("Impossible de timeout un administrateur")
             return
@@ -36,7 +40,11 @@ class Timeout(commands.Cog):
         ]
 
         delta = timedelta(minutes=duration)
-        await member.timeout(delta, reason=reason)
+        try:
+            await member.timeout(delta, reason=reason)
+        except Exception as e:
+            await ctx.send(f"Une erreur est survenue, détail de l'erreur:\n{e}")
+            return
 
         msg = await ctx.send("".join(kamehameha_emotes[0]))
         for emotes in kamehameha_emotes:
