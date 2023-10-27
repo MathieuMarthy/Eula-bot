@@ -10,12 +10,14 @@ class SellPropertiesView(View):
         super().__init__(timeout=None)
         self.sellPropertiesFunc = sellPropertiesFunc
         self.noFunc = noFunc
+        self.player = player
 
-        self.select = discord.ui.Select(placeholder="Sélectionnez les propriétés à vendre", min_values=1, max_values=10)
+        self.select = discord.ui.Select(placeholder="Sélectionnez les propriétés à vendre", row=1, min_values=1, max_values=len(player.properties))
 
         for property in player.properties:
-            self.select.add_option(label=f"{property.name} - {property.getSellPrice()}", value=property.position)
+            self.select.add_option(label=f"{property.name} - {property.getSellPrice()} $", value=property.position)
 
+        self.select.callback = self.select_callback
         self.add_item(self.select)
 
 
@@ -27,3 +29,11 @@ class SellPropertiesView(View):
     @discord.ui.button(label="Annuler", style=discord.ButtonStyle.danger, row=2)
     async def no(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.noFunc(interaction, button)
+
+
+    async def select_callback(self, interaction: discord.Interaction):
+        if interaction.user != self.player.discord:
+            await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
+            return
+
+        await interaction.response.defer()

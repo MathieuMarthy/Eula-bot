@@ -47,6 +47,9 @@ class Property(Square):
         self.multiplier += 0.2
 
 
+    def getSellPrice(self) -> int:
+        return round(self.price / CONST.MORTGAGE_DIVIDER)
+
     def sell(self) -> int:
         """Sell the property
 
@@ -54,4 +57,4 @@ class Property(Square):
             int: the money earned
         """
         self.multiplier = 1
-        return self.price / CONST.MORTGAGE_DIVIDER
+        return self.getSellPrice()

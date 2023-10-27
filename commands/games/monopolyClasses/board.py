@@ -211,7 +211,7 @@ class Board:
 
         action: str
         if num == 1:
-            action = "Tu es très beau donc tu gagne une concours de beauté. Tu gagne 250$. Non Tony cette carte ne fonctionne pas avec toi"
+            action = "Tu es très beau donc tu gagnes un concours de beauté. Tu gagnes 250 $. Non Tony cette carte ne fonctionne pas avec toi"
             
             if player.discord.id != 481528251605581854: # ID de Tony
                 player.addMoney(250)

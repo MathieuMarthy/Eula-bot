@@ -1,6 +1,8 @@
 from asyncio import sleep as async_sleep
+
 import discord
 from discord.ui import View
+from uwutilities import String_tools
 
 from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.data.const import CONST
@@ -105,7 +107,7 @@ class BoardView(View):
         await self.nextPlayer()
     
 
-    @discord.ui.button(label="Vendre des propriétés", custom_id="sell_property", style=discord.ButtonStyle.secondary, emoji="", row=2)
+    @discord.ui.button(label="Vendre des propriétés", custom_id="sell_property", style=discord.ButtonStyle.secondary, row=2)
     async def sell_properties_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         
         if interaction.user != self.board.getCurrentPlayer().discord:
@@ -116,10 +118,16 @@ class BoardView(View):
             await interaction.response.send_message("Vous devez répondre à la popup !", ephemeral=True)
             return
     
+
+        if self.board.getCurrentPlayer().getNumberOfProperties() == 0:
+            await interaction.response.send_message("Vous n'avez aucune propriété !", ephemeral=True)
+            return
+
         await interaction.response.defer()
 
         embed = discord.Embed(title=f"Vente de propriétés", description="Sélectionnées les propriétés que vous voulez vendre", color=self.embed_color)
         view = SellPropertiesView(self.board.getCurrentPlayer(), self.sellPropertiesFunc, self.noFunc)
+        self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
 
 
     async def executeSquare(self):
@@ -278,12 +286,14 @@ class BoardView(View):
             return
 
         user = self.board.getCurrentPlayer()
+        values = [int(value) for value in values]
         properties = [user.getPropertyByPosition(value) for value in values]
         total = user.sellProperties(properties)
 
         await self.deletePopup()
-        await self.showAction(f"Vous avez vendu **{len(properties)}** propriétés pour **{total} $** !")
-        await async_sleep(2)
+        await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{String_tools.singular_or_plural(len(properties))} pour **{total} $** !")
+        await async_sleep(3)
+        await self.showAction("...")
 
 
     async def jailCardFunc(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -314,7 +324,7 @@ class BoardView(View):
         await async_sleep(2)
 
 
-    async def noFunc(self, interaction: discord.Interaction, button: discord.ui.Button, text: str):
+    async def noFunc(self, interaction: discord.Interaction, button: discord.ui.Button, text: str = "..."):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
