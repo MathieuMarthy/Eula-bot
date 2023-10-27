@@ -1,6 +1,7 @@
 from typing import Optional
 
 from discord import Member
+from commands.games.monopolyClasses.chanceEffect import ChanceEffect
 from commands.games.monopolyClasses.square import Property, Square
 from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import SquareType, numberPropertiesInColor
@@ -17,6 +18,12 @@ class Player:
     jail: bool
     jailTurn: int
     jailCard: bool
+
+    # chance
+    Switzerland_account: bool
+    chance_effects: list[ChanceEffect]
+    dice_divide: int
+
     
     def __init__(self, discord: Member, emoji: str) -> None:
         self.discord = discord
@@ -27,6 +34,10 @@ class Player:
         self.jail = False
         self.jailTurn = 0
         self.jailCard = False
+        
+        self.Switzerland_account = False
+        self.chance_effects = []
+        self.dice_divide = None
 
 
     def addMoney(self, amount: int):
@@ -36,6 +47,24 @@ class Player:
     def loseMoney(self, amount: int):
         self.money -= amount
 
+
+    def multiplyMoney(self, pourcentage: int) -> int:
+        """Multiply the money of the player
+
+        Args:
+            multiplier (int): the multiplier
+
+        Returns:
+            int: the money earned or lost
+        """
+        old = self.money
+        self.money += round(self.money * pourcentage / 100)
+        return round(self.money - old)
+
+
+    def addChanceEffect(self, effect: ChanceEffect):
+        self.chance_effects.append(effect)
+
     
     def addProperty(self, property: Property):
         self.properties.append(property)
@@ -43,10 +72,11 @@ class Player:
 
     def removeProperty(self, property: Property):
         try:
+            property.sell()
             self.properties.remove(property)
         except:
             pass
-    
+
 
     def leaveJail(self):
         self.jail = False

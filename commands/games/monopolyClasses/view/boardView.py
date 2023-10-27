@@ -50,10 +50,10 @@ class BoardView(View):
 
 
         await interaction.response.defer()
-        user = self.board.getCurrentPlayer()
-        dice = self.board.rollDice()
+        player = self.board.getCurrentPlayer()
+        dice = self.board.rollDice(player)
 
-        square = self.board.getSquareUnderPlayer(user)
+        square = self.board.getSquareUnderPlayer(player)
         await self.showAction(f"<a:roll_dice:1162800533548056707> Vous avez obtenu {dice} !\n \
             Vous êtes sur la case {square.name}")
         await async_sleep(3)
@@ -157,7 +157,7 @@ class BoardView(View):
 
         # 🍀
         elif square.type == SquareType.LUCK.value:
-            action = self.board.luck(self.board.getCurrentPlayer())
+            action = self.board.chance(self.board.getCurrentPlayer())
             await self.showAction(action)
             await async_sleep(2)
 
@@ -173,9 +173,13 @@ class BoardView(View):
 
         # 💰
         elif square.type == SquareType.TAX.value:
-            square: Tax
-            self.board.getCurrentPlayer().loseMoney(square.price)
-            await self.showAction(f"Vous avez payé **{square.price} $** de taxe !")
+            if self.board.getCurrentPlayer().Switzerland_account: # chance card
+                await self.showAction("Vous avez un compte en Suisse, vous ne payez pas de taxe !")
+            
+            else:
+                square: Tax
+                self.board.getCurrentPlayer().loseMoney(square.price)
+                await self.showAction(f"Vous avez payé **{square.price} $** de taxe !")
 
         self.userHasRolled = True
         self.enableButton("next")
@@ -221,20 +225,20 @@ class BoardView(View):
         self.disableButton("next")
         self.enableButton("dice")
 
-        user = self.board.getCurrentPlayer()
+        player = self.board.getCurrentPlayer()
 
         # jail
-        if user.jailTurn == 2:
-            user.leaveJail()
+        if player.jailTurn == 2:
+            player.leaveJail()
             await self.showAction("Vous êtes libéré de prison !")
             await async_sleep(2)
             await self.showAction("...")
 
-        if user.jail:
-            user.jailTurn += 1
+        if player.jail:
+            player.jailTurn += 1
             await self.showAction("Vous êtes en prison !")
             
-            if user.jailCard:
+            if player.jailCard:
                 embed = discord.Embed(title=f"Sortie de prison", description=f"Voulez-vous utiliser votre carte de sortie de prison ?", color=self.embed_color)
                 view = PopupView(self.buyFunc, self.noJailFunc)
 
@@ -246,6 +250,15 @@ class BoardView(View):
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
 
+        # chance effects
+        for effect in player.chance_effects.copy():
+            action = effect.function(player)
+            await self.showAction(action[-1])
+            await async_sleep(2)
+
+            effect.turn -= 1
+            if effect.turn == 0:
+                player.chance_effects.remove(effect)
 
         await self.updateView()
 

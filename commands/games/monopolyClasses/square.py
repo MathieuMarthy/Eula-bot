@@ -43,8 +43,8 @@ class Property(Square):
         self.multiplier = 1
 
     
-    def upgrade(self):
-        self.multiplier += 0.2
+    def upgrade(self, amount: int = 0.2) -> None:
+        self.multiplier += amount
 
 
     def getSellPrice(self) -> int:
