@@ -4,8 +4,8 @@ from typing import Tuple
 
 from discord import Member
 from commands.games.monopolyClasses.chanceEffect import ChanceEffect
-from commands.games.monopolyClasses.data.SquareEmoji import SquareEmoji
 from commands.games.monopolyClasses.data.const import CONST
+from commands.games.monopolyClasses.data.squareData import PropertiesEmojis
 
 from commands.games.monopolyClasses.player import Player
 from commands.games.monopolyClasses.square import *
@@ -85,11 +85,12 @@ class Board:
 
     def rollDice(self, player: Player) -> int:
         dice = random.randint(1, 12)
+        dice = 1
 
         # chance effect
-        if player.dice_divide is not None:
-            dice = dice // player.dice_divide
-            player.dice_divide = None
+        # if player.dice_divide is not None:
+        #     dice = dice // player.dice_divide
+        #     player.dice_divide = None
 
 
         currentPlayer = self.getCurrentPlayer()
@@ -123,6 +124,18 @@ class Board:
         return (True, rent)
 
 
+    def updatePropertiesEmojisOnBoard(self):
+        for square in self.squares:
+            index = self.getIndexInBoardSquare(square)
+
+            if isinstance(square, Property):
+                owner = self.getOwner(square)
+                if owner is not None and owner.hasAllPropertiesInColor(square.color):
+                    self.board[index[0]][index[1]] = PropertiesEmojis.get_crown_emoji_by_color(square.color)
+                else:
+                    self.board[index[0]][index[1]] = PropertiesEmojis.get_emojis_by_color(square.color)
+
+
     def nextPlayer(self):
         self._currentPlayer += 1
 
@@ -148,12 +161,13 @@ class Board:
 
     def buyProperty(self, player: Player, square: Property):
         player.buyProperty(square)
+        self.updatePropertiesEmojisOnBoard()
 
-        if isinstance(square, Property) and player.hasAllPropertiesInColor(square.color):
-            for square in player.getPropertiesByColor(square.color):
-                index = self.getIndexInBoardSquare(square)
-                self.board[index[0]][index[1]] = SquareEmoji[square.color]
 
+    def sellProperties(self, player: Player, squares: list[Square]):
+        total = player.sellProperties(squares)
+        self.updatePropertiesEmojisOnBoard()
+        return total
 
 
     def movePlayerOnBoard(self, player: Player, old_position: int):
@@ -201,14 +215,14 @@ class Board:
     def getIndexInBoardSquare(self, square: Square) -> list[int, int]:
         index = self.getIndexInBoard(square.position)
 
-        if 1 <= square.position <= 9:
+        if 0 <= square.position <= 9:
             index[0] = index[0] - 1
         elif 10 <= square.position <= 19:
             index[1] = index[1] + 1
         elif 20 <= square.position <= 29:
-            index[0] = index[0] - 1
+            index[0] = index[0] + 1
         elif 30 <= square.position <= 39:
-            index[1] = index[1] + 1
+            index[1] = index[1] - 1
         
         return index
 
@@ -302,6 +316,7 @@ class Board:
                         current_player.addProperty(property2)
                         player.addProperty(property1)
                         return action
+
             self.chance(current_player)
         
         elif num == 15:

@@ -188,7 +188,6 @@ class BoardView(View):
         await self.showAction("...")
 
 
-
     async def showAction(self, action: str):
         await self.game_msg.edit(embed=self.getEmbed(action))
 
@@ -222,10 +221,18 @@ class BoardView(View):
         self.userHasRolled = False
         await self.game_msg.edit(embed=self.getEmbed())
 
-        self.disableButton("next")
-        self.enableButton("dice")
-
         player = self.board.getCurrentPlayer()
+
+        # chance effects
+        for effect in player.chance_effects.copy():
+            action = effect.function(player)
+            await self.showAction(action[-1])
+            await async_sleep(2)
+            await self.showAction("...")
+
+            effect.turn -= 1
+            if effect.turn == 0:
+                player.chance_effects.remove(effect)
 
         # jail
         if player.jailTurn == 2:
@@ -250,16 +257,8 @@ class BoardView(View):
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
 
-        # chance effects
-        for effect in player.chance_effects.copy():
-            action = effect.function(player)
-            await self.showAction(action[-1])
-            await async_sleep(2)
-
-            effect.turn -= 1
-            if effect.turn == 0:
-                player.chance_effects.remove(effect)
-
+        self.disableButton("next")
+        self.enableButton("dice")
         await self.updateView()
 
 
@@ -271,7 +270,7 @@ class BoardView(View):
         user = self.board.getCurrentPlayer()
         square = self.board.getSquareUnderPlayer(user)
         self.board.buyProperty(user, square)
-        
+
         await self.deletePopup()
 
         await self.showAction(f"Vous avez acheté **{square.name}** !")
@@ -298,10 +297,10 @@ class BoardView(View):
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
 
-        user = self.board.getCurrentPlayer()
+        player = self.board.getCurrentPlayer()
         values = [int(value) for value in values]
-        properties = [user.getPropertyByPosition(value) for value in values]
-        total = user.sellProperties(properties)
+        properties = [player.getPropertyByPosition(value) for value in values]
+        total = self.board.sellProperties(player, properties)
 
         await self.deletePopup()
         await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{String_tools.singular_or_plural(len(properties))} pour **{total} $** !")

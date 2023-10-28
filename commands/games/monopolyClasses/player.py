@@ -4,7 +4,7 @@ from discord import Member
 from commands.games.monopolyClasses.chanceEffect import ChanceEffect
 from commands.games.monopolyClasses.square import Property, Square
 from commands.games.monopolyClasses.data.const import CONST
-from commands.games.monopolyClasses.data.squareData import SquareType, numberPropertiesInColor
+from commands.games.monopolyClasses.data.squareData import PropertiesEmojis, SquareType
 
 
 
@@ -29,12 +29,12 @@ class Player:
         self.discord = discord
         self.emoji = emoji
         self.money = CONST.START_MONEY
-        self.position = 10
+        self.position = 0
         self.properties = []
         self.jail = False
         self.jailTurn = 0
         self.jailCard = False
-        
+
         self.Switzerland_account = False
         self.chance_effects = []
         self.dice_divide = None
@@ -159,7 +159,7 @@ class Player:
         Returns:
             bool: if the player has all the properties in a color
         """
-        return len(self.getPropertiesByColor(color)) == numberPropertiesInColor[color]
+        return len(self.getPropertiesByColor(color)) == PropertiesEmojis.get_number_properties_in_color(color)
 
 
     def getPropertyByPosition(self, position: int) -> Optional[Property]:
@@ -177,7 +177,7 @@ class Player:
         return None
 
 
-    def getPropertiesByColor(self, color: str) -> list[Property]:
+    def getPropertiesByColor(self, color: int) -> list[Property]:
         return [property for property in self._getProperties() if property.color == color]
 
 
@@ -196,6 +196,7 @@ class Player:
             price = property.sell()
             totalPrice += price
             
+            self.removeProperty(property)
             self.addMoney(price)
 
         return totalPrice

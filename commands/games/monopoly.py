@@ -4,7 +4,6 @@ from discord.ext import commands
 
 from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.view.boardView import BoardView
-from functions import Utils
 
 class Monopoly(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:

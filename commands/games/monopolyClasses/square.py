@@ -28,6 +28,17 @@ class Railroad(Square):
         super().__init__(position, SquareType.RAILROAD.value, name)
         self.price = price
 
+    def getSellPrice(self) -> int:
+        return round(self.price / CONST.MORTGAGE_DIVIDER)
+
+    def sell(self) -> int:
+        """Sell the property
+
+        Returns:
+            int: the money earned
+        """
+        return self.getSellPrice()
+
 
 class Property(Square):
     price: int
