@@ -65,7 +65,7 @@ class PropertiesEmojis:
     
     
 
-class SquareType(Enum):
+class SquareType:
     PROPERTY = 1
     RAILROAD = 2
     LUCK = 3
@@ -73,3 +73,4 @@ class SquareType(Enum):
     JAIL = 5
     START = 6
     GO_TO_JAIL = 7
+    SHOP = 8

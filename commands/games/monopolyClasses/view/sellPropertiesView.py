@@ -23,12 +23,12 @@ class SellPropertiesView(View):
 
     @discord.ui.button(label="Vendre les propriétés sélectionnées", style=discord.ButtonStyle.green, row=2)
     async def yes(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.sellPropertiesFunc(interaction, button, self.select.values)
+        await self.sellPropertiesFunc(interaction, self.select.values)
 
 
-    @discord.ui.button(label="Annuler", style=discord.ButtonStyle.danger, row=2)
+    @discord.ui.button(label="Fermer", style=discord.ButtonStyle.danger, row=2)
     async def no(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.noFunc(interaction, button)
+        await self.noFunc(interaction)
 
 
     async def select_callback(self, interaction: discord.Interaction):

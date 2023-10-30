@@ -6,6 +6,7 @@ from discord import Member
 from commands.games.monopolyClasses.chanceEffect import ChanceEffect
 from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import PropertiesEmojis
+from commands.games.monopolyClasses.object import *
 
 from commands.games.monopolyClasses.player import Player
 from commands.games.monopolyClasses.square import *
@@ -14,6 +15,7 @@ from commands.games.monopolyClasses.square import *
 class Board:
     squares: list[Square] = []
     players: list[Player] = []
+    objects: list[Object] = []
     _currentPlayer: int
     board: list[str] = []
 
@@ -22,7 +24,7 @@ class Board:
         self._currentPlayer = 0
         self.board = [
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], # 0
-            ["⬛", "🚗", "🟥", "❔", "🟥", "🟥", "🚉", "🟨", "🟨", "❔", "🟨", "👮", "⬛"], # 1
+            ["⬛", "🛒", "🟥", "❔", "🟥", "🟥", "🚉", "🟨", "🟨", "❔", "🟨", "👮", "⬛"], # 1
             ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"], # 2
             ["⬛", "🟧", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "🟩", "⬛"], # 3
             ["⬛", "❔", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "❔", "⬛"], # 4
@@ -40,7 +42,7 @@ class Board:
         # Load squares 
         squares_json = json.load(open("commands/games/monopolyClasses/data/squares.json", "r", encoding="utf-8"))
         for i, square in enumerate(squares_json):
-            if square["type"] == SquareType.PROPERTY.value:
+            if square["type"] == SquareType.PROPERTY:
                 self.squares.append(
                     Property(
                         i,
@@ -50,7 +52,7 @@ class Board:
                         square["color"]
                     )
                 )
-            elif square["type"] == SquareType.TAX.value:
+            elif square["type"] == SquareType.TAX:
                 self.squares.append(
                     Tax(
                         i,
@@ -58,7 +60,7 @@ class Board:
                         square["price"]
                     )
                 )
-            elif square["type"] == SquareType.RAILROAD.value:
+            elif square["type"] == SquareType.RAILROAD:
                 self.squares.append(
                     Railroad(
                         i,
@@ -82,15 +84,21 @@ class Board:
 
         random.shuffle(self.players)
 
+        # init objects
+        self.objects = [
+            CustomDice(),
+            DoubleDice()
+        ]
+
 
     def rollDice(self, player: Player) -> int:
         dice = random.randint(1, 12)
-        dice = 1
+        dice = 10
 
         # chance effect
-        # if player.dice_divide is not None:
-        #     dice = dice // player.dice_divide
-        #     player.dice_divide = None
+        if player.dice_multipler is not None:
+            dice = dice // player.dice_multipler
+            player.dice_multipler = None
 
 
         currentPlayer = self.getCurrentPlayer()
@@ -156,6 +164,13 @@ class Board:
             if Property in player.properties:
                 return player
         
+        return None
+
+
+    def getObjectById(self, id: int) -> Object:
+        for obj in self.objects:
+            if obj.id == id:
+                return obj
         return None
 
 
@@ -229,7 +244,6 @@ class Board:
 
     def chance(self, current_player: Player):
         num = random.randint(1, 20)
-        num = 20
 
         action: str
         if num == 1:
@@ -358,6 +372,7 @@ class Board:
         elif num == 21:
             action = "Tu gagnes le concours du plus gros mangeur, tu remportes **100 $** mais au prochain tour, tes dés sont dévisés par 2"
 
+            current_player.dice_multipler = 0.5
             chanceEffect = ChanceEffect(1)
             chanceEffect.function = lambda player: (
                 "Tes dés sont divisés par 2."

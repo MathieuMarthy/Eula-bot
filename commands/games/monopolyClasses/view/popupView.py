@@ -12,9 +12,9 @@ class PopupView(View):
 
     @discord.ui.button(label="Oui", custom_id="yes", style=discord.ButtonStyle.green)
     async def yes_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.yes_func(interaction, button)
+        await self.yes_func(interaction)
 
 
     @discord.ui.button(label="Non", custom_id="no", style=discord.ButtonStyle.red)
     async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.no_func(interaction, button, "...")
+        await self.no_func(interaction, "...")

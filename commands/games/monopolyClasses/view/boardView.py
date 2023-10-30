@@ -8,6 +8,7 @@ from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import SquareType
 from commands.games.monopolyClasses.square import Tax
+from commands.games.monopolyClasses.view.objectsView import ObjectsView
 from commands.games.monopolyClasses.view.popupView import PopupView
 from commands.games.monopolyClasses.view.sellPropertiesView import SellPropertiesView
 
@@ -118,28 +119,50 @@ class BoardView(View):
             await interaction.response.send_message("Vous devez répondre à la popup !", ephemeral=True)
             return
     
-
         if self.board.getCurrentPlayer().getNumberOfProperties() == 0:
             await interaction.response.send_message("Vous n'avez aucune propriété !", ephemeral=True)
             return
 
         await interaction.response.defer()
 
-        embed = discord.Embed(title=f"Vente de propriétés", description="Sélectionnées les propriétés que vous voulez vendre", color=self.embed_color)
+        embed = discord.Embed(title="Vente de propriétés", description="Sélectionnées les propriétés que vous voulez vendre", color=self.embed_color)
         view = SellPropertiesView(self.board.getCurrentPlayer(), self.sellPropertiesFunc, self.noFunc)
+        self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
+
+
+    @discord.ui.button(label="Utiliser un objet", custom_id="use_object", style=discord.ButtonStyle.secondary, row=2, emoji="🎒")
+    async def object_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        player = self.board.getCurrentPlayer()
+        if interaction.user != player.discord:
+            await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
+            return
+        
+        if self.IsPopupLaunched():
+            await interaction.response.send_message("Vous devez répondre à la popup !", ephemeral=True)
+            return
+
+        if player.getNumberOfObjects() == 0:
+            await interaction.response.send_message("Vous n'avez aucun objet !", ephemeral=True)
+            return
+
+        await interaction.response.defer()
+
+        embed = discord.Embed(title="Vos objets", description="Sélectionnez un objet à utiliser", color=self.embed_color)
+        view = ObjectsView(player, player.objects, self.useObject, self.noFunc, False)
         self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
 
 
     async def executeSquare(self):
         """When a player go on a square"""
 
-        square = self.board.getSquareUnderPlayer(self.board.getCurrentPlayer())
+        player = self.board.getCurrentPlayer()
+        square = self.board.getSquareUnderPlayer(player)
 
         # 🏠 & 🚂
-        if square.type == SquareType.PROPERTY.value or square.type == SquareType.RAILROAD.value:
+        if square.type == SquareType.PROPERTY or square.type == SquareType.RAILROAD:
             
             if self.board.getOwner(square) != None:
-                playerHasPaid, square_rent = self.board.playerPayRent(self.board.getCurrentPlayer(), square)
+                playerHasPaid, square_rent = self.board.playerPayRent(player, square)
 
                 await self.showAction(f"Vous avez payé **{square_rent} $** de loyer à {self.board.getOwner(square).discord.display_name} !")
                 
@@ -156,14 +179,14 @@ class BoardView(View):
                 return
 
         # 🍀
-        elif square.type == SquareType.LUCK.value:
-            action = self.board.chance(self.board.getCurrentPlayer())
+        elif square.type == SquareType.LUCK:
+            action = self.board.chance(player)
             await self.showAction(action)
             await async_sleep(2)
 
         # ⛓
-        elif square.type == SquareType.GO_TO_JAIL.value:
-            user = self.board.getCurrentPlayer()
+        elif square.type == SquareType.GO_TO_JAIL:
+            user = player
             old_position = user.position
 
             user.goToJail()
@@ -172,14 +195,22 @@ class BoardView(View):
             await self.showAction("Vous allez en prison !")
 
         # 💰
-        elif square.type == SquareType.TAX.value:
-            if self.board.getCurrentPlayer().Switzerland_account: # chance card
+        elif square.type == SquareType.TAX:
+            if player.Switzerland_account: # chance card
                 await self.showAction("Vous avez un compte en Suisse, vous ne payez pas de taxe !")
             
             else:
                 square: Tax
-                self.board.getCurrentPlayer().loseMoney(square.price)
+                player.loseMoney(square.price)
                 await self.showAction(f"Vous avez payé **{square.price} $** de taxe !")
+            
+        elif square.type == SquareType.SHOP:
+            await self.showAction("Vous êtes dans le magasin à objets !")
+        
+            embed = discord.Embed(title="Magasin", description="Sélectionnez un objet à acheter", color=self.embed_color)
+            view = ObjectsView(player, self.board.objects, self.buyObjectFunc, self.noFunc, True)
+            self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
+
 
         self.userHasRolled = True
         self.enableButton("next")
@@ -227,7 +258,7 @@ class BoardView(View):
         for effect in player.chance_effects.copy():
             action = effect.function(player)
             await self.showAction(action[-1])
-            await async_sleep(2)
+            await async_sleep(3)
             await self.showAction("...")
 
             effect.turn -= 1
@@ -262,7 +293,7 @@ class BoardView(View):
         await self.updateView()
 
 
-    async def buyFunc(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def buyFunc(self, interaction: discord.Interaction):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
@@ -281,7 +312,7 @@ class BoardView(View):
         await self.showAction("...")
 
 
-    async def upgradeFunc(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def upgradeFunc(self, interaction: discord.Interaction):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
@@ -292,7 +323,7 @@ class BoardView(View):
         await self.showAction("Vous avez amélioré toutes vos propriétés !")
     
 
-    async def sellPropertiesFunc(self, interaction: discord.Interaction, button: discord.ui.Button, values: list[int]):
+    async def sellPropertiesFunc(self, interaction: discord.Interaction, values: list[int]):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
@@ -308,7 +339,7 @@ class BoardView(View):
         await self.showAction("...")
 
 
-    async def jailCardFunc(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def jailCardFunc(self, interaction: discord.Interaction):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
@@ -322,21 +353,45 @@ class BoardView(View):
         self.enableButton("dice")
         await self.updateView()
 
-    
-    async def payJailFunc(self, interaction: discord.Interaction, button: discord.ui.Button):
+
+    async def payJailFunc(self, interaction: discord.Interaction):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
 
-        user = self.board.getCurrentPlayer()
-        user.leaveJail()
-        user.loseMoney(CONST.JAIL_FEE)
+        player = self.board.getCurrentPlayer()
+        player.leaveJail()
+        player.loseMoney(CONST.JAIL_FEE)
         await self.deletePopup()
         await self.showAction(f"Vous avez payé **{CONST.JAIL_FEE} $** pour sortir de prison !")
         await async_sleep(2)
+    
+
+    async def useObject(self, interaction: discord.Interaction, object_id: int):
+        player = self.board.getCurrentPlayer()
+        object = player.getObjectById(object_id)
+        action = player.useObject(self.board, object)
+
+        await self.deletePopup()
+        await self.showAction(action)
+        await async_sleep(2)
+    
+
+    async def buyObjectFunc(self, interaction: discord.Interaction, object_id: int):
+        object = self.board.getObjectById(object_id)
+
+        if object is None:
+            await interaction.response.send_message("Erreur: Cet objet n'existe pas !", ephemeral=True)
+            return
+    
+        player = self.board.getCurrentPlayer()
+        player.buyObject(object)
+        await self.deletePopup()
+        await self.showAction(f"Vous avez acheté **{object.name}** pour **{object.price} $ **!")
+        await async_sleep(2)
 
 
-    async def noFunc(self, interaction: discord.Interaction, button: discord.ui.Button, text: str = "..."):
+    async def noFunc(self, interaction: discord.Interaction, text: str = "..."):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
@@ -346,7 +401,7 @@ class BoardView(View):
         await async_sleep(3)
 
 
-    async def noJailFunc(self, interaction: discord.Interaction, button: discord.ui.Button, _):
+    async def noJailFunc(self, interaction: discord.Interaction, _):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return

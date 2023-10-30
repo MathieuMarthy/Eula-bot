@@ -2,6 +2,7 @@ from typing import Optional
 
 from discord import Member
 from commands.games.monopolyClasses.chanceEffect import ChanceEffect
+from commands.games.monopolyClasses.object import CustomDice, Object
 from commands.games.monopolyClasses.square import Property, Square
 from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import PropertiesEmojis, SquareType
@@ -18,26 +19,28 @@ class Player:
     jail: bool
     jailTurn: int
     jailCard: bool
+    objects: list[Object]
 
     # chance
     Switzerland_account: bool
     chance_effects: list[ChanceEffect]
-    dice_divide: int
+    dice_multipler: int
 
-    
+
     def __init__(self, discord: Member, emoji: str) -> None:
         self.discord = discord
         self.emoji = emoji
         self.money = CONST.START_MONEY
-        self.position = 0
+        self.position = 10
         self.properties = []
         self.jail = False
         self.jailTurn = 0
         self.jailCard = False
+        self.objects = [CustomDice()]
 
         self.Switzerland_account = False
         self.chance_effects = []
-        self.dice_divide = None
+        self.dice_multipler = None
 
 
     def addMoney(self, amount: int):
@@ -110,6 +113,32 @@ class Player:
         self.changePosition(self.position + amount)
 
 
+    def buyObject(self, object: Object):
+        self.addObject(object)
+        self.loseMoney(object.price)
+
+
+    def addObject(self, object: Object):
+        self.objects.append(object)
+
+
+    def removeObject(self, object: Object):
+        self.objects.remove(object)
+
+    
+    def useObject(self, board, object: Object) -> str:
+        action = object.use(board, self)
+        self.removeObject(object)
+        return action
+
+
+    def getObjectById(self, id: int) -> Optional[Object]:
+        for obj in self.objects:
+            if obj.id == id:
+                return obj
+        return None
+
+
     def buyProperty(self, property: Property):
         self.addProperty(property)
         self.loseMoney(property.price)
@@ -124,6 +153,10 @@ class Player:
     
     def getNumberOfPropertiesAndRailroads(self) -> int:
         return len(self.properties)
+    
+
+    def getNumberOfObjects(self) -> int:
+        return len(self.objects)
 
 
     def getRentOfaProperty(self, square: Square) -> int:
@@ -136,7 +169,7 @@ class Player:
             int: the rent
         """
 
-        if square.type == SquareType.PROPERTY.value:
+        if square.type == SquareType.PROPERTY:
             property: Property = square
 
             if self.hasAllPropertiesInColor(property.color):
@@ -144,8 +177,8 @@ class Player:
 
             return property.rent * property.multiplier
 
-        elif square.type == SquareType.RAILROAD.value:
-            return CONST.RENT_RAILROAD * len([property for property in self.properties if property.type == SquareType.RAILROAD.value])
+        elif square.type == SquareType.RAILROAD:
+            return CONST.RENT_RAILROAD * len([property for property in self.properties if property.type == SquareType.RAILROAD])
         
         return 0
 
