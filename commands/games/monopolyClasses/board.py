@@ -91,14 +91,18 @@ class Board:
         ]
 
 
-    def rollDice(self, player: Player) -> int:
-        dice = random.randint(1, 12)
-        dice = 10
+    def rollDice(self, player: Player, dice: int = None) -> int:
+        if dice is None:
+            dice = random.randint(1, 12)
 
-        # chance effect
+        # == chance effects & objects ==
         if player.dice_multipler is not None:
             dice = dice // player.dice_multipler
             player.dice_multipler = None
+        
+        if player.doubleDice:
+            dice *= 2
+            player.doubleDice = False
 
 
         currentPlayer = self.getCurrentPlayer()
@@ -191,6 +195,18 @@ class Board:
 
         new_index = self.getIndexInBoard(player.position)
         self.board[new_index[0]][new_index[1]] = self.getEmojiOnSquare(player.position)
+    
+
+    def playerGoToJail(self, player: Player):
+        old_position = player.position
+        player.goToJail()
+        self.movePlayerOnBoard(player, old_position)
+
+
+    def playerChangePosition(self, player: Player, position: int):
+        old_position = player.position
+        player.changePosition(position)
+        self.movePlayerOnBoard(player, old_position)
 
 
     def getPlayersOnSquare(self, square: int) -> list[Player]:
@@ -243,7 +259,7 @@ class Board:
 
 
     def chance(self, current_player: Player):
-        num = random.randint(1, 20)
+        num = random.randint(1, 21)
 
         action: str
         if num == 1:
@@ -266,7 +282,7 @@ class Board:
                 
                 player.loseMoney(50)
                 current_player.addMoney(50)
-            
+
         elif num == 4:
             action = "Tu ouvres un compte bancaire en suisse ! Tu es maintenant immunisé contre les taxes."
 
@@ -302,7 +318,7 @@ class Board:
         elif num == 11:
             action = "La police a regardé ton historique, tu dois payer **200 $** d'amende et tu **vas en prison**."
             current_player.loseMoney(200)
-            current_player.goToJail()
+            self.playerGoToJail(current_player)
 
         elif num == 12:
             action = "Tu as grand mère est morte, tu hérites de **1 000 $**."
@@ -331,8 +347,8 @@ class Board:
                         player.addProperty(property1)
                         return action
 
-            self.chance(current_player)
-        
+            return self.chance(current_player)
+
         elif num == 15:
             action = "Un huissier vient chez toi et constate que tout n'est pas en règle, tu perds une propriété au hasard."
             property = random.choice(current_player.properties)
@@ -340,7 +356,7 @@ class Board:
 
         elif num == 16:
             action = "Blitzcrank vous gank avec un grab, tu es téléporté sur une case aléatoire."
-            current_player.changePosition(random.randint(0, 39))
+            self.playerChangePosition(current_player, random.randint(0, 39))
         
         elif num == 17:
             action = "SIUUUUUU ! Oh mon dieu Ronaldo sort d'un buisson et te donne **300 $**."
@@ -349,13 +365,14 @@ class Board:
         elif num == 18:
             action = "Tu écris le meilleur hentai loli, gagne **300 $** mais perds ta santée mentale et **vas en prison**."
             current_player.addMoney(300)
-            current_player.goToJail()
+            self.playerGoToJail(current_player)
 
         elif num == 19:
             action = "Tout le monde retourne à la case départ."
 
             for player in self.players:
-                player.changePosition(0)
+                self.playerChangePosition(player, 0)
+
 
         elif num == 20:
             action = "Tu investis dans le bitcoin pendant 3 tours, ton salaire évolura en fonction du cours du bitcoin."

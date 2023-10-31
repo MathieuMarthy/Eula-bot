@@ -6,8 +6,8 @@ from discord.ext import commands, tasks
 
 import data.config as config
 from functions import Utils
-from view.poll import pollView
 from dao.pollDao import pollDao
+
 # --- Setup ---
 default_intents = discord.Intents.default().all()
 default_intents.members = True

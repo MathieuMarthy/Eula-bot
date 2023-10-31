@@ -8,6 +8,7 @@ from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import SquareType
 from commands.games.monopolyClasses.square import Tax
+from commands.games.monopolyClasses.view.customDice import CustomDiceView
 from commands.games.monopolyClasses.view.objectsView import ObjectsView
 from commands.games.monopolyClasses.view.popupView import PopupView
 from commands.games.monopolyClasses.view.sellPropertiesView import SellPropertiesView
@@ -44,15 +45,32 @@ class BoardView(View):
             await interaction.response.send_message("Vous ne pouvez pas lancer les dés maintenant !", ephemeral=True)
             return
         
+        
         self.disableButton("dice")
         await self.updateView()
-
         self.can_roll_dice = False
-
+    
 
         await interaction.response.defer()
         player = self.board.getCurrentPlayer()
-        dice = self.board.rollDice(player)
+
+        # object
+        if player.customDice:
+            player.customDice = False
+            embed = discord.Embed(title=f"Dé pipé", description=f"Choisissez le résultat du dé", color=self.embed_color)
+            view = CustomDiceView(player, self.display_dice)
+            self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
+        else:
+            await self.display_dice(self.board.rollDice(player))
+
+
+    async def display_dice(self, dice: int):
+        player = self.board.getCurrentPlayer()
+
+        # custom dice popup
+        if self.IsPopupLaunched():
+            await self.deletePopup()
+            self.board.rollDice(player, dice)
 
         square = self.board.getSquareUnderPlayer(player)
         await self.showAction(f"<a:roll_dice:1162800533548056707> Vous avez obtenu {dice} !\n \
@@ -79,7 +97,7 @@ class BoardView(View):
         if upgradePrice > user.money:
             await interaction.response.send_message(f"Vous n'avez pas assez d'argent !\nIl vous faut **{upgradePrice} $**", ephemeral=True)
             return
-    
+
         if user.getNumberOfProperties() == 0:
             await interaction.response.send_message(f"Vous n'avez aucune propriété !", ephemeral=True)
             return
@@ -186,12 +204,7 @@ class BoardView(View):
 
         # ⛓
         elif square.type == SquareType.GO_TO_JAIL:
-            user = player
-            old_position = user.position
-
-            user.goToJail()
-            self.board.movePlayerOnBoard(user, old_position)
-
+            self.board.playerGoToJail(player)
             await self.showAction("Vous allez en prison !")
 
         # 💰
@@ -374,7 +387,8 @@ class BoardView(View):
 
         await self.deletePopup()
         await self.showAction(action)
-        await async_sleep(2)
+        await async_sleep(3)
+        await self.showAction("...")
     
 
     async def buyObjectFunc(self, interaction: discord.Interaction, object_id: int):

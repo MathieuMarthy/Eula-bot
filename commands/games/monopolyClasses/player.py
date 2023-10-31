@@ -26,12 +26,16 @@ class Player:
     chance_effects: list[ChanceEffect]
     dice_multipler: int
 
+    # object
+    customDice: bool
+    doubleDice: bool
+
 
     def __init__(self, discord: Member, emoji: str) -> None:
         self.discord = discord
         self.emoji = emoji
         self.money = CONST.START_MONEY
-        self.position = 10
+        self.position = 0
         self.properties = []
         self.jail = False
         self.jailTurn = 0
@@ -41,6 +45,9 @@ class Player:
         self.Switzerland_account = False
         self.chance_effects = []
         self.dice_multipler = None
+
+        self.customDice = False
+        self.doubleDice = False
 
 
     def addMoney(self, amount: int):
@@ -119,7 +126,7 @@ class Player:
 
 
     def addObject(self, object: Object):
-        self.objects.append(object)
+        self.objects.append(object.copy())
 
 
     def removeObject(self, object: Object):
