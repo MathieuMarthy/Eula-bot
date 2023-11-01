@@ -24,6 +24,7 @@ class BoardView(View):
         self.popup_msg = None
         self.can_roll_dice = True
         self.userHasRolled = False
+        self.usedObject = False
 
 
     @discord.ui.button(label="Lancer les dés", custom_id="dice", style=discord.ButtonStyle.primary, emoji="🎲")
@@ -44,12 +45,12 @@ class BoardView(View):
         if not self.can_roll_dice:
             await interaction.response.send_message("Vous ne pouvez pas lancer les dés maintenant !", ephemeral=True)
             return
-        
-        
+
+
         self.disableButton("dice")
         await self.updateView()
         self.can_roll_dice = False
-    
+
 
         await interaction.response.defer()
         player = self.board.getCurrentPlayer()
@@ -148,7 +149,7 @@ class BoardView(View):
         self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
 
 
-    @discord.ui.button(label="Utiliser un objet", custom_id="use_object", style=discord.ButtonStyle.secondary, row=2, emoji="🎒")
+    @discord.ui.button(label="Utiliser un objet", custom_id="object", style=discord.ButtonStyle.secondary, row=2, emoji="🎒")
     async def object_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         player = self.board.getCurrentPlayer()
         if interaction.user != player.discord:
@@ -163,11 +164,18 @@ class BoardView(View):
             await interaction.response.send_message("Vous n'avez aucun objet !", ephemeral=True)
             return
 
+        if self.usedObject:
+            await interaction.response.send_message("Vous avez déjà utilisé un objet ce tour !", ephemeral=True)
+            return
+
         await interaction.response.defer()
 
         embed = discord.Embed(title="Vos objets", description="Sélectionnez un objet à utiliser", color=self.embed_color)
         view = ObjectsView(player, player.objects, self.useObject, self.noFunc, False)
         self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
+
+        self.disableButton("object")
+        await self.updateView()
 
 
     async def executeSquare(self):
@@ -180,21 +188,26 @@ class BoardView(View):
         if square.type == SquareType.PROPERTY or square.type == SquareType.RAILROAD:
             
             if self.board.getOwner(square) != None:
-                playerHasPaid, square_rent = self.board.playerPayRent(player, square)
+                # object
+                if player.immunity > 0:
+                    await self.showAction("Vous êtes immunisé !")
+                    await async_sleep(2)
+                    await self.showAction("...")
+                else:
+                    playerHasPaid, square_rent = self.board.playerPayRent(player, square)
 
-                await self.showAction(f"Vous avez payé **{square_rent} $** de loyer à {self.board.getOwner(square).discord.display_name} !")
-                
-                if not playerHasPaid:
-                    # TODO : player has not enough money
-                    await self.showAction(f"Vous n'avez pas assez d'argent pour payer le loyer !")
-                    pass
+                    await self.showAction(f"Vous avez payé **{square_rent} $** de loyer à {self.board.getOwner(square).discord.display_name} !")
+                    
+                    if not playerHasPaid:
+                        # TODO : player has not enough money
+                        await self.showAction(f"Vous n'avez pas assez d'argent pour payer le loyer !")
+                        pass
 
             else:
                 embed = discord.Embed(title=f"Achat", description=f"Voulez-vous acheter **{square.name}** pour **{square.price} $**", color=self.embed_color)
                 view = PopupView(self.buyFunc, self.noFunc)
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
-                return
 
         # 🍀
         elif square.type == SquareType.LUCK:
@@ -239,7 +252,7 @@ class BoardView(View):
     def getEmbed(self, action: str = "...") -> discord.Embed:
 
         # embed
-        embed = discord.Embed(title=f"Monopoly", color=self.embed_color)
+        embed = discord.Embed(title="Monopoly", color=self.embed_color)
         embed.add_field(name="Plateau", value=self.board.getBoardStr(), inline=False)
         
         currentPlayer = self.board.getCurrentPlayer()
@@ -263,9 +276,11 @@ class BoardView(View):
         self.board.nextPlayer()
         self.can_roll_dice = True
         self.userHasRolled = False
+        self.usedObject = False
         await self.game_msg.edit(embed=self.getEmbed())
 
         player = self.board.getCurrentPlayer()
+        player.newTurn()
 
         # chance effects
         for effect in player.chance_effects.copy():
@@ -288,21 +303,22 @@ class BoardView(View):
         if player.jail:
             player.jailTurn += 1
             await self.showAction("Vous êtes en prison !")
-            
+
             if player.jailCard:
-                embed = discord.Embed(title=f"Sortie de prison", description=f"Voulez-vous utiliser votre carte de sortie de prison ?", color=self.embed_color)
+                embed = discord.Embed(title="Sortie de prison", description="Voulez-vous utiliser votre carte de sortie de prison ?", color=self.embed_color)
                 view = PopupView(self.buyFunc, self.noJailFunc)
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
                 return 
             else:
-                embed = discord.Embed(title=f"Sortie de prison", description=f"Voulez-vous payer **{CONST.JAIL_FEE} $** pour sortir de prison ?", color=self.embed_color)
+                embed = discord.Embed(title="Sortie de prison", description=f"Voulez-vous payer **{CONST.JAIL_FEE} $** pour sortir de prison ?", color=self.embed_color)
                 view = PopupView(self.payJailFunc, self.noJailFunc)
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
 
         self.disableButton("next")
         self.enableButton("dice")
+        self.enableButton("object")
         await self.updateView()
 
 
@@ -321,6 +337,7 @@ class BoardView(View):
         self.userHasRolled = True
         self.enableButton("next")
         await self.updateView()
+
         await async_sleep(3)
         await self.showAction("...")
 
@@ -378,18 +395,21 @@ class BoardView(View):
         await self.deletePopup()
         await self.showAction(f"Vous avez payé **{CONST.JAIL_FEE} $** pour sortir de prison !")
         await async_sleep(2)
-    
+
 
     async def useObject(self, interaction: discord.Interaction, object_id: int):
         player = self.board.getCurrentPlayer()
         object = player.getObjectById(object_id)
         action = player.useObject(self.board, object)
 
+        self.disableButton("object")
+        await self.updateView()
+
         await self.deletePopup()
         await self.showAction(action)
         await async_sleep(3)
         await self.showAction("...")
-    
+
 
     async def buyObjectFunc(self, interaction: discord.Interaction, object_id: int):
         object = self.board.getObjectById(object_id)

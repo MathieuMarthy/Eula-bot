@@ -87,7 +87,9 @@ class Board:
         # init objects
         self.objects = [
             CustomDice(),
-            DoubleDice()
+            DoubleDice(),
+            SwapPlayer(),
+            Immunity()
         ]
 
 
@@ -270,7 +272,6 @@ class Board:
 
         elif num == 2:
             action = "Vous gagnez une carte sortie de prison. Vous pouvez l'utiliser quand vous voulez."
-
             current_player.addJailCard()
 
         elif num == 3:
@@ -284,15 +285,16 @@ class Board:
                 current_player.addMoney(50)
 
         elif num == 4:
-            action = "Tu ouvres un compte bancaire en suisse ! Tu es maintenant immunisé contre les taxes."
+            if current_player.Switzerland_account:
+                return self.chance(current_player)
 
+            action = "Tu ouvres un compte bancaire en suisse ! Tu es maintenant immunisé contre les taxes."
             current_player.Switzerland_account = True
 
         elif num == 5:
             action = "Tu as gagné **100 $** à la loterie !"
-
             current_player.addMoney(100)
-        
+
         elif num == 6:
             action = "Un investisseur chinois 😑 investit dans tes propriétés. Le prix de tes propriétés augmente de 10 %."
 
@@ -312,8 +314,8 @@ class Board:
             current_player.loseMoney(300)
 
         elif num == 10:
-            action = "Tu as laissé ta femme conduire ta voiture, elle a eu un accident, tu dois payer **500 $** de réparation."
-            current_player.loseMoney(500)
+            action = "Tu as laissé ta femme conduire ta voiture, elle a eu un accident, tu dois payer **300 $** de réparation."
+            current_player.loseMoney(300)
 
         elif num == 11:
             action = "La police a regardé ton historique, tu dois payer **200 $** d'amende et tu **vas en prison**."
@@ -350,6 +352,9 @@ class Board:
             return self.chance(current_player)
 
         elif num == 15:
+            if len(current_player.properties) == 0:
+                return self.chance(current_player)
+
             action = "Un huissier vient chez toi et constate que tout n'est pas en règle, tu perds une propriété au hasard."
             property = random.choice(current_player.properties)
             current_player.removeProperty(property)
@@ -373,7 +378,6 @@ class Board:
             for player in self.players:
                 self.playerChangePosition(player, 0)
 
-
         elif num == 20:
             action = "Tu investis dans le bitcoin pendant 3 tours, ton salaire évolura en fonction du cours du bitcoin."
 
@@ -394,5 +398,9 @@ class Board:
             chanceEffect.function = lambda player: (
                 "Tes dés sont divisés par 2."
             )
+
+        elif num == 22:
+            action = "\"La terre, elle n'est pas verte, elle est bleue\" Jojo n'aime pas les écolos et te casse la gueule, tu dois payer les frais d'hopitaux  **-200 $.**"
+            current_player.loseMoney(200)
 
         return action

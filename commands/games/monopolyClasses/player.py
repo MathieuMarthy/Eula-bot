@@ -1,8 +1,9 @@
+import copy
 from typing import Optional
 
 from discord import Member
 from commands.games.monopolyClasses.chanceEffect import ChanceEffect
-from commands.games.monopolyClasses.object import CustomDice, Object
+from commands.games.monopolyClasses.object import CustomDice, Immunity, Object, SwapPlayer
 from commands.games.monopolyClasses.square import Property, Square
 from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import PropertiesEmojis, SquareType
@@ -27,8 +28,10 @@ class Player:
     dice_multipler: int
 
     # object
+    useObjectThisTurn: bool
     customDice: bool
     doubleDice: bool
+    immunity: int
 
 
     def __init__(self, discord: Member, emoji: str) -> None:
@@ -40,14 +43,23 @@ class Player:
         self.jail = False
         self.jailTurn = 0
         self.jailCard = False
-        self.objects = [CustomDice()]
+        self.objects = [CustomDice(), SwapPlayer(), Immunity()]
 
         self.Switzerland_account = False
         self.chance_effects = []
         self.dice_multipler = None
 
+        self.useObjectThisTurn = False
         self.customDice = False
         self.doubleDice = False
+        self.immunity = 0
+    
+
+    def newTurn(self):
+        self.useObjectThisTurn = False
+
+        if self.immunity > 0:
+            self.immunity -= 1
 
 
     def addMoney(self, amount: int):
@@ -126,7 +138,8 @@ class Player:
 
 
     def addObject(self, object: Object):
-        self.objects.append(object.copy())
+        newObject = copy.deepcopy(object)
+        self.objects.append(newObject)
 
 
     def removeObject(self, object: Object):
