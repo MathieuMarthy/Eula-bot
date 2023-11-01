@@ -10,3 +10,4 @@ class CONST:
     SALARY = 200
     START_MONEY = 1500
     JAIL_FEE = 50
+    NB_TURNS_IN_JAIL = 2

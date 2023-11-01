@@ -167,6 +167,10 @@ class BoardView(View):
         if self.usedObject:
             await interaction.response.send_message("Vous avez déjà utilisé un objet ce tour !", ephemeral=True)
             return
+        
+        if player.jail:
+            await interaction.response.send_message("Vous ne pouvez pas utiliser d'objet en prison !", ephemeral=True)
+            return
 
         await interaction.response.defer()
 
@@ -186,17 +190,24 @@ class BoardView(View):
 
         # 🏠 & 🚂
         if square.type == SquareType.PROPERTY or square.type == SquareType.RAILROAD:
-            
-            if self.board.getOwner(square) != None:
+
+            owner = self.board.getOwner(square)
+            if owner != None:
                 # object
                 if player.immunity > 0:
                     await self.showAction("Vous êtes immunisé !")
                     await async_sleep(2)
                     await self.showAction("...")
+
+                elif owner.jail:
+                    await self.showAction(f"**{owner.discord.display_name}** est en prison, vous ne payez pas de loyer !")
+                    await async_sleep(2)
+                    await self.showAction("...")
+
                 else:
                     playerHasPaid, square_rent = self.board.playerPayRent(player, square)
 
-                    await self.showAction(f"Vous avez payé **{square_rent} $** de loyer à {self.board.getOwner(square).discord.display_name} !")
+                    await self.showAction(f"Vous avez payé **{square_rent} $** de loyer à {owner.discord.display_name} !")
                     
                     if not playerHasPaid:
                         # TODO : player has not enough money
@@ -257,7 +268,7 @@ class BoardView(View):
         
         currentPlayer = self.board.getCurrentPlayer()
         embed.add_field(name="Au tour de", value=f"{currentPlayer.discord.display_name} - {currentPlayer.money} $", inline=False)
-        embed.add_field(name="Actions", value=action)
+        embed.add_field(name="Action", value=action)
         
         return embed
 
@@ -294,7 +305,7 @@ class BoardView(View):
                 player.chance_effects.remove(effect)
 
         # jail
-        if player.jailTurn == 2:
+        if player.jailTurn == CONST.NB_TURNS_IN_JAIL:
             player.leaveJail()
             await self.showAction("Vous êtes libéré de prison !")
             await async_sleep(2)
@@ -302,7 +313,9 @@ class BoardView(View):
 
         if player.jail:
             player.jailTurn += 1
-            await self.showAction("Vous êtes en prison !")
+
+            remainingTurn = CONST.NB_TURNS_IN_JAIL - player.jailTurn
+            await self.showAction(f"Vous êtes en prison pour encore {remainingTurn} tour{String_tools.singular_or_plural(remainingTurn)} !")
 
             if player.jailCard:
                 embed = discord.Embed(title="Sortie de prison", description="Voulez-vous utiliser votre carte de sortie de prison ?", color=self.embed_color)

@@ -38,7 +38,7 @@ class Player:
         self.discord = discord
         self.emoji = emoji
         self.money = CONST.START_MONEY
-        self.position = 0
+        self.position = 10
         self.properties = []
         self.jail = False
         self.jailTurn = 0

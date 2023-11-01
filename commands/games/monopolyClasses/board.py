@@ -96,6 +96,7 @@ class Board:
     def rollDice(self, player: Player, dice: int = None) -> int:
         if dice is None:
             dice = random.randint(1, 12)
+            dice = 10
 
         # == chance effects & objects ==
         if player.dice_multipler is not None:
@@ -105,7 +106,6 @@ class Board:
         if player.doubleDice:
             dice *= 2
             player.doubleDice = False
-
 
         currentPlayer = self.getCurrentPlayer()
         old_postion = currentPlayer.position
