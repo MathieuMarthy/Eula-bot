@@ -1,17 +1,18 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from Utils.WaitPlayer import WaitPlayer
 
 from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.view.boardView import BoardView
+from view.waitPlayerView import WaitPlayerView
 
 class Monopoly(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
 
 
-    async def command(self, ctx: commands.Context):
-        players = [ctx.author, ctx.guild.get_member(826029326893842463)]
+    async def start(self, ctx: commands.Context, players: list[discord.Member]):
         board = Board(players)
         
         # show players emoji
@@ -26,6 +27,11 @@ class Monopoly(commands.Cog):
 
         # show the board / game begin
         await game_msg.edit(content="", embed=view.getEmbed(), view=view)
+
+
+    async def command(self, ctx: commands.Context):
+        waitPlayer = WaitPlayer("Monopoly", ctx, ctx.author, self.start, 10)
+        await waitPlayer.start()
 
 
     def embedPlayersEmojis(self, board: Board) -> discord.Embed:
