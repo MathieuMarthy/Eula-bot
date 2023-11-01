@@ -1,5 +1,6 @@
 import discord
 from discord.ui import View, Select, Button
+from commands.games.monopolyClasses.data.const import CONST
 
 from commands.games.monopolyClasses.object import Object
 from commands.games.monopolyClasses.player import Player
@@ -17,7 +18,7 @@ class ObjectsView(View):
 
         for obj in objects:
             if buyPhase:
-                self.select.add_option(label=f"{obj.name} - {obj.price} $", value=obj.id)
+                self.select.add_option(label=f"{obj.name} - {obj.price} {CONST.MONEY_SYMBOL}", value=obj.id)
             else:
                 self.select.add_option(label=obj.name, value=obj.id)
 
@@ -47,7 +48,8 @@ class ObjectsView(View):
 
 
     async def yes(self, interaction: discord.Interaction):
-        await self.yesFunc(interaction, int(self.select.values[0]))
+        value = int(self.select.values[0]) if self.select.values else None
+        await self.yesFunc(interaction, value)
 
 
     async def cancel(self, interaction: discord.Interaction):

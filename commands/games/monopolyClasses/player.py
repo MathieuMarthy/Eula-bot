@@ -38,7 +38,7 @@ class Player:
         self.discord = discord
         self.emoji = emoji
         self.money = CONST.START_MONEY
-        self.position = 10
+        self.position = 0
         self.properties = []
         self.jail = False
         self.jailTurn = 0
@@ -130,6 +130,11 @@ class Player:
 
     def addPosition(self, amount: int):
         self.changePosition(self.position + amount)
+
+    
+    def die(self):
+        for property in self.properties:
+            property.sell()
 
 
     def buyObject(self, object: Object):

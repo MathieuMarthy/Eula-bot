@@ -96,7 +96,6 @@ class Board:
     def rollDice(self, player: Player, dice: int = None) -> int:
         if dice is None:
             dice = random.randint(1, 12)
-            dice = 10
 
         # == chance effects & objects ==
         if player.dice_multipler is not None:
@@ -155,6 +154,11 @@ class Board:
 
         if self._currentPlayer >= len(self.players):
             self._currentPlayer = 0
+
+
+    def playerDie(self, player: Player):
+        self.players.remove(player)
+        player.die()
 
 
     def getSquareUnderPlayer(self, player: Player) -> Square:
@@ -265,7 +269,7 @@ class Board:
 
         action: str
         if num == 1:
-            action = "Tu es très beau donc tu gagnes un concours de beauté. Tu gagnes **250 $**. Non Tony cette carte ne fonctionne pas avec toi."
+            action = f"Tu es très beau donc tu gagnes un concours de beauté. Tu gagnes **250 {CONST.MONEY_SYMBOL}**. Non Tony cette carte ne fonctionne pas avec toi."
             
             if current_player.discord.id != 481528251605581854: # ID de Tony
                 current_player.addMoney(250)
@@ -275,7 +279,7 @@ class Board:
             current_player.addJailCard()
 
         elif num == 3:
-            action = "Tu fais commerce de ton eau de bain de femboy, chaque joueur en achète 1 pot à **50 $**."
+            action = f"Tu fais commerce de ton eau de bain de femboy, chaque joueur en achète 1 pot à **50 {CONST.MONEY_SYMBOL}**."
 
             for player in self.players:
                 if player == current_player:
@@ -292,7 +296,7 @@ class Board:
             current_player.Switzerland_account = True
 
         elif num == 5:
-            action = "Tu as gagné **100 $** à la loterie !"
+            action = f"Tu as gagné **100 {CONST.MONEY_SYMBOL}** à la loterie !"
             current_player.addMoney(100)
 
         elif num == 6:
@@ -302,32 +306,32 @@ class Board:
                 property.upgrade(0.1)
 
         elif num == 7:
-            action = "Tu touches l'héritage de tonton jean-ma, gagne **200 $**."
+            action = f"Tu touches l'héritage de tonton jean-ma, gagne **200 {CONST.MONEY_SYMBOL}**."
             current_player.addMoney(200)
 
         elif num == 8:
-            action = "Tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne **200 $**."
+            action = f"Tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne **200 {CONST.MONEY_SYMBOL}**."
             current_player.addMoney(200)
 
         elif num == 9:
-            action = "Tu as commencé à jouer à League of Legends, tu achètes trop de skins ... **-300 $**."
+            action = f"Tu as commencé à jouer à League of Legends, tu achètes trop de skins ... **-300 {CONST.MONEY_SYMBOL}**."
             current_player.loseMoney(300)
 
         elif num == 10:
-            action = "Tu as laissé ta femme conduire ta voiture, elle a eu un accident, tu dois payer **300 $** de réparation."
+            action = f"Tu as laissé ta femme conduire ta voiture, elle a eu un accident, tu dois payer **300 {CONST.MONEY_SYMBOL}** de réparation."
             current_player.loseMoney(300)
 
         elif num == 11:
-            action = "La police a regardé ton historique, tu dois payer **200 $** d'amende et tu **vas en prison**."
+            action = f"La police a regardé ton historique, tu dois payer **200 {CONST.MONEY_SYMBOL}** d'amende et tu **vas en prison**."
             current_player.loseMoney(200)
             self.playerGoToJail(current_player)
 
         elif num == 12:
-            action = "Tu as grand mère est morte, tu hérites de **1 000 $**."
+            action = f"Tu as grand mère est morte, tu hérites de **1 000 {CONST.MONEY_SYMBOL}**."
             current_player.addMoney(1_000)
 
         elif num == 13:
-            action = "Tu as voté Sandrine Rousseau..., tu perds **100 $**."
+            action = f"Tu as voté Sandrine Rousseau..., tu perds **100 {CONST.MONEY_SYMBOL}**."
             current_player.loseMoney(100)
 
         elif num == 14:
@@ -364,11 +368,11 @@ class Board:
             self.playerChangePosition(current_player, random.randint(0, 39))
         
         elif num == 17:
-            action = "SIUUUUUU ! Oh mon dieu Ronaldo sort d'un buisson et te donne **300 $**."
+            action = f"SIUUUUUU ! Oh mon dieu Ronaldo sort d'un buisson et te donne **300 {CONST.MONEY_SYMBOL}**."
             current_player.addMoney(300)
         
         elif num == 18:
-            action = "Tu écris le meilleur hentai loli, gagne **300 $** mais perds ta santée mentale et **vas en prison**."
+            action = f"Tu écris le meilleur hentai loli, gagne **300 {CONST.MONEY_SYMBOL}** mais perds ta santée mentale et **vas en prison**."
             current_player.addMoney(300)
             self.playerGoToJail(current_player)
 
@@ -386,12 +390,12 @@ class Board:
                 evolution := random.randint(-10, 10),
                 earn := player.multiplyMoney(evolution),
                 word := "augmenté" if evolution > 0 else "diminué",
-                f"Le cours du bitcoin à {word} de {abs(evolution)} %\nVotre salaire à {word} de **{abs(earn)} $**."
+                f"Le cours du bitcoin à {word} de {abs(evolution)} %\nVotre salaire à {word} de **{abs(earn)} {CONST.MONEY_SYMBOL}**."
             )
             current_player.addChanceEffect(chanceEffect)
 
         elif num == 21:
-            action = "Tu gagnes le concours du plus gros mangeur, tu remportes **100 $** mais au prochain tour, tes dés sont dévisés par 2"
+            action = f"Tu gagnes le concours du plus gros mangeur, tu remportes **100 {CONST.MONEY_SYMBOL}** mais au prochain tour, tes dés sont dévisés par 2"
 
             current_player.dice_multipler = 0.5
             chanceEffect = ChanceEffect(1)
@@ -400,7 +404,7 @@ class Board:
             )
 
         elif num == 22:
-            action = "\"La terre, elle n'est pas verte, elle est bleue\" Jojo n'aime pas les écolos et te casse la gueule, tu dois payer les frais d'hopitaux  **-200 $.**"
+            action = f"\"La terre, elle n'est pas verte, elle est bleue\" Jojo n'aime pas les écolos et te casse la gueule, tu dois payer les frais d'hopitaux  **-200 {CONST.MONEY_SYMBOL}.**"
             current_player.loseMoney(200)
 
         return action

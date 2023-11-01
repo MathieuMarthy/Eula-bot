@@ -1,5 +1,6 @@
 import discord
 from discord.ui import View
+from commands.games.monopolyClasses.data.const import CONST
 
 from commands.games.monopolyClasses.player import Player
 
@@ -15,7 +16,7 @@ class SellPropertiesView(View):
         self.select = discord.ui.Select(placeholder="Sélectionnez les propriétés à vendre", row=1, min_values=1, max_values=len(player.properties))
 
         for property in player.properties:
-            self.select.add_option(label=f"{property.name} - {property.getSellPrice()} $", value=property.position)
+            self.select.add_option(label=f"{property.name} - {property.getSellPrice()} {CONST.MONEY_SYMBOL}", value=property.position)
 
         self.select.callback = self.select_callback
         self.add_item(self.select)

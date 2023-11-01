@@ -96,7 +96,7 @@ class BoardView(View):
         upgradePrice = user.getPriceForUpgrade()
 
         if upgradePrice > user.money:
-            await interaction.response.send_message(f"Vous n'avez pas assez d'argent !\nIl vous faut **{upgradePrice} $**", ephemeral=True)
+            await interaction.response.send_message(f"Vous n'avez pas assez d'argent !\nIl vous faut **{upgradePrice} {CONST.MONEY_SYMBOL}**", ephemeral=True)
             return
 
         if user.getNumberOfProperties() == 0:
@@ -104,7 +104,7 @@ class BoardView(View):
             return
         
         await interaction.response.defer()
-        embed = discord.Embed(title=f"Amélioration", description=f"Voulez-vous améliorer le loyer de 20% pour toutes vos propriétés actuelles pour **{upgradePrice} $** ?", color=self.embed_color)
+        embed = discord.Embed(title=f"Amélioration", description=f"Voulez-vous améliorer le loyer de 20% pour toutes vos propriétés actuelles pour **{upgradePrice} {CONST.MONEY_SYMBOL}** ?", color=self.embed_color)
         self.popup_msg = await self.game_msg.channel.send(embed=embed, view=PopupView(self.upgradeFunc, self.noFunc))
 
 
@@ -207,15 +207,19 @@ class BoardView(View):
                 else:
                     playerHasPaid, square_rent = self.board.playerPayRent(player, square)
 
-                    await self.showAction(f"Vous avez payé **{square_rent} $** de loyer à {owner.discord.display_name} !")
+                    await self.showAction(f"Vous avez payé **{square_rent} {CONST.MONEY_SYMBOL}** de loyer à {owner.discord.display_name} !")
                     
                     if not playerHasPaid:
-                        # TODO : player has not enough money
-                        await self.showAction(f"Vous n'avez pas assez d'argent pour payer le loyer !")
-                        pass
+                        await self.showAction(f"Vous n'avez pas assez d'argent pour payer le loyer !\n**Vous avez perdu !**")
+                        await async_sleep(2)
+                        await self.showAction("...")
+
+                        self.board.playerDie(player)
+                        self.nextPlayer()
+                        return
 
             else:
-                embed = discord.Embed(title=f"Achat", description=f"Voulez-vous acheter **{square.name}** pour **{square.price} $**", color=self.embed_color)
+                embed = discord.Embed(title=f"Achat", description=f"Voulez-vous acheter **{square.name}** pour **{square.price} {CONST.MONEY_SYMBOL}**", color=self.embed_color)
                 view = PopupView(self.buyFunc, self.noFunc)
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
@@ -239,7 +243,7 @@ class BoardView(View):
             else:
                 square: Tax
                 player.loseMoney(square.price)
-                await self.showAction(f"Vous avez payé **{square.price} $** de taxe !")
+                await self.showAction(f"Vous avez payé **{square.price} {CONST.MONEY_SYMBOL}** de taxe !")
             
         elif square.type == SquareType.SHOP:
             await self.showAction("Vous êtes dans le magasin à objets !")
@@ -267,7 +271,7 @@ class BoardView(View):
         embed.add_field(name="Plateau", value=self.board.getBoardStr(), inline=False)
         
         currentPlayer = self.board.getCurrentPlayer()
-        embed.add_field(name="Au tour de", value=f"{currentPlayer.discord.display_name} - {currentPlayer.money} $", inline=False)
+        embed.add_field(name="Au tour de", value=f"{currentPlayer.discord.display_name} - {currentPlayer.money} {CONST.MONEY_SYMBOL}", inline=False)
         embed.add_field(name="Action", value=action)
         
         return embed
@@ -324,7 +328,7 @@ class BoardView(View):
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
                 return 
             else:
-                embed = discord.Embed(title="Sortie de prison", description=f"Voulez-vous payer **{CONST.JAIL_FEE} $** pour sortir de prison ?", color=self.embed_color)
+                embed = discord.Embed(title="Sortie de prison", description=f"Voulez-vous payer **{CONST.JAIL_FEE} {CONST.MONEY_SYMBOL}** pour sortir de prison ?", color=self.embed_color)
                 view = PopupView(self.payJailFunc, self.noJailFunc)
 
                 self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
@@ -370,6 +374,10 @@ class BoardView(View):
         if interaction.user != self.board.getCurrentPlayer().discord:
             await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
             return
+    
+        if values == []:
+            await interaction.response.send_message("Vous devez sélectionner au moins une propriété !", ephemeral=True)
+            return
 
         player = self.board.getCurrentPlayer()
         values = [int(value) for value in values]
@@ -377,7 +385,7 @@ class BoardView(View):
         total = self.board.sellProperties(player, properties)
 
         await self.deletePopup()
-        await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{String_tools.singular_or_plural(len(properties))} pour **{total} $** !")
+        await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{String_tools.singular_or_plural(len(properties))} pour **{total} {CONST.MONEY_SYMBOL}** !")
         await async_sleep(3)
         await self.showAction("...")
 
@@ -406,11 +414,19 @@ class BoardView(View):
         player.leaveJail()
         player.loseMoney(CONST.JAIL_FEE)
         await self.deletePopup()
-        await self.showAction(f"Vous avez payé **{CONST.JAIL_FEE} $** pour sortir de prison !")
+        await self.showAction(f"Vous avez payé **{CONST.JAIL_FEE} {CONST.MONEY_SYMBOL}** pour sortir de prison !")
         await async_sleep(2)
 
 
     async def useObject(self, interaction: discord.Interaction, object_id: int):
+        if interaction.user != self.board.getCurrentPlayer().discord:
+            await interaction.response.send_message("Ce n'est pas votre tour !", ephemeral=True)
+            return
+    
+        if object_id is None:
+            await interaction.response.send_message("Veuillez sélectionner un objet !", ephemeral=True)
+            return
+
         player = self.board.getCurrentPlayer()
         object = player.getObjectById(object_id)
         action = player.useObject(self.board, object)
@@ -428,13 +444,13 @@ class BoardView(View):
         object = self.board.getObjectById(object_id)
 
         if object is None:
-            await interaction.response.send_message("Erreur: Cet objet n'existe pas !", ephemeral=True)
+            await interaction.response.send_message("Veuillez sélectionner un objet !", ephemeral=True)
             return
     
         player = self.board.getCurrentPlayer()
         player.buyObject(object)
         await self.deletePopup()
-        await self.showAction(f"Vous avez acheté **{object.name}** pour **{object.price} $ **!")
+        await self.showAction(f"Vous avez acheté **{object.name}** pour **{object.price} {CONST.MONEY_SYMBOL} **!")
         await async_sleep(2)
 
 
