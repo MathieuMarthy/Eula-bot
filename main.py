@@ -7,6 +7,7 @@ from discord.ext import commands, tasks
 import data.config as config
 from functions import Utils
 from dao.pollDao import pollDao
+
 # --- Setup ---
 default_intents = discord.Intents.default().all()
 default_intents.members = True
@@ -37,14 +38,14 @@ async def on_ready():
     periodic_check.start()
     print("Initialisation terminée")
 
-async def load(folder: str):
+async def load(folder: str, first: bool = True):
     """Load all the cogs"""
 
     for file in os.listdir(folder):
         file = os.path.join(folder, file)
 
-        if os.path.isdir(file):
-            await load(file)
+        if os.path.isdir(file) and first:
+            await load(file, False)
 
         elif file.endswith(".py"):
             file = file.replace(utils.bot_path() + os.sep, "")
