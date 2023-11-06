@@ -269,7 +269,7 @@ class BoardView(View):
         # embed
         embed = discord.Embed(title="Monopoly", color=self.embed_color)
         embed.add_field(name="Plateau", value=self.board.getBoardStr(), inline=False)
-        
+
         currentPlayer = self.board.getCurrentPlayer()
         embed.add_field(name="Au tour de", value=f"{currentPlayer.discord.display_name} - {currentPlayer.money} {CONST.MONEY_SYMBOL}", inline=False)
         embed.add_field(name="Action", value=action)

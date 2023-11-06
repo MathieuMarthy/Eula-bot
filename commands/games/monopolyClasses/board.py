@@ -22,7 +22,7 @@ class Board:
     privateJokes: bool
 
 
-    def __init__(self, players: list[Member], privateJokes: bool) -> None:
+    def __init__(self, players: list[Member], privatesJokes: bool) -> None:
         self._currentPlayer = 0
         self.board = [
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], # 0
@@ -94,7 +94,7 @@ class Board:
             Immunity()
         ]
 
-        self.privateJokes = privateJokes
+        self.privateJokes = privatesJokes
 
 
     def rollDice(self, player: Player, dice: int = None) -> int:

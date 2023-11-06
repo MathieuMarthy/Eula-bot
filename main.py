@@ -38,6 +38,7 @@ async def on_ready():
     periodic_check.start()
     print("Initialisation terminée")
 
+
 async def load(folder: str, first: bool = True):
     """Load all the cogs"""
 
@@ -68,7 +69,6 @@ async def load_polls():
 
                 pollView = utils.get_poll_object(int(guild_id), int(channel_id), int(message_id))
                 await msg.edit(view=pollView, embed=pollView.embed)
-
 
 
 @tasks.loop(minutes=1)
