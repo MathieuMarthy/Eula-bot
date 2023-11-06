@@ -43,7 +43,7 @@ class Player:
         self.jail = False
         self.jailTurn = 0
         self.jailCard = False
-        self.objects = [CustomDice(), SwapPlayer(), Immunity()]
+        self.objects = []
 
         self.Switzerland_account = False
         self.chance_effects = []
