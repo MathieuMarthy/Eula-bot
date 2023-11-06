@@ -59,4 +59,5 @@ class WaitPlayer:
             return
         
         await interaction.response.defer()
+        self.view.stop()
         await self.func(self.ctx, self.players)

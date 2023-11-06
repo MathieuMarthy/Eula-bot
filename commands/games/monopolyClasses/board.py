@@ -132,13 +132,12 @@ class Board:
         owner = self.getOwner(square)
         rent = owner.getRentOfaProperty(square)
 
-        if player.money < rent:
-            return (False, rent)
+        enoughMoney = player.money < rent
 
         owner.addMoney(rent)
         player.loseMoney(rent)
 
-        return (True, rent)
+        return (enoughMoney, rent)
 
 
     def updatePropertiesEmojisOnBoard(self):
@@ -205,6 +204,10 @@ class Board:
 
         new_index = self.getIndexInBoard(player.position)
         self.board[new_index[0]][new_index[1]] = self.getEmojiOnSquare(player.position)
+
+
+    def currentPlayerWin(self) -> bool:
+        return len(self.players) == 1
     
 
     def playerGoToJail(self, player: Player):
