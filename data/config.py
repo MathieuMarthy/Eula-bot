@@ -15,6 +15,7 @@ prefix = [
 ]
 version = "5.0.7"
 owner_id = 236853417681616906
+main_server_id = 624629955099230228
 timezone = "Europe/Paris"
 
 with (open(f"{config_path}/reddit.txt", "r")) as f:

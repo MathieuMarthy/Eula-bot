@@ -19,8 +19,10 @@ class Board:
     _currentPlayer: int
     board: list[str] = []
 
+    privateJokes: bool
 
-    def __init__(self, players: list[Member]) -> None:
+
+    def __init__(self, players: list[Member], privateJokes: bool) -> None:
         self._currentPlayer = 0
         self.board = [
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], # 0
@@ -91,6 +93,8 @@ class Board:
             SwapPlayer(),
             Immunity()
         ]
+
+        self.privateJokes = privateJokes
 
 
     def rollDice(self, player: Player, dice: int = None) -> int:
@@ -265,14 +269,25 @@ class Board:
 
 
     def chance(self, current_player: Player):
-        num = random.randint(1, 21)
-
         action: str
+
+
+        if self.privateJokes:
+            num = random.randint(0, 21)
+        else:
+            num = random.randint(1, 21)
+
+        if num == 0:
+            action = f"Tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne **200 {CONST.MONEY_SYMBOL}**."
+            current_player.addMoney(200)
+
         if num == 1:
-            action = f"Tu es très beau donc tu gagnes un concours de beauté. Tu gagnes **250 {CONST.MONEY_SYMBOL}**. Non Tony cette carte ne fonctionne pas avec toi."
-            
-            if current_player.discord.id != 481528251605581854: # ID de Tony
-                current_player.addMoney(250)
+            action = f"Tu es très beau donc tu gagnes un concours de beauté. Tu gagnes **250 {CONST.MONEY_SYMBOL}**."
+
+            if self.privateJokes:
+                action += "Non Tony cette carte ne fonctionne pas avec toi."
+                if current_player.discord.id != 481528251605581854: # ID de Tony
+                    current_player.addMoney(250)
 
         elif num == 2:
             action = "Vous gagnez une carte sortie de prison. Vous pouvez l'utiliser quand vous voulez."
@@ -310,8 +325,8 @@ class Board:
             current_player.addMoney(200)
 
         elif num == 8:
-            action = f"Tony a arrêté d'être gay, tu perds moins d'argent en capote, gagne **200 {CONST.MONEY_SYMBOL}**."
-            current_player.addMoney(200)
+            action = f"\"La terre, elle n'est pas verte, elle est bleue\" Jojo n'aime pas les écolos et te casse la gueule, tu dois payer les frais d'hopitaux  **-200 {CONST.MONEY_SYMBOL}.**"
+            current_player.loseMoney(200)
 
         elif num == 9:
             action = f"Tu as commencé à jouer à League of Legends, tu achètes trop de skins ... **-300 {CONST.MONEY_SYMBOL}**."
@@ -402,9 +417,5 @@ class Board:
             chanceEffect.function = lambda player: (
                 "Tes dés sont divisés par 2."
             )
-
-        elif num == 22:
-            action = f"\"La terre, elle n'est pas verte, elle est bleue\" Jojo n'aime pas les écolos et te casse la gueule, tu dois payer les frais d'hopitaux  **-200 {CONST.MONEY_SYMBOL}.**"
-            current_player.loseMoney(200)
 
         return action

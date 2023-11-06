@@ -6,6 +6,7 @@ from Utils.WaitPlayer import WaitPlayer
 from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.view.boardView import BoardView
 from view.waitPlayerView import WaitPlayerView
+from data import config
 
 class Monopoly(commands.Cog):
     def __init__(self, client: commands.Bot) -> None:
@@ -13,7 +14,11 @@ class Monopoly(commands.Cog):
 
 
     async def start(self, ctx: commands.Context, players: list[discord.Member]):
-        board = Board(players)
+
+        board = Board(
+            players,
+            ctx.guild.id == config.main_server_id
+        )
         
         # show players emoji
         await ctx.send(embed=self.embedPlayersEmojis(board))
