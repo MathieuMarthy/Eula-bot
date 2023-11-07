@@ -21,7 +21,7 @@ class WaitPlayer:
         self.msg = None
         self.minPlayer = minPlayer
         self.maxPlayer = maxPlayer
-        self.view = WaitPlayerView(self._callbackAddPlayer, self._callbackStartFunc)
+        self.view = WaitPlayerView(self._callbackAddPlayer, self._callbackStartFunc, self.onViewTimeout)
 
 
     async def start(self):
@@ -32,14 +32,17 @@ class WaitPlayer:
         await self.msg.edit(embed=self._getEmbed())
 
 
-    def _getEmbed(self):
+    def _getEmbed(self, finished: bool = False):
         embed = discord.Embed(title=self.title, color=0x989eec)
         
         title = "Joueurs"
-        if self.minPlayer is not None:
-            title += f" ({len(self.players)}/{self.minPlayer})"
+        if self.maxPlayer is not None:
+            title += f" ({len(self.players)}/{self.maxPlayer})"
 
         embed.add_field(name=title, value=", ".join([player.mention for player in self.players]), inline=True)
+        if finished:
+            embed.set_footer(text="La partie est annulée")
+
         return embed
 
 
@@ -71,3 +74,7 @@ class WaitPlayer:
         await interaction.response.defer()
         self.view.stop()
         await self.func(self.ctx, self.players)
+
+
+    async def onViewTimeout(self):
+        await self.msg.edit(embed=self._getEmbed(True), view=None)

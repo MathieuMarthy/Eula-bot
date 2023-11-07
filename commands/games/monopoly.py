@@ -35,7 +35,7 @@ class Monopoly(commands.Cog):
 
 
     async def command(self, ctx: commands.Context):
-        waitPlayer = WaitPlayer("Monopoly", ctx, ctx.author, self.start, 10)
+        waitPlayer = WaitPlayer("Monopoly", ctx, ctx.author, self.start, 2, 10)
         await waitPlayer.start()
 
 

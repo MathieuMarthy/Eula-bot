@@ -16,7 +16,7 @@ from commands.games.monopolyClasses.view.sellPropertiesView import SellPropertie
 
 class BoardView(View):
     def __init__(self, board: Board, game_msg: discord.Message):
-        super().__init__(timeout=None)
+        super().__init__(timeout=10)
         self.board = board
         self.game_msg = game_msg
         self.embed_color = 0x989eec
@@ -546,3 +546,19 @@ class BoardView(View):
             if isinstance(item, discord.ui.Button) and item.custom_id == custom_id:
                 return item
         return None
+
+
+    async def on_timeout(self):
+        player = self.board.getCurrentPlayer()
+
+        embed = discord.Embed(title="Monopoly", color=self.embed_color)
+        embed.add_field(name="Plateau", value=self.board.getBoardStr(), inline=False)
+        embed.add_field(name="Temps écoulé", value=f"La partie est annulée au cause de {player.discord.mention} qui est afk", inline=False)
+
+        await self.game_msg.edit(embed=embed)
+
+        for btn in self.children:
+            self.remove_item(btn)
+
+        await self.updateView()
+        self.stop()
