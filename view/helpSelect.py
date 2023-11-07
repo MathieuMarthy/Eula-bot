@@ -63,7 +63,8 @@ help_dict = {
     },
     "🎮 Jeux": {
         "commandes": {
-            "10fastfingers": "multijoueur: dans ce jeu, vous devez taper le plus de mots possible"
+            "10fastfingers": "multijoueur: dans ce jeu, vous devez taper le plus de mots possible",
+            "monopoly": "multijoueur : jeu de monopoly avec des règles personnalisées, objets, ...",
         },
         "image": "https://media.discordapp.net/attachments/836943322580516904/1063440044364402698/5ech2agzst1a1.png"
     }

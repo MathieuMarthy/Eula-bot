@@ -61,3 +61,4 @@ Si vous avez des propositions ou si vous trouver des bugs, contactez-moi (kojhyy
 
 ### 🎮 Jeux
 - `10fastfingers` : Multijoueur : dans ce jeu, vous devez taper le plus de mots possible
+- `monopoly`: Multijoueur : jeu de monopoly avec des règles personnalisées, objets, ...

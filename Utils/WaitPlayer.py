@@ -12,7 +12,7 @@ class WaitPlayer:
     maxPlayer: int
     view: WaitPlayerView
 
-    def __init__(self, title: str, ctx: commands.Context, owner: discord.Member, funcToCall: callable, minPlayer: int, maxPlayer: int = None) -> None:
+    def __init__(self, title: str, ctx: commands.Context, owner: discord.Member, funcToCall: callable, minPlayer: int = None, maxPlayer: int = None) -> None:
         self.players: list[discord.Member] = [owner]
         self.title = title
         self.owner = owner
@@ -34,14 +34,14 @@ class WaitPlayer:
 
     def _getEmbed(self):
         embed = discord.Embed(title=self.title, color=0x989eec)
-        embed.add_field(name="Joueurs", value=", ".join([player.mention for player in self.players]), inline=True)
+        embed.add_field(name=f"Joueurs {len(self.players) / self.maxPlayer} maximum", value=", ".join([player.mention for player in self.players]), inline=True)
         return embed
 
 
     async def _callbackAddPlayer(self, interaction: discord.Interaction):
         user = interaction.user
 
-        if len(self.players) >= self.maxPlayer:
+        if self.maxPlayer is not None and len(self.players) >= self.maxPlayer:
             await interaction.response.send_message("La partie est déjà pleine", ephemeral=True)
             return
 
@@ -59,7 +59,7 @@ class WaitPlayer:
             await interaction.response.send_message("Seul le créateur de la partie peut la lancer", ephemeral=True)
             return
     
-        if len(self.players) < self.minPlayer:
+        if self.minPlayer is not None and len(self.players) < self.minPlayer:
             await interaction.response.send_message(f"Il faut au moins {self.minPlayer} joueurs pour lancer la partie", ephemeral=True)
             return
         
