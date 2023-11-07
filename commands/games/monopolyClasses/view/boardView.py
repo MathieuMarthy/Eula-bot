@@ -16,7 +16,7 @@ from commands.games.monopolyClasses.view.sellPropertiesView import SellPropertie
 
 class BoardView(View):
     def __init__(self, board: Board, game_msg: discord.Message):
-        super().__init__(timeout=10)
+        super().__init__(timeout=300)
         self.board = board
         self.game_msg = game_msg
         self.embed_color = 0x989eec
