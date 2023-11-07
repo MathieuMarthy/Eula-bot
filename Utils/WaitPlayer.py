@@ -34,7 +34,12 @@ class WaitPlayer:
 
     def _getEmbed(self):
         embed = discord.Embed(title=self.title, color=0x989eec)
-        embed.add_field(name=f"Joueurs {len(self.players) / self.maxPlayer} maximum", value=", ".join([player.mention for player in self.players]), inline=True)
+        
+        title = "Joueurs"
+        if self.minPlayer is not None:
+            title += f" ({len(self.players)}/{self.minPlayer})"
+
+        embed.add_field(name=title, value=", ".join([player.mention for player in self.players]), inline=True)
         return embed
 
 

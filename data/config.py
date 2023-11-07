@@ -13,7 +13,7 @@ prefix = [
     "<@!914226393565499412> ",
     "<@!914226393565499412>"
 ]
-version = "5.0.7"
+version = "5.0.8"
 owner_id = 236853417681616906
 main_server_id = 624629955099230228
 timezone = "Europe/Paris"
