@@ -12,13 +12,14 @@ class WaitPlayer:
     maxPlayer: int
     view: WaitPlayerView
 
-    def __init__(self, title: str, ctx: commands.Context, owner: discord.Member, funcToCall: callable, maxPlayer: int = None) -> None:
+    def __init__(self, title: str, ctx: commands.Context, owner: discord.Member, funcToCall: callable, minPlayer: int, maxPlayer: int = None) -> None:
         self.players: list[discord.Member] = [owner]
         self.title = title
         self.owner = owner
         self.func = funcToCall
         self.ctx = ctx
         self.msg = None
+        self.minPlayer = minPlayer
         self.maxPlayer = maxPlayer
         self.view = WaitPlayerView(self._callbackAddPlayer, self._callbackStartFunc)
 
@@ -56,6 +57,10 @@ class WaitPlayer:
     async def _callbackStartFunc(self, interaction: discord.Interaction):
         if interaction.user != self.owner:
             await interaction.response.send_message("Seul le créateur de la partie peut la lancer", ephemeral=True)
+            return
+    
+        if len(self.players) < self.minPlayer:
+            await interaction.response.send_message(f"Il faut au moins {self.minPlayer} joueurs pour lancer la partie", ephemeral=True)
             return
         
         await interaction.response.defer()
