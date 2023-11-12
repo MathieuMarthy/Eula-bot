@@ -8,6 +8,7 @@ import yt_dlp
 
 from Utils.musicManager import MusicManager
 from models.music.songModel import SongModel
+from view.musicView import MusicView
 
 
 class Music(commands.Cog):
@@ -30,7 +31,7 @@ class Music(commands.Cog):
                 return None
 
         return SongModel(info["title"], info["url"], info["duration"], info["thumbnail"], member)
-    
+
 
     async def play_music_in_queue(self, interaction: discord.Interaction):
         
@@ -41,19 +42,26 @@ class Music(commands.Cog):
             if self.music_manager[gl_id].current_song_msg is not None:
                 await self.music_manager[gl_id].current_song_msg.delete()
 
-            self.music_manager[gl_id].current_song_msg = await interaction.channel.send(embed=self.music_manager[gl_id].get_msg_current_music(song))
+            view = MusicView(
+                self.toggle_play_pause,
+                self.skip,
+                self.stop,
+                self.shuffle
+            )
+            self.music_manager[gl_id].current_song_msg = await interaction.channel.send(
+                                            embed=self.music_manager[gl_id].get_msg_current_music(song),
+                                            view=view)
             
             audio_source = discord.FFmpegPCMAudio(song.url, **self.FFMPEG_OPTIONS)
-
             self.music_manager[gl_id].vc.play(
                 audio_source,
                 after=lambda _: asyncio.run_coroutine_threadsafe(self.play_music_in_queue(interaction), self.client.loop)
             )
- 
+
 
     @app_commands.command(name="play", description="joue une musique")
     @app_commands.describe(url="url youtube de la musique")
-    async def playSlash(self, interaction: discord.Interaction, url: str):
+    async def play(self, interaction: discord.Interaction, url: str):
         can_interact, message = await self._can_interact_with_me(interaction, False)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
@@ -75,12 +83,19 @@ class Music(commands.Cog):
             self.music_manager[gd_id].move_to(interaction.user.voice.channel)
 
         self.music_manager[gd_id].add_to_queue(song)
-        await interaction.response.send_message(embed=self.music_manager[gd_id].get_msg_add_queue(song))
+        
+        view = MusicView(
+            self.toggle_play_pause,
+            self.skip,
+            self.stop,
+            self.shuffle
+        )
+        await interaction.response.send_message(embed=self.music_manager[gd_id].get_msg_add_queue(song), view=view)
         await self.play_music_in_queue(interaction)
 
 
     @app_commands.command(name="stop", description="stop la musique")
-    async def stopSlash(self, interaction: discord.Interaction):
+    async def stop(self, interaction: discord.Interaction):
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
@@ -93,7 +108,7 @@ class Music(commands.Cog):
 
 
     @app_commands.command(name="pause", description="pause la musique")
-    async def pauseSlash(self, interaction: discord.Interaction):
+    async def pause(self, interaction: discord.Interaction):
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
@@ -104,7 +119,7 @@ class Music(commands.Cog):
 
 
     @app_commands.command(name="resume", description="reprend la musique")
-    async def resumeSlash(self, interaction: discord.Interaction):
+    async def resume(self, interaction: discord.Interaction):
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
@@ -115,7 +130,7 @@ class Music(commands.Cog):
     
 
     @app_commands.command(name="shuffle", description="mélange la file d'attente")
-    async def shuffleSlash(self, interaction: discord.Interaction):
+    async def shuffle(self, interaction: discord.Interaction):
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
@@ -123,6 +138,26 @@ class Music(commands.Cog):
 
         self.music_manager[interaction.guild_id].shuffle()
         await interaction.response.send_message("File d'attente mélangée", ephemeral=True)
+
+
+    @app_commands.command(name="skip", description="passe à la musique suivante")
+    async def skip(self, interaction: discord.Interaction):
+        can_interact, message = await self._can_interact_with_me(interaction, True)
+        if not can_interact:
+            await interaction.response.send_message(message, ephemeral=True)
+            return
+
+        self.music_manager[interaction.guild_id].vc.stop()
+        await interaction.response.send_message("Musique suivante", ephemeral=True)
+
+
+    async def toggle_play_pause(self, interaction: discord.Interaction):
+        if self.music_manager[interaction.guild_id].vc.is_playing():
+            self.music_manager[interaction.guild_id].vc.pause()
+            await interaction.response.send_message("Musique en pause", ephemeral=True)
+        else:
+            self.music_manager[interaction.guild_id].vc.resume()
+            await interaction.response.send_message("Musique reprise", ephemeral=True)
 
 
     async def _can_interact_with_me(self, interaction: discord.Interaction, i_need_to_be_same_vc: bool) -> Tuple[bool, str]:
