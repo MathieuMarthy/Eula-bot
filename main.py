@@ -80,7 +80,6 @@ async def periodic_check():
     except:
         pass
 
-
     # Remove all the polls that are finished
     polls = pollDao.get_all_poll()
     now = datetime.datetime.now().timestamp()
