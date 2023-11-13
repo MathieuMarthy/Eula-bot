@@ -17,21 +17,21 @@ class MusicView(View):
         self.shuffle = shuffle
 
 
-    @discord.ui.button(emoji="⏯️", style=discord.ButtonStyle.green)
+    @discord.ui.button(emoji="⏯️", style=discord.ButtonStyle.secondary)
     async def toggle_play_pause(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.toggle_play_pause(interaction)
 
 
-    @discord.ui.button(emoji="⏭️", style=discord.ButtonStyle.green)
+    @discord.ui.button(emoji="⏭️", style=discord.ButtonStyle.secondary)
     async def skip(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.skip(interaction)
 
 
-    @discord.ui.button(emoji="⏹️", style=discord.ButtonStyle.green)
+    @discord.ui.button(emoji="⏹️", style=discord.ButtonStyle.secondary)
     async def stop(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.stop(interaction)
 
 
-    @discord.ui.button(emoji="🔀", style=discord.ButtonStyle.green)
+    @discord.ui.button(emoji="🔀", style=discord.ButtonStyle.secondary)
     async def shuffle(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.shuffle(interaction)
