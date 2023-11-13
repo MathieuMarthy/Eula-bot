@@ -13,6 +13,7 @@ from view.musicView import MusicView
 embed_color = 0xf0a3ff
 
 class MusicManager:
+    client: discord.Client
     vc: discord.VoiceClient
     queue: list[SongModel]
     current_song_msg: discord.Message
@@ -20,7 +21,8 @@ class MusicManager:
     gl_id: int
     FFMPEG_OPTIONS: dict[str, str]
 
-    def __init__(self, channel: discord.TextChannel) -> None:
+    def __init__(self, client: discord.Client, channel: discord.TextChannel) -> None:
+        self.client = client
         self.vc = None
         self.queue: list[SongModel] = []
         self.current_song_msg = None
@@ -151,7 +153,7 @@ class MusicManager:
             self.suicide()
             return
 
-        self.shuffle()
+        self.queue.shuffle()
         await interaction.response.send_message("File d'attente mélangée", ephemeral=True)
 
 
