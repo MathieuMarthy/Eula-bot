@@ -165,6 +165,7 @@ class MusicManager:
             return
 
         self.vc.stop()
+        await self.current_song_msg.delete()
         await interaction.response.send_message("Musique suivante", ephemeral=True)
 
 
