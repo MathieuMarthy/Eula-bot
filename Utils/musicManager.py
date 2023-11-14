@@ -125,6 +125,7 @@ class MusicManager:
         await self.vc.disconnect(force=True)
         await interaction.response.send_message(embed=self.get_msg_stop())
         await self.current_song_msg.delete()
+        self.reset()
 
 
     async def pause(self, interaction: discord.Interaction):
