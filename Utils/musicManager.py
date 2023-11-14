@@ -21,13 +21,14 @@ class MusicManager:
     gl_id: int
     FFMPEG_OPTIONS: dict[str, str]
 
-    def __init__(self, client: discord.Client, channel: discord.TextChannel) -> None:
+    def __init__(self, client: discord.Client, channel: discord.TextChannel, remove_imself: callable) -> None:
         self.client = client
         self.vc = None
         self.queue: list[SongModel] = []
         self.current_song_msg = None
         self.channel = channel
         self.gld_id = channel.guild.id
+        self.remove_imself = remove_imself
 
         self.FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
         self.ydl = yt_dlp.YoutubeDL({
@@ -117,10 +118,9 @@ class MusicManager:
             return
 
         await self.vc.disconnect(force=True)
-        self.vc = None
         await interaction.response.send_message(embed=self.get_msg_stop())
         await self.current_song_msg.delete()
-        self.queue = []
+        self.remove_imself()
 
 
     async def pause(self, interaction: discord.Interaction):
@@ -184,6 +184,10 @@ class MusicManager:
             return False, "Vous devez être dans le même salon vocal que moi pour utiliser cette commande"
 
         return True, ""
+
+
+    def remove_imself(self):
+        self.remove_music_manager(self)
 
 
     # == Messages == #

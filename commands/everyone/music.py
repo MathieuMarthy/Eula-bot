@@ -58,6 +58,10 @@ class Music(commands.Cog):
         MusicManager = self._get_music_manger(interaction)
         await MusicManager.skip(interaction)
 
+    
+    def remove_music_manager(self, music_manager: MusicManager):
+        self.music_managers.remove(music_manager)
+
 
 async def setup(bot):
     await bot.add_cog(Music(bot))
