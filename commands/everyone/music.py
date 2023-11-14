@@ -16,7 +16,7 @@ class Music(commands.Cog):
             if music_manager.gld_id == interaction.guild_id:
                 return music_manager
 
-        music_manager = MusicManager(self.client, interaction.channel, self.remove_music_manager)
+        music_manager = MusicManager(self.client, interaction.channel)
         self.music_managers.append(music_manager)
         return music_manager
 
@@ -57,10 +57,6 @@ class Music(commands.Cog):
     async def skip(self, interaction: discord.Interaction):
         MusicManager = self._get_music_manger(interaction)
         await MusicManager.skip(interaction)
-
-    
-    def remove_music_manager(self, music_manager: MusicManager):
-        self.music_managers.remove(music_manager)
 
 
 async def setup(bot):
