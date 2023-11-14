@@ -92,13 +92,11 @@ class MusicManager:
         can_interact, message = await self._can_interact_with_me(interaction, False)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
-            self.suicide()
             return
 
         song = self.search_yt(url, interaction.user)
         if song is None:
             await interaction.response.send_message("Impossible de trouver la musique", ephemeral=True)
-            self.suicide()
             return
 
         if self.vc is None:
@@ -116,19 +114,19 @@ class MusicManager:
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
-            self.suicide()
             return
 
         await self.vc.disconnect(force=True)
-        del self.vc
+        self.vc = None
         await interaction.response.send_message(embed=self.get_msg_stop())
+        await self.current_song_msg.delete()
+        self.queue = []
 
 
     async def pause(self, interaction: discord.Interaction):
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
-            self.suicide()
             return
 
         self.vc.pause()
@@ -139,7 +137,6 @@ class MusicManager:
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
-            self.suicide()
             return
 
         self.vc.resume()
@@ -150,7 +147,6 @@ class MusicManager:
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
-            self.suicide()
             return
 
         self.queue.shuffle()
@@ -161,7 +157,6 @@ class MusicManager:
         can_interact, message = await self._can_interact_with_me(interaction, True)
         if not can_interact:
             await interaction.response.send_message(message, ephemeral=True)
-            self.suicide()
             return
 
         self.vc.stop()
@@ -189,10 +184,6 @@ class MusicManager:
             return False, "Vous devez être dans le même salon vocal que moi pour utiliser cette commande"
 
         return True, ""
-
-
-    def suicide(self):
-        del self
 
 
     # == Messages == #
