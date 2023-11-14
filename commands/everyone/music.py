@@ -16,7 +16,7 @@ class Music(commands.Cog):
             if music_manager.gld_id == interaction.guild_id:
                 return music_manager
 
-        music_manager = MusicManager(self.client, interaction.channel)
+        music_manager = MusicManager(self.client, interaction.channel, self.remove_music_manager)
         self.music_managers.append(music_manager)
         return music_manager
 
