@@ -154,7 +154,7 @@ class MusicManager:
             await interaction.response.send_message(message, ephemeral=True)
             return
 
-        self.queue.shuffle()
+        random.shuffle(self.queue)
         await interaction.response.send_message("File d'attente mélangée", ephemeral=True)
 
 
