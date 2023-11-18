@@ -1,5 +1,4 @@
 **/__pycache__
 **/.vscode
 /tmp
-data/token.txt
-data/reddit.txt
+.env
