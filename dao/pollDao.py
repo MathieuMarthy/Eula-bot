@@ -20,7 +20,11 @@ class pollDao:
 
 
     def save_poll_file(self):
-        json.dump(self.poll_file, open(os.path.join(project_path, "databases", "poll.json"), "w", encoding="utf-8"), indent=4)
+        try:
+            json.dump(self.poll_file, open(os.path.join(project_path, "databases", "poll.json"), "w", encoding="utf-8"), indent=4)
+        except FileNotFoundError:
+            self.poll_file = {}
+            json.dump(self.poll_file, open(os.path.join(project_path, "databases", "poll.json"), "x", encoding="utf-8"), indent=4)
 
 
     def create_poll(self, guild: int, channel: int, poll_msg_id: int, end_timestamp: int, question: str, choix: list):
