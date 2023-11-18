@@ -74,11 +74,11 @@ class Utils:
             return config
 
     def load_server_config(self):
-        return json.load(open(os.path.join(project_path, "data", "server_config.json"), "r", encoding="utf-8"))
+        return json.load(open(os.path.join(project_path, "databases", "server_config.json"), "r", encoding="utf-8"))
 
 
     def _save_server_config(self):
-        json.dump(self.server_config, open(os.path.join(self.bot_path(), "data", "server_config.json"), "w", encoding="utf-8"), indent=4)
+        json.dump(self.server_config, open(os.path.join(self.bot_path(), "databases", "server_config.json"), "w", encoding="utf-8"), indent=4)
         self.server_config = self.load_server_config()
 
     

@@ -7,13 +7,16 @@ from discord.ext import commands, tasks
 import data.config as config
 from functions import Utils
 from dao.pollDao import pollDao
+from dao.reminderDao import ReminderDao
 
 # --- Setup ---
 default_intents = discord.Intents.default().all()
 default_intents.members = True
 client: discord.Client = commands.Bot(command_prefix=config.prefix, help_command=None, intents=default_intents)
+
 utils = Utils(client)
 pollDao = pollDao.get_instance()
+reminderDao = ReminderDao.get_instance()
 
 
 @client.event
@@ -79,6 +82,12 @@ async def periodic_check():
             os.remove(os.path.join(config.path, "tmp", file))
     except:
         pass
+
+    # Send reminders
+    reminders = reminderDao.pop_reminder_to_send_at(int(datetime.datetime.now().timestamp()))
+    for reminder in reminders:
+        user = await client.fetch_user(reminder.user_id)
+        await user.send(f"**Rappel:** {reminder.message}")
 
     # Remove all the polls that are finished
     polls = pollDao.get_all_poll()
