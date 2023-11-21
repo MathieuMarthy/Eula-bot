@@ -29,21 +29,22 @@ class LogsVocal(commands.Cog):
             color=self.utils.embed_color()
         )
 
+        avatar_url = member.avatar.url if member.avatar is not None else member.default_avatar.url
         # a rejoint un salon
         if before.channel is None and after.channel is not None:
-            embed.set_author(name=f"{member.name} a rejoint un salon vocal", icon_url=member.avatar.url)
+            embed.set_author(name=f"{member.name} a rejoint un salon vocal", icon_url=avatar_url)
             embed.set_thumbnail(url=self.utils.get_img("enter"))
             embed.add_field(name="Salon rejoint", value=after.channel.mention)
         
         # a quitté un salon
         elif before.channel is not None and after.channel is None:
-            embed.set_author(name=f"{member.name} a quitté un salon vocal", icon_url=member.avatar.url)
+            embed.set_author(name=f"{member.name} a quitté un salon vocal", icon_url=avatar_url)
             embed.set_thumbnail(url=self.utils.get_img("exit"))
             embed.add_field(name="Salon quitté", value=before.channel.mention)
         
         # a changé de salon
         elif before.channel is not None and after.channel is not None:
-            embed.set_author(name=f"{member.name} a changer de salon vocal", icon_url=member.avatar.url)
+            embed.set_author(name=f"{member.name} a changer de salon vocal", icon_url=avatar_url)
             embed.set_thumbnail(url=self.utils.get_img("shuffle"))
             embed.add_field(name="Ancien salon", value=before.channel.mention)
             embed.add_field(name="Nouveau salon", value=after.channel.mention)

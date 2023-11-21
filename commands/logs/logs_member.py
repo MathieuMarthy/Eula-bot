@@ -31,7 +31,8 @@ class LogsMember(commands.Cog):
         embed = discord.Embed(
             color=self.utils.embed_color()
         )
-        embed.set_author(name=f"Un membre a rejoint le serveur", icon_url=member.avatar.url)
+        avatar_url = member.avatar.url if member.avatar is not None else member.default_avatar.url
+        embed.set_author(name=f"Un membre a rejoint le serveur", icon_url=avatar_url)
         embed.set_thumbnail(url=self.utils.get_img("notif"))
 
         embed.add_field(name="Membre", value=member.mention, inline=True)
@@ -39,7 +40,7 @@ class LogsMember(commands.Cog):
 
         # envoie du message
         await logs_channel.send(embed=embed)
-    
+
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
@@ -52,7 +53,8 @@ class LogsMember(commands.Cog):
         embed = discord.Embed(
             color=self.utils.embed_color()
         )
-        embed.set_author(name=f"Un membre a quitté le serveur", icon_url=member.avatar.url)
+        avatar_url = member.avatar.url if member.avatar is not None else member.default_avatar.url
+        embed.set_author(name=f"Un membre a quitté le serveur", icon_url=avatar_url)
         embed.set_thumbnail(url=self.utils.get_img("notif"))
 
         embed.add_field(name="Membre", value=member.name, inline=True)
