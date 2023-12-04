@@ -1,3 +1,4 @@
+import pytz
 import os
 from dotenv import load_dotenv
 
@@ -5,6 +6,7 @@ load_dotenv()
 
 config_path = os.path.dirname(os.path.abspath(__file__))
 path = os.path.dirname(config_path)
+my_timezone = pytz.timezone("Europe/Paris")
 
 token = os.environ.get("token")
 reddit_id = os.environ.get("reddit_id")
