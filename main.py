@@ -84,7 +84,7 @@ async def periodic_check():
         pass
 
     # Send reminders
-    reminders = reminderDao.pop_reminder_to_send_at(int(datetime.datetime.now().timestamp()))
+    reminders = reminderDao.pop_reminder_to_send_at(int(datetime.datetime.now(config.my_timezone).timestamp()))
     for reminder in reminders:
         user = await client.fetch_user(reminder.user_id)
         await user.send(f"**Rappel:** {reminder.message}")
