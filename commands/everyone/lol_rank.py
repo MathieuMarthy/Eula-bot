@@ -36,7 +36,7 @@ class LolRank(commands.Cog):
 
         return embed
 
-    @app_commands.command(name="lol_register", description="enregistre votre compte LoL")
+    @app_commands.command(name="add_lol_account", description="enregistre un compte LoL")
     @app_commands.describe(riot_name="votre nom d'invocateur")
     @app_commands.describe(tag="votre tag")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
@@ -75,6 +75,22 @@ class LolRank(commands.Cog):
             lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP"
         )
         await viewPages.start()
+
+
+    @app_commands.command(name="show_lol_rank", description="affiche le rank LoL d'un joueur")
+    @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
+    async def show_rank(self, interaction: discord.Interaction, discord: discord.Member = None):
+        discord_id = interaction.user.id if discord is None else discord.id
+
+        memberRankLol = self.riotService.get_member(interaction.guild_id, discord_id)
+
+        if memberRankLol is None:
+            await interaction.response.send_message("Ce joueur n'est pas enregistré", ephemeral=True)
+            return
+
+        embed = self.create_player_embed(memberRankLol)
+
+        await interaction.response.send_message(embed=embed, content=None)
 
 
 async def setup(bot):

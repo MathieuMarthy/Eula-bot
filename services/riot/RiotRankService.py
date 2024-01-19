@@ -33,6 +33,9 @@ class RiotRankService:
         self.riot_dao.store_member(guildId, memberRankLol)
         return memberRankLol
 
+    def get_member(self, guildId: int, discordId: int) -> Optional[MemberRankLol]:
+        return self.riot_dao.get_member(guildId, discordId)
+
 
     def update_player_data(self, memberRankLol: MemberRankLol) -> MemberRankLol:
         rank_data = self.riot_api.get_rank_data(memberRankLol.accountId)
