@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 import requests
 
 from data.config import riot_api_key, riot_api_url, riot_api_ddragon, riot_api_url_euw
@@ -44,7 +44,7 @@ class RiotApi:
         return json["puuid"]
 
 
-    def get_player_id_ppId(self, puuid: str) -> str:
+    def get_player_id_ppId(self, puuid: str) -> tuple[Any, Any]:
         path = f"lol/summoner/v4/summoners/by-puuid/{puuid}"
 
         res = self.__make_request(self.__get_url(path, riot_api_url_euw))

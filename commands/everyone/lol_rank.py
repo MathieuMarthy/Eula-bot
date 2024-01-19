@@ -12,7 +12,6 @@ class LolRank(commands.Cog):
         self.client = client
         self.riotService = RiotRankService()
 
-
     def create_player_embed(self, memberRankLol: MemberRankLol) -> discord.Embed:
         if memberRankLol.empty_lol_data():
             embed = discord.Embed(
@@ -39,11 +38,14 @@ class LolRank(commands.Cog):
     @app_commands.command(name="lol_register", description="enregistre votre compte LoL")
     @app_commands.describe(riot_name="votre nom d'invocateur")
     @app_commands.describe(tag="votre tag")
-    async def register(self, interaction: discord.Interaction, riot_name: str, tag: str):
+    @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
+    async def register(self, interaction: discord.Interaction, riot_name: str, tag: str, discord: discord.Member = None):
         try:
+            discord_id = interaction.user.id if discord is None else discord.id
+
             memberRankLol = self.riotService.store_member_by_name_and_tag(
                 interaction.guild_id,
-                interaction.user.id,
+                discord_id,
                 riot_name,
                 tag
             )
