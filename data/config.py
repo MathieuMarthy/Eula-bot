@@ -19,7 +19,12 @@ prefix = [
     "<@!914226393565499412> ",
     "<@!914226393565499412>"
 ]
-version = "5.1.0"
+version = "5.2.0"
 owner_id = 236853417681616906
 main_server_id = 624629955099230228
 timezone = "Europe/Paris"
+
+riot_api_url = "https://europe.api.riotgames.com"
+riot_api_url_euw = "https://euw1.api.riotgames.com"
+riot_api_ddragon = "https://ddragon.leagueoflegends.com/cdn/14.1.1"
+riot_api_key = os.environ.get("riot_api_key")

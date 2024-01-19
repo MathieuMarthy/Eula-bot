@@ -1,7 +1,8 @@
 from math import ceil
 import discord
 
-from Utils.viewPages.viewPagesView import ViewPagesView
+from Services.general.viewPages.viewPagesView import ViewPagesView
+
 
 
 class View_pages:
