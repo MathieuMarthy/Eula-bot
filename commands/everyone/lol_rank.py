@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from Services.riot.RiotRankService import RiotRankService
+from services.riot.RiotRankService import RiotRankService
 from errors.api import ApiError, ApiNotFoundError
 from models.riot.memberRankLol import MemberRankLol
 

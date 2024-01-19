@@ -1,5 +1,5 @@
 from typing import Optional
-from Services.riot.RiotApi import RiotApi
+from services.riot.RiotApi import RiotApi
 from dao.rankLolDao import RankLolDao
 from models.riot.memberRankLol import MemberRankLol
 

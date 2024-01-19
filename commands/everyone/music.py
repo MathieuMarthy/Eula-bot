@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from Services.musique.musicManager import MusicManager
+from services.musique.musicManager import MusicManager
 
 
 

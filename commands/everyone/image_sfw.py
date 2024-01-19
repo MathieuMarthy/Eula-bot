@@ -3,7 +3,7 @@ import enum
 import discord
 from discord import app_commands
 from discord.ext import commands
-from Services.imageNeko.imageNekos import ImageNekos
+from services.imageNeko.imageNekos import ImageNekos
 
 from data import config
 

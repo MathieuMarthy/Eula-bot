@@ -1,7 +1,7 @@
 import datetime
 import discord
 from discord.ui import View, Select
-from Services.general.viewPages.ViewPages import View_pages
+from services.general.viewPages.ViewPages import View_pages
 
 from dao.pollDao import pollDao
 
