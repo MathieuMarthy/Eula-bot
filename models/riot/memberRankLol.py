@@ -98,8 +98,8 @@ class MemberRankLol:
         return False 
 
     @staticmethod
-    def from_json(json: dict) -> "MemberRankLol":
-        member = MemberRankLol(int(json["discordId"]), json["puuid"], json["accountId"], json["riotName"])
+    def from_json(json: dict, discordId: int) -> "MemberRankLol":
+        member = MemberRankLol(discordId, json["puuid"], json["accountId"], json["riotName"])
         member.rank = Rank.from_json(json.get("rank", None))
         member.lp = json.get("lp", 0)
         member.wins = json.get("wins", 0)

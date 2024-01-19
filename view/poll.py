@@ -1,7 +1,7 @@
 import datetime
 import discord
 from discord.ui import View, Select
-from services.general.viewPages.ViewPages import View_pages
+from services.general.viewPages.ViewPages import ViewPages
 
 from dao.pollDao import pollDao
 
@@ -29,7 +29,7 @@ class pollView(View):
 
     @discord.ui.button(custom_id="check", emoji="🔍", row=2)
     async def checkButton(self, interaction: discord.Interaction, button: discord.ui.Button):
-        view = View_pages(
+        view = ViewPages(
             interaction,
             "Participants au sondages", 
             self.pollDao.get_members_poll(self.infos[0], self.infos[1], self.infos[2]),

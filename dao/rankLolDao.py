@@ -1,5 +1,6 @@
 import json
 import os
+from json import JSONDecodeError
 from typing import Optional
 
 from data.config import path
@@ -24,8 +25,14 @@ class RankLolDao:
     
 
     def load(self):
-        data = json.load(open(self.path, "r", encoding="utf-8"))
+        try:
+            data = json.load(open(self.path, "r", encoding="utf-8"))
+        except JSONDecodeError:
+            data = {}
+
         for guildId, members in data.items():
+            self.ranks[guildId] = {}
+
             self.ranks[guildId] = {
                 int(discordId): MemberRankLol.from_json(member)
                 for discordId, member in members.items()

@@ -1,11 +1,10 @@
-from math import ceil
 import discord
 
 from services.general.viewPages.viewPagesView import ViewPagesView
 
 
 
-class View_pages:
+class ViewPages:
 
     def __init__(self, interaction: discord.Interaction, title: str, collection: list, nb_per_pages: int, item_to_str: callable, ephemeral: bool = False) -> None:
         self.view = ViewPagesView(self._previous_page, self._next_page)
@@ -20,6 +19,18 @@ class View_pages:
 
     
     async def start(self):
+        if len(self.collection) == 0:
+            embed = discord.Embed(
+                title=self.title,
+                description="Aucun élément à afficher",
+                color=0x989eec
+            )
+            await self.interaction.response.send_message(
+                embed=embed,
+                ephemeral=self.ephemeral
+            )
+            return
+
         await self.interaction.response.send_message(
             embed=self._get_embed(),
             view=self.view,

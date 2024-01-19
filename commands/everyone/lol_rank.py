@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from services.general.viewPages.ViewPages import ViewPages
 from services.riot.RiotRankService import RiotRankService
 from errors.api import ApiError, ApiNotFoundError
 from models.riot.memberRankLol import MemberRankLol
@@ -64,7 +65,16 @@ class LolRank(commands.Cog):
 
     @app_commands.command(name="lol_leaderboard", description="affiche le leaderboard des joueurs du serveur")
     async def leaderboard(self, interaction: discord.Interaction):
-        pass
+        membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
+
+        viewPages = ViewPages(
+            interaction,
+            f"Leaderboard de {interaction.guild.name}",
+            membersRank,
+            10,
+            lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP"
+        )
+        await viewPages.start()
 
 
 async def setup(bot):
