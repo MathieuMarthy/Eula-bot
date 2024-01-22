@@ -19,7 +19,7 @@
 ## Présentation
 Eula est un bot Discord qui a pour but de vous aider dans votre serveur. Il est capable de modérer votre serveur, de vous amuser et de vous aider dans votre quotidien.
 
-Si vous avez des propositions ou si vous trouver des bugs, contactez-moi (kojhyy#0012).
+Si vous avez des propositions ou si vous trouver des bugs, contactez-moi @kojhyy.
 
 ## Commandes
 
