@@ -105,7 +105,7 @@ class LolRank(commands.Cog):
             await send_message(embeds)
 
 
-    @app_commands.command(name="remove_add_account", description="supprime un compte LoL")
+    @app_commands.command(name="remove_lol_account", description="supprime un compte LoL")
     @app_commands.describe(riot_name="le nom du compte à supprimer")
     async def remove_account(self, interaction: lib_discord.Interaction, riot_name: str):
         memberRankLol = self.riotService.remove_member_by_name(interaction.guild_id, interaction.user.id, riot_name)
