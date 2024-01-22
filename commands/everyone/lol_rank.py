@@ -36,7 +36,7 @@ class LolRank(commands.Cog):
 
         return embed
 
-    @app_commands.command(name="add_lol_account", description="enregistre un compte LoL")
+    @app_commands.command(name="add_lol_account", description="enregistre un compte LoL sur le serveur")
     @app_commands.describe(riot_name="votre nom d'invocateur")
     @app_commands.describe(tag="votre tag")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")

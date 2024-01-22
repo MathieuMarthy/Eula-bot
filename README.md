@@ -11,7 +11,7 @@
     <a href="https://discord.com/api/oauth2/authorize?client_id=914226393565499412&permissions=8&scope=applications.commands%20bot">
         <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592356667422/inviterlebot.png" alt="inviter le bot" height="40">
     </a>
-    <p align="center">version: 5.1.0</p>
+    <p align="center">version: 5.3.0</p>
 </p>
 
 
@@ -58,6 +58,10 @@ Si vous avez des propositions ou si vous trouver des bugs, contactez-moi (kojhyy
 - `randomizer_lol` : Donne un champion, stuff et runes aléatoire
 - `image_sfw` : Envoie une image d'animé aléatoire
 - `image_nsfw` : Envoie une d'animé image nsfw aléatoire
+- `add_lol_account`: Enregistre un compte LoL sur le serveur
+- `remove_lol_account`: Supprime un compte LoL du serveur
+- `show_lol_rank`: Affiche les comptes LoL d'un utilisateur
+- `lol_leaderboard`: Affiche le classement des joueurs LoL du serveur
 
 ### 🎮 Jeux
 - `10fastfingers` : Multijoueur : dans ce jeu, vous devez taper le plus de mots possible
