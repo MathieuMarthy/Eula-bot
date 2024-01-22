@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from Utils.WaitPlayer import WaitPlayer
+from services.general.WaitPlayer import WaitPlayer
 
 from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.view.boardView import BoardView

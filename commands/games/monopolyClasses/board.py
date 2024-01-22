@@ -1,16 +1,15 @@
 import json
-import random
+import os
 from typing import Tuple
 
 from discord import Member
+
 from commands.games.monopolyClasses.chanceEffect import ChanceEffect
-from commands.games.monopolyClasses.data.const import CONST
 from commands.games.monopolyClasses.data.squareData import PropertiesEmojis
 from commands.games.monopolyClasses.object import *
-
 from commands.games.monopolyClasses.player import Player
 from commands.games.monopolyClasses.square import *
-
+from data.config import path as sys_path
 
 class Board:
     squares: list[Square] = []
@@ -41,8 +40,9 @@ class Board:
             # 0     1     2      3     4     5      6     7     8     9     10    11    12
         ]
 
-        # Load squares 
-        squares_json = json.load(open("commands/games/monopolyClasses/data/squares.json", "r", encoding="utf-8"))
+        # Load squares
+        path = os.path.join(sys_path, "commands/games/monopolyClasses/data/squares.json")
+        squares_json = json.load(open(path, "r", encoding="utf-8"))
         for i, square in enumerate(squares_json):
             if square["type"] == SquareType.PROPERTY:
                 self.squares.append(

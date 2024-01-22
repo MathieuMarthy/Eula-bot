@@ -83,15 +83,16 @@ async def periodic_check():
     except:
         pass
 
+    now_timestamp = datetime.datetime.now(config.my_timezone).timestamp()
+
     # Send reminders
-    reminders = reminderDao.pop_reminder_to_send_at(int(datetime.datetime.now(config.my_timezone).timestamp()))
+    reminders = reminderDao.pop_reminder_to_send_at(int(now_timestamp))
     for reminder in reminders:
         user = await client.fetch_user(reminder.user_id)
         await user.send(f"**Rappel:** {reminder.message}")
 
     # Remove all the polls that are finished
     polls = pollDao.get_all_poll()
-    now = datetime.datetime.now().timestamp()
 
     list_to_remove = []
     for guild_id in polls:
@@ -99,7 +100,7 @@ async def periodic_check():
             for message_id in polls[guild_id][channel_id]:
                 poll = utils.get_poll_object(guild_id, channel_id, message_id)
 
-                if poll.end_timestamp < now and not pollDao.is_finish(guild_id, channel_id, message_id):
+                if poll.end_timestamp < now_timestamp and not pollDao.is_finish(guild_id, channel_id, message_id):
                     try:
                         channel = await client.fetch_channel(channel_id)
                         msg = await channel.fetch_message(message_id)
@@ -110,7 +111,7 @@ async def periodic_check():
                     await msg.edit(view=poll, embed=poll.embed)
                     pollDao.set_finish(guild_id, channel_id, message_id)
 
-                if round(poll.end_timestamp + datetime.timedelta(weeks=1).total_seconds()) < now:
+                if round(poll.end_timestamp + datetime.timedelta(weeks=1).total_seconds()) < now_timestamp:
                     list_to_remove.append((guild_id, channel_id, message_id))
                     
                     try:
