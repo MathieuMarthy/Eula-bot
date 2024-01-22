@@ -31,6 +31,13 @@ class ViewPages:
             )
             return
 
+        if self._get_total_pages() == 1:
+            await self.interaction.response.send_message(
+                embed=self._get_embed(),
+                ephemeral=self.ephemeral
+            )
+            return
+
         await self.interaction.response.send_message(
             embed=self._get_embed(),
             view=self.view,

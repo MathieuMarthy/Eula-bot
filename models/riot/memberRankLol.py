@@ -36,13 +36,24 @@ class MemberRankLol:
         for queue in rank_data:
             if queue["queueType"] == "RANKED_SOLO_5x5":
                 self.rank = Rank.from_string(queue["tier"])
-                self.division = queue["rank"]
+                self.division = self._division_str_to_int(queue["rank"])
                 self.lp = queue["leaguePoints"]
                 self.wins = queue["wins"]
                 self.losses = queue["losses"]
                 self.winrate = round(self.wins / (self.wins + self.losses) * 100, 2)
                 self.lastUpdate = int(time.time())
                 break
+
+    def _division_str_to_int(self, division: str) -> int:
+        if division == "I":
+            return 1
+        if division == "II":
+            return 2
+        if division == "III":
+            return 3
+        if division == "IV":
+            return 4
+        return 0
     
     def set_profile_icon_id(self, profile_icon_id: int):
         self.profileIconId = profile_icon_id

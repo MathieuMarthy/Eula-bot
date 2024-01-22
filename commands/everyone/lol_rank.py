@@ -31,7 +31,7 @@ class LolRank(commands.Cog):
         embed.add_field(name="Winrate", value=f"{memberRankLol.winrate}%")
         embed.add_field(name="Wins", value=memberRankLol.wins)
         embed.add_field(name="Losses", value=memberRankLol.losses)
-        embed.add_field(name="Last game", value=memberRankLol.lastGame)
+        # embed.add_field(name="Last game", value=memberRankLol.lastGame)
         embed.set_thumbnail(url=self.riotService.get_icone_url(memberRankLol.profileIconId))
 
         return embed
