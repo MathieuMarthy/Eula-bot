@@ -50,3 +50,7 @@ class RiotRankService:
 
     def get_icone_url(self, icon_id: int) -> str:
         return self.riot_api.get_profile_icon_url(icon_id)
+
+
+    def remove_member_by_name(self, guildId: int, discordId: int, name: str) -> bool:
+        return self.riot_dao.remove_member_by_name(guildId, discordId, name)

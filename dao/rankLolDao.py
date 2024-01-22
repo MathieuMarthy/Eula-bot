@@ -69,3 +69,16 @@ class RankLolDao:
 
     def get_server_leaderboard(self, guildId: int) -> list[MemberRankLol]:
         return sorted(self.get_all_members_from_guild(guildId))
+
+
+    def remove_member_by_name(self, guildId: int, discordId: int, name: str) -> bool:
+        if discordId not in self.ranks.get(guildId, {}):
+            return False
+
+        for member in self.ranks[guildId][discordId]:
+            if member.riotName.lower() == name.lower():
+                self.ranks[guildId][discordId].remove(member)
+                self.save()
+                return True
+
+        return False

@@ -18,7 +18,7 @@ class LolRank(commands.Cog):
             embed = lib_discord.Embed(
                 title=memberRankLol.riotName,
                 description="Unranked",
-                color=int(memberRankLol.rank.color, 16)
+                color=0x000000
             )
             embed.set_thumbnail(url=self.riotService.get_icone_url(memberRankLol.profileIconId))
             return embed
@@ -103,6 +103,18 @@ class LolRank(commands.Cog):
 
         if embeds:
             await send_message(embeds)
+
+
+    @app_commands.command(name="remove_add_account", description="supprime un compte LoL")
+    @app_commands.describe(riot_name="le nom du compte à supprimer")
+    async def remove_account(self, interaction: lib_discord.Interaction, riot_name: str):
+        memberRankLol = self.riotService.remove_member_by_name(interaction.guild_id, interaction.user.id, riot_name)
+
+        if not memberRankLol:
+            await interaction.response.send_message("Ce compte n'est pas enregistré", ephemeral=True)
+            return
+
+        await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte", ephemeral=True)
 
 
 async def setup(bot):
