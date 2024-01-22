@@ -21,7 +21,7 @@ class RiotRankService:
         return memberRankLol
 
 
-    def store_player(self, guildId: int, discordId: int, player_id: str, puuid: str, riotName: str, rank_data: Optional[dict] = None, profile_icon_id: Optional[int] = None):
+    def store_player(self, guildId: int, discordId: int, player_id: str, puuid: str, riotName: str, rank_data: Optional[list[dict]] = None, profile_icon_id: Optional[int] = None):
         memberRankLol = MemberRankLol(discordId, player_id, puuid, riotName)
 
         if profile_icon_id is not None:
@@ -33,11 +33,11 @@ class RiotRankService:
         self.riot_dao.store_member(guildId, memberRankLol)
         return memberRankLol
 
-    def get_member(self, guildId: int, discordId: int) -> Optional[MemberRankLol]:
-        return self.riot_dao.get_member(guildId, discordId)
+    def get_member_accounts(self, guildId: int, discordId: int) -> list[MemberRankLol]:
+        return self.riot_dao.get_member_accounts(guildId, discordId)
 
 
-    def update_player_data(self, memberRankLol: MemberRankLol) -> MemberRankLol:
+    def update_player_data(self, memberRankLol: MemberRankLol):
         rank_data = self.riot_api.get_rank_data(memberRankLol.accountId)
         memberRankLol = MemberRankLol.fill_from_raw_rank_data(rank_data)
         

@@ -1,4 +1,4 @@
-import discord
+import discord as lib_discord
 from discord import app_commands
 from discord.ext import commands
 
@@ -13,9 +13,9 @@ class LolRank(commands.Cog):
         self.client = client
         self.riotService = RiotRankService()
 
-    def create_player_embed(self, memberRankLol: MemberRankLol) -> discord.Embed:
+    def create_player_embed(self, memberRankLol: MemberRankLol) -> lib_discord.Embed:
         if memberRankLol.empty_lol_data():
-            embed = discord.Embed(
+            embed = lib_discord.Embed(
                 title=memberRankLol.riotName,
                 description="Unranked",
                 color=int(memberRankLol.rank.color, 16)
@@ -23,9 +23,9 @@ class LolRank(commands.Cog):
             embed.set_thumbnail(url=self.riotService.get_icone_url(memberRankLol.profileIconId))
             return embed
 
-        embed = discord.Embed(
+        embed = lib_discord.Embed(
             title=memberRankLol.riotName,
-            description=f"{memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP",
+            description=f"{memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP",
             color=int(memberRankLol.rank.color, 16)
         )
         embed.add_field(name="Winrate", value=f"{memberRankLol.winrate}%")
@@ -40,7 +40,7 @@ class LolRank(commands.Cog):
     @app_commands.describe(riot_name="votre nom d'invocateur")
     @app_commands.describe(tag="votre tag")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
-    async def register(self, interaction: discord.Interaction, riot_name: str, tag: str, discord: discord.Member = None):
+    async def register(self, interaction: lib_discord.Interaction, riot_name: str, tag: str, discord: lib_discord.Member = None):
         try:
             discord_id = interaction.user.id if discord is None else discord.id
 
@@ -64,7 +64,7 @@ class LolRank(commands.Cog):
 
 
     @app_commands.command(name="lol_leaderboard", description="affiche le leaderboard des joueurs du serveur")
-    async def leaderboard(self, interaction: discord.Interaction):
+    async def leaderboard(self, interaction: lib_discord.Interaction):
         membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
 
         viewPages = ViewPages(
@@ -72,25 +72,37 @@ class LolRank(commands.Cog):
             f"Leaderboard de {interaction.guild.name}",
             membersRank,
             10,
-            lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP"
+            lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>"
         )
         await viewPages.start()
 
 
     @app_commands.command(name="show_lol_rank", description="affiche le rank LoL d'un joueur")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
-    async def show_rank(self, interaction: discord.Interaction, discord: discord.Member = None):
+    async def show_rank(self, interaction: lib_discord.Interaction, discord: lib_discord.Member):
         discord_id = interaction.user.id if discord is None else discord.id
 
-        memberRankLol = self.riotService.get_member(interaction.guild_id, discord_id)
+        memberLolAccounts = self.riotService.get_member_accounts(interaction.guild_id, discord_id)
 
-        if memberRankLol is None:
+        if len(memberLolAccounts) == 0:
             await interaction.response.send_message("Ce joueur n'est pas enregistré", ephemeral=True)
             return
 
-        embed = self.create_player_embed(memberRankLol)
+        async def send_message(embeds_to_send: list[lib_discord.Embed]):
+            if len(embeds_to_send) != len(memberLolAccounts):
+                return await interaction.followup.send(embeds=embeds_to_send, content=None)
 
-        await interaction.response.send_message(embed=embed, content=None)
+            return await interaction.response.send_message(embeds=embeds_to_send, content=None)
+
+        embeds = []
+        for account in memberLolAccounts:
+            embeds.append(self.create_player_embed(account))
+
+            if len(embeds) == 10:
+                await send_message(embeds)
+
+        if embeds:
+            await send_message(embeds)
 
 
 async def setup(bot):
