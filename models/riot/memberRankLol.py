@@ -13,7 +13,7 @@ class MemberRankLol:
 
         # lol data
         self.rank: Rank = RankEnum.UNRANKED
-        self.division = "X"
+        self.division = 0
         self.lp = 0
         self.wins = 0
         self.losses = 0
@@ -54,6 +54,17 @@ class MemberRankLol:
         if division == "IV":
             return 4
         return 0
+
+    def get_division(self) -> str:
+        if self.division == 1:
+            return "I"
+        if self.division == 2:
+            return "II"
+        if self.division == 3:
+            return "III"
+        if self.division == 4:
+            return "IV"
+        return " "
     
     def set_profile_icon_id(self, profile_icon_id: int):
         self.profileIconId = profile_icon_id
@@ -81,9 +92,9 @@ class MemberRankLol:
                 return False
 
             if self.division > other.division:
-                return True
-            if self.division < other.division:
                 return False
+            if self.division < other.division:
+                return True
 
             if self.lp > other.lp:
                 return True
@@ -113,7 +124,7 @@ class MemberRankLol:
     def from_json(json: dict, discordId: int) -> "MemberRankLol":
         member = MemberRankLol(discordId, json["puuid"], json["accountId"], json["riotName"])
         member.rank = Rank.from_json(json.get("rank", None))
-        member.division = json.get("division", "X")
+        member.division = json.get("division", 5)
         member.lp = json.get("lp", 0)
         member.wins = json.get("wins", 0)
         member.losses = json.get("losses", 0)

@@ -25,7 +25,7 @@ class LolRank(commands.Cog):
 
         embed = lib_discord.Embed(
             title=memberRankLol.riotName,
-            description=f"{memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP",
+            description=f"{memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP",
             color=int(memberRankLol.rank.color, 16)
         )
         embed.add_field(name="Winrate", value=f"{memberRankLol.winrate}%")
@@ -72,7 +72,7 @@ class LolRank(commands.Cog):
             f"Leaderboard de {interaction.guild.name}",
             membersRank,
             10,
-            lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.division} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>"
+            lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>"
         )
         await viewPages.start()
 
