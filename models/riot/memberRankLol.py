@@ -13,7 +13,7 @@ class MemberRankLol:
 
         # lol data
         self.rank: Rank = RankEnum.UNRANKED
-        self.division = 0
+        self.division = "X"
         self.lp = 0
         self.wins = 0
         self.losses = 0
@@ -64,6 +64,7 @@ class MemberRankLol:
             "accountId": self.accountId,
             "riotName": self.riotName,
             "rank": self.rank.to_json(),
+            "division": self.division,
             "lp": self.lp,
             "wins": self.wins,
             "losses": self.losses,
@@ -112,6 +113,7 @@ class MemberRankLol:
     def from_json(json: dict, discordId: int) -> "MemberRankLol":
         member = MemberRankLol(discordId, json["puuid"], json["accountId"], json["riotName"])
         member.rank = Rank.from_json(json.get("rank", None))
+        member.division = json.get("division", "X")
         member.lp = json.get("lp", 0)
         member.wins = json.get("wins", 0)
         member.losses = json.get("losses", 0)
