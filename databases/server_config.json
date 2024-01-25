@@ -23,7 +23,7 @@
             "message": "{user}, Bienvenue dans le serveur ayaya !\noublie pas de prendre tes r\u00f4les dans le salon \n<#924307133216980992>\nhttps://tenor.com/view/ayaya-yeah-happy-hapinness-kiniro-gif-12992329"
         },
         "logs": {
-            "active": false,
+            "active": true,
             "channel_id": 831956464523280464
         },
         "autorole": {
