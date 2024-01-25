@@ -12,12 +12,12 @@ class RiotRankService:
     
 
     def store_member_by_name_and_tag(self, guildId: int, discordId: int, name: str, tag: str) -> MemberRankLol:
-        puuid = self.riot_api.get_player_puuid(name, tag)
+        puuid, riot_name = self.riot_api.get_player_puuid_name(name, tag)
 
         player_id, ppId = self.riot_api.get_player_id_ppId(puuid)
         rank_data = self.riot_api.get_rank_data(player_id)
 
-        memberRankLol = self.store_player(guildId, discordId, player_id, puuid, name, rank_data, ppId)
+        memberRankLol = self.store_player(guildId, discordId, player_id, puuid, riot_name, rank_data, ppId)
         return memberRankLol
 
 
