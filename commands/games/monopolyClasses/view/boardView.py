@@ -2,7 +2,7 @@ from asyncio import sleep as async_sleep
 
 import discord
 from discord.ui import View
-from uwutilities import String_tools
+from functions import singular_or_plural
 
 from commands.games.monopolyClasses.board import Board
 from commands.games.monopolyClasses.data.const import CONST
@@ -352,7 +352,7 @@ class BoardView(View):
             player.jailTurn += 1
 
             remainingTurn = CONST.NB_TURNS_IN_JAIL - player.jailTurn
-            await self.showAction(f"Vous êtes en prison pour encore {remainingTurn} tour{String_tools.singular_or_plural(remainingTurn)} !")
+            await self.showAction(f"Vous êtes en prison pour encore {remainingTurn} tour{singular_or_plural(remainingTurn)} !")
 
             if player.jailCard:
                 embed = discord.Embed(title="Sortie de prison", description="Voulez-vous utiliser votre carte de sortie de prison ?", color=self.embed_color)

@@ -124,7 +124,7 @@ class MemberRankLol:
     def from_json(json: dict, discordId: int) -> "MemberRankLol":
         member = MemberRankLol(discordId, json["puuid"], json["accountId"], json["riotName"])
         member.rank = Rank.from_json(json.get("rank", None))
-        member.division = json.get("division", 5)
+        member.division = json.get("division", 0)
         member.lp = json.get("lp", 0)
         member.wins = json.get("wins", 0)
         member.losses = json.get("losses", 0)

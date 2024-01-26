@@ -15,8 +15,13 @@ from view.poll import pollView
 
 project_path = os.path.dirname(os.path.realpath(__file__))
 
+
 def is_me(ctx: commands.Context) -> bool:
     return ctx.author.id == 236853417681616906
+
+
+def singular_or_plural(number: int) -> str:
+    return "s" if number > 1 else ""
 
 
 class Utils:
@@ -24,7 +29,7 @@ class Utils:
 
     @staticmethod
     def get_instance(client):
-        if Utils.__instance is None :
+        if Utils.__instance is None:
             Utils.__instance = Utils(client)
         return Utils.__instance
 
@@ -37,10 +42,8 @@ class Utils:
     def invisible_string(self) -> str:
         return " "
 
-
     def server_exists_in_config(self, guild_id: int) -> bool:
         return str(guild_id) in self.server_config
-
 
     def add_new_server(self, guild_id: int):
         self.server_config[str(guild_id)] = {
@@ -63,7 +66,6 @@ class Utils:
         }
         self._save_server_config()
 
-
     def get_server_config(self, guild_id: int, *keys: str):
         if len(keys) == 0:
             return self.server_config[str(guild_id)]
@@ -76,12 +78,12 @@ class Utils:
     def load_server_config(self):
         return json.load(open(os.path.join(project_path, "databases", "server_config.json"), "r", encoding="utf-8"))
 
-
     def _save_server_config(self):
-        json.dump(self.server_config, open(os.path.join(self.bot_path(), "databases", "server_config.json"), "w", encoding="utf-8"), indent=4)
+        json.dump(self.server_config,
+                  open(os.path.join(self.bot_path(), "databases", "server_config.json"), "w", encoding="utf-8"),
+                  indent=4)
         self.server_config = self.load_server_config()
 
-    
     def set_server_config(self, guild_id: int, *keys: str, value):
         config = self.server_config[str(guild_id)]
         for key in keys[:-1]:
@@ -89,28 +91,24 @@ class Utils:
         config[keys[-1]] = value
         self._save_server_config()
 
-
     def bot_path(self) -> str:
         return project_path
-
 
     def replaces(self, string, *args):
         for i in range(0, len(args), 2):
             string = string.replace(args[i], args[i + 1])
         return string
-    
 
     async def is_member(self, member: str, guild: discord.Guild) -> bool:
 
         for char in ["<", "@", "!", ">"]:
             member = member.replace(char, "")
-        
+
         if not member.isdigit() and len(member) != 18:
             return False
 
         member = await guild.fetch_member(member)
         return member is not None
- 
 
     async def is_user(self, member: str) -> bool:
 
@@ -122,30 +120,27 @@ class Utils:
 
         member = await self.client.fetch_user(member)
         return member is not None
-    
 
     def apply_timezone(self, date: datetime) -> datetime:
         return date.astimezone(pytz.timezone(config.timezone))
 
-
     def get_date_time(self):
         return datetime.now(pytz.timezone(config.timezone)).strftime("%d/%m/%Y %H:%M:%S")
-
 
     def embed_color(self):
         return self._color
 
-
     def error_message(self, error: discord.DiscordException) -> str:
         if isinstance(error, commands.MissingRequiredArgument):
             return "Il manque un ou plusieurs arguments\nutilisez `/help` pour plus d'informations"
-        elif isinstance(error, commands.MissingPermissions) or isinstance(error, app_commands.errors.MissingPermissions):
+        elif isinstance(error, commands.MissingPermissions) or isinstance(error,
+                                                                          app_commands.errors.MissingPermissions):
             return "Vous n'avez pas les permissions d'utiliser cette commande"
-        elif isinstance(error, commands.BotMissingPermissions) or isinstance(error, app_commands.errors.BotMissingPermissions):
+        elif isinstance(error, commands.BotMissingPermissions) or isinstance(error,
+                                                                             app_commands.errors.BotMissingPermissions):
             return "Le bot n'a pas les permissions d'utiliser cette commande"
         else:
             return None
-        
 
     async def start_game_multi(self, ctx, limit, name_game):
         """
@@ -195,7 +190,6 @@ class Utils:
         await asyncio.sleep(3)
         return list_user, dico_points
 
-
     async def start_game_duo(self, ctx: commands.Context, member, name_game):
         member = ctx.guild.get_member(member)
 
@@ -206,9 +200,10 @@ class Utils:
         await ctx.send(f"{member.mention} acceptez-vous la partie de {name_game} contre **{ctx.author.name}** ?")
         try:
             msg = await self.client.wait_for("message", check=lambda message: message.author.id in [member.id,
-                                ctx.author.id] and message.content.lower() in [
-                                    "y", "o", "n", "yes", "oui", "no", "non"],
-                                    timeout=180)
+                                                                                                    ctx.author.id] and message.content.lower() in [
+                                                                                  "y", "o", "n", "yes", "oui", "no",
+                                                                                  "non"],
+                                             timeout=180)
         except asyncio.TimeoutError:
             await ctx.reply(f"**{member.name}** n'a pas répondu", mention_author=False)
             return False, None
@@ -219,7 +214,7 @@ class Utils:
 
         else:
             return True, member
-        
+
     async def end_game(self, ctx, list_user, dico_points):
         """
         Args:
@@ -247,7 +242,6 @@ class Utils:
             await ctx.send(
                 f"󠀮 \n**Partie finie !**\nLes vainqueurs sont {str_winner} avec {dico_points[username.id]} points !")
 
-
     def get_img(self, name: str) -> str:
         """
         power
@@ -272,11 +266,9 @@ class Utils:
         """
         return dico[name]
 
-
     def get_poll_object(self, guild: int, channel: int, poll_msg_id: int):
         json_poll = self.pollDao.get_poll(guild, channel, poll_msg_id)
         return pollView(guild, channel, poll_msg_id, json_poll["end_date"], json_poll["question"], json_poll["choix"])
-
 
     def string_duration_to_datetime(self, duration: str) -> datetime:
         duration = duration.split(" ")
@@ -284,7 +276,7 @@ class Utils:
         # on considère que la durée est au format "x jour(s) y heure(s) z minute(s)"
 
         now = datetime.now()
-        
+
         # on prend les éléments de la liste par 2
         for i in range(0, len(duration), 2):
             number, unit = duration[i], duration[i + 1]
@@ -305,6 +297,7 @@ class Utils:
                 now += relativedelta(seconds=int(number))
 
         return now
+
 
 dico = {
     "power": "https://media.discordapp.net/attachments/836943322580516904/971846167078006814/unknown.png",
