@@ -1,4 +1,7 @@
+from typing import Tuple, Callable
+
 import discord as lib_discord
+import discord.ui
 from discord import app_commands
 from discord.ext import commands
 
@@ -66,13 +69,16 @@ class LolRank(commands.Cog):
     async def leaderboard(self, interaction: lib_discord.Interaction):
         membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
 
+        button, callback = self._get_update_button()
+
         viewPages = ViewPages(
             interaction,
             f"Leaderboard de {interaction.guild.name}",
             membersRank,
             10,
             lambda
-                memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>"
+                memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>",
+            buttons_and_callback=[(button, callback)]
         )
         await viewPages.start()
 
@@ -114,6 +120,17 @@ class LolRank(commands.Cog):
 
         await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte",
                                                 ephemeral=True)
+
+    def _get_update_button(self) -> Tuple[discord.ui.Button, Callable[[list[MemberRankLol]], None]]:
+        callback = self.riotService.update_players_data
+
+        button = discord.ui.Button(
+            style=discord.ButtonStyle.primary,
+            custom_id="update",
+            emoji="🔄"
+        )
+
+        return button, callback
 
 
 async def setup(bot):

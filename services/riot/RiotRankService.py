@@ -45,6 +45,10 @@ class RiotRankService:
 
         self.riot_dao.store_member(memberRankLol)
 
+    def update_players_data(self, players: list[MemberRankLol]):
+        for player in players:
+            self.update_player_data(player)
+
     def get_server_leaderboard(self, guildId: int) -> list[MemberRankLol]:
         return self.riot_dao.get_server_leaderboard(guildId)
 
