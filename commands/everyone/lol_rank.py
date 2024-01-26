@@ -40,7 +40,8 @@ class LolRank(commands.Cog):
     @app_commands.describe(riot_name="votre nom d'invocateur")
     @app_commands.describe(tag="votre tag")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
-    async def register(self, interaction: lib_discord.Interaction, riot_name: str, tag: str, discord: lib_discord.Member = None):
+    async def register(self, interaction: lib_discord.Interaction, riot_name: str, tag: str,
+                       discord: lib_discord.Member = None):
         try:
             discord_id = interaction.user.id if discord is None else discord.id
 
@@ -57,11 +58,9 @@ class LolRank(commands.Cog):
             await interaction.response.send_message("Erreur de connexion à l'API Riot", ephemeral=True)
             return
 
-
         embed = self.create_player_embed(memberRankLol)
 
         await interaction.response.send_message(embed=embed, content=None)
-
 
     @app_commands.command(name="lol_leaderboard", description="affiche le leaderboard des joueurs du serveur")
     async def leaderboard(self, interaction: lib_discord.Interaction):
@@ -72,10 +71,10 @@ class LolRank(commands.Cog):
             f"Leaderboard de {interaction.guild.name}",
             membersRank,
             10,
-            lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>"
+            lambda
+                memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>"
         )
         await viewPages.start()
-
 
     @app_commands.command(name="show_lol_rank", description="affiche le rank LoL d'un joueur")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
@@ -104,7 +103,6 @@ class LolRank(commands.Cog):
         if embeds:
             await send_message(embeds)
 
-
     @app_commands.command(name="remove_lol_account", description="supprime un compte LoL")
     @app_commands.describe(riot_name="le nom du compte à supprimer")
     async def remove_account(self, interaction: lib_discord.Interaction, riot_name: str):
@@ -114,7 +112,8 @@ class LolRank(commands.Cog):
             await interaction.response.send_message("Ce compte n'est pas enregistré", ephemeral=True)
             return
 
-        await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte", ephemeral=True)
+        await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte",
+                                                ephemeral=True)
 
 
 async def setup(bot):
