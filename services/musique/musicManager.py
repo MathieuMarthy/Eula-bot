@@ -3,7 +3,7 @@ import asyncio
 import random
 
 import discord
-from uwutilities import String_tools
+from functions import singular_or_plural
 import yt_dlp
 
 from models.music.playlistModel import PlaylistModel
@@ -210,7 +210,7 @@ class MusicManager:
 
     def get_msg_current_music(self, song: SongModel) -> discord.Embed:
         songs_left = len(self.queue)
-        s_or_empty = String_tools.singular_or_plural(songs_left)
+        s_or_empty = singular_or_plural(songs_left)
 
         embed = discord.Embed(
             title=song.title,
