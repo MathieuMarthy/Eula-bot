@@ -1,23 +1,39 @@
 import discord
-from discord.ui import View
+from discord.ui import View, Button
 
 
 class ViewPagesView(View):
     
-    def __init__(self, previous_func: callable, next_func: callable, timeout: int = 120, buttons: list[discord.ui.Button] = None) -> None:
+    def __init__(self, previous_func: callable,
+                 next_func: callable,
+                 timeout: int = 120,
+                 buttons: list[discord.ui.Button] = None,
+                 activeNavButton: bool = True
+                 ) -> None:
         super().__init__(timeout=timeout)
-        self.previous_func = previous_func
-        self.next_func = next_func
-        self.buttons = buttons
 
         if buttons is not None:
-            for button in self.buttons:
+            for button in buttons:
                 self.add_item(button)
 
-    @discord.ui.button(custom_id="previous", style=discord.ButtonStyle.secondary, emoji="⬅️")
-    async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.previous_func(interaction)
+        # Nav buttons
+        if not activeNavButton:
+            return
 
-    @discord.ui.button(custom_id="next", style=discord.ButtonStyle.secondary, emoji="➡️")
-    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.next_func(interaction)
+        self.previous_func = previous_func
+        self.next_func = next_func
+
+        prevButton = Button(
+            style=discord.ButtonStyle.secondary,
+            custom_id="previous",
+            emoji="⬅️")
+        prevButton.callback = self.previous_func
+
+        nextButton = Button(
+            style=discord.ButtonStyle.secondary,
+            custom_id="next",
+            emoji="➡️")
+        nextButton.callback = self.next_func
+
+        self.add_item(prevButton)
+        self.add_item(nextButton)

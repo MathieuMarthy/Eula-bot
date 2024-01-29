@@ -54,11 +54,11 @@ class LolRank(commands.Cog):
                 riot_name,
                 tag
             )
-        except ApiNotFoundError:
-            await interaction.response.send_message("Impossible de trouver votre compte LoL", ephemeral=True)
+        except ApiError as e:
+            await interaction.response.send_message(f"Erreur:\n{e}", ephemeral=True)
             return
-        except ApiError:
-            await interaction.response.send_message("Erreur de connexion à l'API Riot", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"Une erreur est survenue:\n{e}", ephemeral=True)
             return
 
         embed = self.create_player_embed(memberRankLol)
@@ -121,7 +121,7 @@ class LolRank(commands.Cog):
         await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte",
                                                 ephemeral=True)
 
-    def _get_update_button(self) -> Tuple[discord.ui.Button, Callable[[list[MemberRankLol]], None]]:
+    def _get_update_button(self) -> Tuple[discord.ui.Button, Callable[[int, list[MemberRankLol]], list[MemberRankLol]]]:
         callback = self.riotService.update_players_data
 
         button = discord.ui.Button(

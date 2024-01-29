@@ -2,6 +2,7 @@ from typing import Optional, Tuple, Any, Callable
 
 import discord
 
+from models.riot.memberRankLol import MemberRankLol
 from services.general.viewPages.viewPagesView import ViewPagesView
 
 
@@ -14,18 +15,18 @@ class ViewPages:
                  nb_per_pages: int,
                  item_to_str: callable,
                  ephemeral: bool = False,
-                 buttons_and_callback: Optional[list[Tuple[discord.ui.Button, Callable[[list[Any]], None]]]] = None
+                 buttons_and_callback: Optional[list[Tuple[discord.ui.Button, Callable[[int, list[Any]], list[MemberRankLol]]]]] = None
                  ) -> None:
 
         buttons = []
         if buttons_and_callback is not None:
             for button, callback in buttons_and_callback:
-                button.callback = lambda inte, but: (
-                    callback(self._get_page(self.current_page)),
-                    self._update()
-                )
+                button.callback = lambda inte: self._custom_callback(self.interaction.guild_id, callback, inte)
+                buttons.append(button)
 
-        self.view = ViewPagesView(self._previous_page, self._next_page, buttons=buttons)
+        activeNavButton = buttons_and_callback is None or len(buttons_and_callback) not in [0, 1]
+        self.view = ViewPagesView(self._previous_page, self._next_page, buttons=buttons,
+                                  activeNavButton=activeNavButton)
         self.current_page = 0
 
         self.interaction = interaction
@@ -34,6 +35,21 @@ class ViewPages:
         self.nb_per_pages = nb_per_pages
         self.item_to_str = item_to_str
         self.ephemeral = ephemeral
+
+    async def _custom_callback(self,
+                               guildId: int,
+                               callback: Callable[[int, list[Any]], list[MemberRankLol]],
+                               inte: discord.Interaction):
+        try:
+            updated_items = callback(guildId, self._get_page(self.current_page))
+            self._update_current_items(updated_items)
+            await self._update_msg()
+            await inte.response.defer()
+        except Exception as e:
+            await self._send_ephemeral_message(f"Une erreur est survenue:\n{e}")
+
+    async def _send_ephemeral_message(self, content: str):
+        await self.interaction.followup.send(content=content, ephemeral=True)
 
     async def start(self):
         if len(self.collection) == 0:
@@ -51,7 +67,8 @@ class ViewPages:
         if self._get_total_pages() == 1:
             await self.interaction.response.send_message(
                 embed=self._get_embed(),
-                ephemeral=self.ephemeral
+                ephemeral=self.ephemeral,
+                view=self.view
             )
             return
 
@@ -72,8 +89,16 @@ class ViewPages:
     def _get_footer(self) -> str:
         return f"Page {self.current_page + 1}/{self._get_total_pages()}"
 
-    async def _update(self):
+    async def _update_msg(self):
         await self.interaction.edit_original_response(embed=self._get_embed())
+
+    def _update_current_items(self, items: list[Any]):
+        current_page_items = self._get_page(self.current_page)
+
+        for i in range(len(current_page_items)):
+            if i >= len(items):
+                return
+            current_page_items[i] = items[i]
 
     async def _next_page(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -82,7 +107,7 @@ class ViewPages:
         else:
             self.current_page = 0
 
-        await self._update()
+        await self._update_msg()
 
     async def _previous_page(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -91,7 +116,7 @@ class ViewPages:
         else:
             self.current_page = self._get_total_pages() - 1
 
-        await self._update()
+        await self._update_msg()
 
     def _get_total_pages(self):
         return -(-len(self.collection) // self.nb_per_pages)
