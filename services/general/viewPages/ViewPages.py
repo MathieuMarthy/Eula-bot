@@ -41,10 +41,11 @@ class ViewPages:
                                callback: Callable[[int, list[Any]], list[MemberRankLol]],
                                inte: discord.Interaction):
         try:
+            await inte.response.defer(ephemeral=True, thinking=True)
             updated_items = callback(guildId, self._get_page(self.current_page))
             self._update_current_items(updated_items)
             await self._update_msg()
-            await inte.response.defer()
+            await inte.followup.send("Les données de cette page ont été mises à jour", ephemeral=True)
         except Exception as e:
             await self._send_ephemeral_message(f"Une erreur est survenue:\n{e}")
 
