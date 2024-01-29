@@ -47,7 +47,7 @@ class RankLolDao:
 
             # if the account is already stored, we remove it
             for riot_account in self.ranks[guildId][memberLol.discordId]:
-                if riot_account.accountId == memberLol.accountId:
+                if riot_account.playerId == memberLol.playerId:
                     self.ranks[guildId][memberLol.discordId].remove(riot_account)
                     break
 

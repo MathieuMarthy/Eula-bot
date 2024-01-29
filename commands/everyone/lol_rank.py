@@ -1,4 +1,7 @@
+from typing import Tuple, Callable
+
 import discord as lib_discord
+import discord.ui
 from discord import app_commands
 from discord.ext import commands
 
@@ -40,7 +43,8 @@ class LolRank(commands.Cog):
     @app_commands.describe(riot_name="votre nom d'invocateur")
     @app_commands.describe(tag="votre tag")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
-    async def register(self, interaction: lib_discord.Interaction, riot_name: str, tag: str, discord: lib_discord.Member = None):
+    async def register(self, interaction: lib_discord.Interaction, riot_name: str, tag: str,
+                       discord: lib_discord.Member = None):
         try:
             discord_id = interaction.user.id if discord is None else discord.id
 
@@ -50,32 +54,33 @@ class LolRank(commands.Cog):
                 riot_name,
                 tag
             )
-        except ApiNotFoundError:
-            await interaction.response.send_message("Impossible de trouver votre compte LoL", ephemeral=True)
+        except ApiError as e:
+            await interaction.response.send_message(f"Erreur:\n{e}", ephemeral=True)
             return
-        except ApiError:
-            await interaction.response.send_message("Erreur de connexion à l'API Riot", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"Une erreur est survenue:\n{e}", ephemeral=True)
             return
-
 
         embed = self.create_player_embed(memberRankLol)
 
         await interaction.response.send_message(embed=embed, content=None)
 
-
     @app_commands.command(name="lol_leaderboard", description="affiche le leaderboard des joueurs du serveur")
     async def leaderboard(self, interaction: lib_discord.Interaction):
         membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
+
+        button, callback = self._get_update_button()
 
         viewPages = ViewPages(
             interaction,
             f"Leaderboard de {interaction.guild.name}",
             membersRank,
             10,
-            lambda memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>"
+            lambda
+                memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>",
+            buttons_and_callback=[(button, callback)]
         )
         await viewPages.start()
-
 
     @app_commands.command(name="show_lol_rank", description="affiche le rank LoL d'un joueur")
     @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
@@ -104,7 +109,6 @@ class LolRank(commands.Cog):
         if embeds:
             await send_message(embeds)
 
-
     @app_commands.command(name="remove_lol_account", description="supprime un compte LoL")
     @app_commands.describe(riot_name="le nom du compte à supprimer")
     async def remove_account(self, interaction: lib_discord.Interaction, riot_name: str):
@@ -114,7 +118,19 @@ class LolRank(commands.Cog):
             await interaction.response.send_message("Ce compte n'est pas enregistré", ephemeral=True)
             return
 
-        await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte", ephemeral=True)
+        await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte",
+                                                ephemeral=True)
+
+    def _get_update_button(self) -> Tuple[discord.ui.Button, Callable[[int, list[MemberRankLol]], list[MemberRankLol]]]:
+        callback = self.riotService.update_players_data
+
+        button = discord.ui.Button(
+            style=discord.ButtonStyle.primary,
+            custom_id="update",
+            emoji="🔄"
+        )
+
+        return button, callback
 
 
 async def setup(bot):
