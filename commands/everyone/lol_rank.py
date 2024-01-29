@@ -27,7 +27,7 @@ class LolRank(commands.Cog):
             return embed
 
         embed = lib_discord.Embed(
-            title=memberRankLol.riotName,
+            title=f"{memberRankLol.riotName}#{memberRankLol.tag}",
             description=f"{memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP",
             color=int(memberRankLol.rank.color, 16)
         )

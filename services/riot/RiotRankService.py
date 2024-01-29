@@ -44,6 +44,7 @@ class RiotRankService:
         memberRankLol.fill_from_raw_rank_data(rank_data)
 
         self.riot_dao.store_member(guildId, memberRankLol)
+        return memberRankLol
 
     def update_players_data(self, guildId: int, players: list[MemberRankLol]) -> list[MemberRankLol]:
         members = []
@@ -51,7 +52,8 @@ class RiotRankService:
             member = self.update_player_data(guildId, player)
             if member is not None:
                 members.append(member)
-        return members
+
+        return sorted(members)
 
     def get_server_leaderboard(self, guildId: int) -> list[MemberRankLol]:
         return self.riot_dao.get_server_leaderboard(guildId)

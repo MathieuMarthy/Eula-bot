@@ -10,7 +10,7 @@ class MemberRankLol:
         self.puuid = puuid
         self.playerId = playerId
         self.riotName = riotName
-        self.tag = tag
+        self.tag = tag.upper()
 
         # lol data
         self.rank: Rank = RankEnum.UNRANKED
@@ -124,7 +124,7 @@ class MemberRankLol:
 
     @staticmethod
     def from_json(json: dict, discordId: int) -> "MemberRankLol":
-        member = MemberRankLol(discordId, json["puuid"], json["accountId"], json["riotName"], json["tag"])
+        member = MemberRankLol(discordId, json["puuid"], json["accountId"], json["riotName"], json.get("tag", "EUW"))
         member.rank = Rank.from_json(json.get("rank", None))
         member.division = json.get("division", 0)
         member.lp = json.get("lp", 0)
