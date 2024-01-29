@@ -64,56 +64,20 @@
             {
                 "puuid": "0noT36agON3xzAjFGGt_GYZmrE-b6WCmCkyP9dI5nH3SLwM445RlEOeo3w",
                 "accountId": "D7raX6erISMcIrar0K_5jJ0rcuB59sBVrhdGLFGukKawoy91VDQ1E6jxqV1fFzy3-LspnQOlPwzHGQ",
-                "riotName": "fcb godofwoods",
+                "riotName": "FCB Godofwoods",
                 "rank": {
                     "value": 5,
                     "name": "Platinum",
                     "color": "00ffff",
                     "emote": "<:plat:1199048041706041445>"
                 },
-                "division": 2,
-                "lp": 99,
-                "wins": 18,
-                "losses": 13,
-                "winrate": 58.06,
-                "lastUpdate": 1706202704,
-                "profileIconId": 3373
-            },
-            {
-                "puuid": "7LW9HBpCPG96FjXez4DsqOhmHTp45EYoPppS9BBdXKSf3zk",
-                "accountId": "UKTXLATHko6y-HJ_C3Hgc9UYmcHptqlTxOuqMOFWbxLj7hxaMGYBj9vK3xlSGZrx_CDaamsqZwpgpw",
-                "riotName": "ER4G0N",
-                "rank": {
-                    "value": 3,
-                    "name": "Silver",
-                    "color": "c0c0c0",
-                    "emote": "<:silver:1199048053211005100>"
-                },
                 "division": 1,
                 "lp": 59,
-                "wins": 8,
-                "losses": 9,
-                "winrate": 47.06,
-                "lastUpdate": 1706209245,
-                "profileIconId": 5968
-            },
-            {
-                "puuid": "rL4xX-L2RqXsYlDKE5C4xjBYPY41EKfNIBE8EPukWdmKuXk2",
-                "accountId": "qzud39tAF2SQbDpACYHK0M8NLTJG1Fpyp1_42MEizUT5hKVj5lsot_dQonsB_NsPIrK9_z4pVsx3Bw",
-                "riotName": "lafougeredesbois",
-                "rank": {
-                    "value": 4,
-                    "name": "Gold",
-                    "color": "ffd700",
-                    "emote": "<:gold:1199048043929030719>"
-                },
-                "division": 3,
-                "lp": 0,
-                "wins": 8,
-                "losses": 15,
-                "winrate": 34.78,
-                "lastUpdate": 1706209322,
-                "profileIconId": 5973
+                "wins": 21,
+                "losses": 14,
+                "winrate": 60.0,
+                "lastUpdate": 1706459711,
+                "profileIconId": 3373
             }
         ],
         "481528251605581854": [
@@ -160,7 +124,7 @@
             {
                 "puuid": "rj2XBb1V_Dp5BTcgLAHJidOHty2HpC7hndnZkMf4a-jxxEw",
                 "accountId": "Iyy4YeXZnx3lo2WHfuZiAF0n1TKppbJSXbG-kkxlcQMWNH21xfzPYJJ32wE23WT2XKWX6duBNWKRwg",
-                "riotName": "sysy",
+                "riotName": "SysY",
                 "rank": {
                     "value": 5,
                     "name": "Platinum",
@@ -168,11 +132,11 @@
                     "emote": "<:plat:1199048041706041445>"
                 },
                 "division": 1,
-                "lp": 3,
-                "wins": 28,
-                "losses": 18,
-                "winrate": 60.87,
-                "lastUpdate": 1706202729,
+                "lp": 30,
+                "wins": 31,
+                "losses": 21,
+                "winrate": 59.62,
+                "lastUpdate": 1706543269,
                 "profileIconId": 5953
             }
         ],
