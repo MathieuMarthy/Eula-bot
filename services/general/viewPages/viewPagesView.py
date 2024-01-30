@@ -6,7 +6,7 @@ class ViewPagesView(View):
     
     def __init__(self, previous_func: callable,
                  next_func: callable,
-                 timeout: int = 12,
+                 timeout: int = 120,
                  buttons: list[discord.ui.Button] = None,
                  activeNavButton: bool = True,
                  on_timeout_callback: callable = None
