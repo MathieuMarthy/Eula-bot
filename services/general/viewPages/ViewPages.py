@@ -94,12 +94,10 @@ class ViewPages:
         await self.interaction.edit_original_response(embed=self._get_embed(), view=self.view)
 
     def _update_current_items(self, items: list[Any]):
-        current_page_items = self._get_page(self.current_page)
 
-        for i in range(len(current_page_items)):
-            if i >= len(items):
-                return
-            current_page_items[i] = items[i]
+        start = self.current_page * self.nb_per_pages
+        end = (self.current_page + 1) * self.nb_per_pages
+        self.collection[start:end] = items
 
     async def _next_page(self, interaction: discord.Interaction):
         await interaction.response.defer()

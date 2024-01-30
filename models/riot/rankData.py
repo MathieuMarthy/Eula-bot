@@ -72,6 +72,8 @@ class Rank:
             return RankEnum.GOLD
         elif string == "PLATINUM":
             return RankEnum.PLATINUM
+        elif string == "EMERALD":
+            return RankEnum.EMERALD
         elif string == "DIAMOND":
             return RankEnum.DIAMOND
         elif string == "MASTER":
@@ -91,7 +93,8 @@ class RankEnum:
     SILVER = Rank(3, "Silver", "c0c0c0", "<:silver:1199048053211005100>")
     GOLD = Rank(4, "Gold", "ffd700", "<:gold:1199048043929030719>")
     PLATINUM = Rank(5, "Platinum", "00ffff", "<:plat:1199048041706041445>")
-    DIAMOND = Rank(6, "Diamond", "00ff00", "<:diams:1199048033925603490>")
-    MASTER = Rank(7, "Master", "ff1493", "<:master:1199048030838599721>")
-    GRANDMASTER = Rank(8, "GrandMaster", "ff0000", "<:gm:1199048027659313322>")
-    CHALLENGER = Rank(9, "Challenger", "ff0000", "<:chall:1199048067052224512>")
+    EMERALD = Rank(6, "Emerald", "69ff4f", "<:emerald:1201872170612166697>")
+    DIAMOND = Rank(7, "Diamond", "40E9FF", "<:diams:1199048033925603490>")
+    MASTER = Rank(8, "Master", "ff1493", "<:master:1199048030838599721>")
+    GRANDMASTER = Rank(9, "GrandMaster", "ff0000", "<:gm:1199048027659313322>")
+    CHALLENGER = Rank(10, "Challenger", "ff0000", "<:chall:1199048067052224512>")

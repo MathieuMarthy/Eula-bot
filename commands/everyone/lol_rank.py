@@ -7,7 +7,7 @@ from discord.ext import commands
 
 from services.general.viewPages.ViewPages import ViewPages
 from services.riot.RiotRankService import RiotRankService
-from errors.api import ApiError, ApiNotFoundError
+from errors.api import ApiError
 from models.riot.memberRankLol import MemberRankLol
 
 
@@ -19,7 +19,7 @@ class LolRank(commands.Cog):
     def create_player_embed(self, memberRankLol: MemberRankLol) -> lib_discord.Embed:
         if memberRankLol.empty_lol_data():
             embed = lib_discord.Embed(
-                title=memberRankLol.riotName,
+                title=f"{memberRankLol.riotName}#{memberRankLol.tag}",
                 description="Unranked",
                 color=0x000000
             )
@@ -27,7 +27,7 @@ class LolRank(commands.Cog):
             return embed
 
         embed = lib_discord.Embed(
-            title=memberRankLol.riotName,
+            title=f"{memberRankLol.riotName}#{memberRankLol.tag}",
             description=f"{memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP",
             color=int(memberRankLol.rank.color, 16)
         )
