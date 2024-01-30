@@ -26,7 +26,7 @@ class ViewPages:
 
         activeNavButton = buttons_and_callback is None or len(buttons_and_callback) not in [0, 1]
         self.view = ViewPagesView(self._previous_page, self._next_page, buttons=buttons,
-                                  activeNavButton=activeNavButton)
+                                  activeNavButton=activeNavButton, on_timeout_callback=self._update_msg)
         self.current_page = 0
 
         self.interaction = interaction
@@ -91,7 +91,7 @@ class ViewPages:
         return f"Page {self.current_page + 1}/{self._get_total_pages()}"
 
     async def _update_msg(self):
-        await self.interaction.edit_original_response(embed=self._get_embed())
+        await self.interaction.edit_original_response(embed=self._get_embed(), view=self.view)
 
     def _update_current_items(self, items: list[Any]):
         current_page_items = self._get_page(self.current_page)

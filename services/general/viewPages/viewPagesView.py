@@ -6,11 +6,14 @@ class ViewPagesView(View):
     
     def __init__(self, previous_func: callable,
                  next_func: callable,
-                 timeout: int = 120,
+                 timeout: int = 12,
                  buttons: list[discord.ui.Button] = None,
-                 activeNavButton: bool = True
+                 activeNavButton: bool = True,
+                 on_timeout_callback: callable = None
                  ) -> None:
         super().__init__(timeout=timeout)
+
+        self.on_timeout_callback = on_timeout_callback
 
         if buttons is not None:
             for button in buttons:
@@ -37,3 +40,9 @@ class ViewPagesView(View):
 
         self.add_item(prevButton)
         self.add_item(nextButton)
+
+    async def on_timeout(self) -> None:
+        for child in self.children:
+            child.disabled = True
+
+        await self.on_timeout_callback()
