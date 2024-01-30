@@ -72,7 +72,7 @@ class Rank:
             return RankEnum.GOLD
         elif string == "PLATINUM":
             return RankEnum.PLATINUM
-        elif string == "EMERALD"
+        elif string == "EMERALD":
             return RankEnum.EMERALD
         elif string == "DIAMOND":
             return RankEnum.DIAMOND
