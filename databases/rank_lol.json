@@ -2,9 +2,10 @@
     "624629955099230228": {
         "576122725785927690": [
             {
-                "accountId": "IYoc1JYYM43uEwOjCLnmj1C8xSFAEoker_OVK0XM_G8kshXp_mnjJHwTEQ",
-                "puuid": "sQQcTlAdVMQV68QagxwE3lUAR_mruTbPmDunFWJ00D-8wuqg075uGpwQ43AoPrhLnwT35JNp0QaX6w",
-                "riotName": "METAK_RAQUE",
+                "puuid": "A_OgESTZ4vpGQuj-R6FZXWFYL1K9QluDQLvph9CxoyKEpYH_FI69IwLXRvre5n-DLErkQs7Jc54txw",
+                "accountId": "XBPKCBMEUnHu4FU8tfmhfj2KHetQ-gfJvw1MB7s0iIidpPG_nDXJw5uqWQ",
+                "riotName": "deJhinerate4",
+                "tag": "4444",
                 "rank": {
                     "value": 0,
                     "name": "Unranked",
@@ -17,34 +18,55 @@
                 "losses": 0,
                 "winrate": 0.0,
                 "lastUpdate": 0,
+                "profileIconId": 907
+            },
+            {
+                "puuid": "sQQcTlAdVMQV68QagxwE3lUAR_mruTbPmDunFWJ00D-8wuqg075uGpwQ43AoPrhLnwT35JNp0QaX6w",
+                "accountId": "IYoc1JYYM43uEwOjCLnmj1C8xSFAEoker_OVK0XM_G8kshXp_mnjJHwTEQ",
+                "riotName": "METAK RAQUE",
+                "tag": "EUW",
+                "rank": {
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
+                },
+                "division": 4,
+                "lp": 29,
+                "wins": 4,
+                "losses": 8,
+                "winrate": 33.33,
+                "lastUpdate": 1733419613,
                 "profileIconId": 5982
             }
         ],
         "519554418530713600": [
             {
-                "accountId": "7LW9HBpCPG96FjXez4DsqOhmHTp45EYoPppS9BBdXKSf3zk",
                 "puuid": "UKTXLATHko6y-HJ_C3Hgc9UYmcHptqlTxOuqMOFWbxLj7hxaMGYBj9vK3xlSGZrx_CDaamsqZwpgpw",
+                "accountId": "7LW9HBpCPG96FjXez4DsqOhmHTp45EYoPppS9BBdXKSf3zk",
                 "riotName": "ER4G0N",
+                "tag": "EUW",
                 "rank": {
                     "value": 3,
                     "name": "Silver",
                     "color": "c0c0c0",
                     "emote": "<:silver:1199048053211005100>"
                 },
-                "division": 1,
-                "lp": 28,
-                "wins": 7,
-                "losses": 9,
-                "winrate": 43.75,
-                "lastUpdate": 1706038021,
+                "division": 4,
+                "lp": 89,
+                "wins": 27,
+                "losses": 24,
+                "winrate": 52.94,
+                "lastUpdate": 1733419613,
                 "profileIconId": 5968
             }
         ],
         "379714914832613377": [
             {
-                "accountId": "jQ0sExfVMHpnwkGx88ZonOIYomTyZUM25e9WJ7AvvLiUcsQrXedu3FaMyw",
                 "puuid": "h4t3Y4_x1gu6llQfxmsw41TN6rmzUsKDlJfq9oO2KAkhpOCWEp57JVumxaD12yz-hP3vNJGIckCYEg",
+                "accountId": "jQ0sExfVMHpnwkGx88ZonOIYomTyZUM25e9WJ7AvvLiUcsQrXedu3FaMyw",
                 "riotName": "1l0veIol",
+                "tag": "EUW",
                 "rank": {
                     "value": 4,
                     "name": "Gold",
@@ -52,99 +74,142 @@
                     "emote": "<:gold:1199048043929030719>"
                 },
                 "division": 2,
-                "lp": 14,
-                "wins": 5,
-                "losses": 7,
-                "winrate": 41.67,
-                "lastUpdate": 1705998250,
+                "lp": 8,
+                "wins": 18,
+                "losses": 19,
+                "winrate": 48.65,
+                "lastUpdate": 1726759189,
                 "profileIconId": 907
-            }
-        ],
-        "420282154409394176": [
+            },
             {
-                "accountId": "0noT36agON3xzAjFGGt_GYZmrE-b6WCmCkyP9dI5nH3SLwM445RlEOeo3w",
-                "puuid": "D7raX6erISMcIrar0K_5jJ0rcuB59sBVrhdGLFGukKawoy91VDQ1E6jxqV1fFzy3-LspnQOlPwzHGQ",
-                "riotName": "FCB Godofwoods",
-                "rank": {
-                    "value": 5,
-                    "name": "Platinum",
-                    "color": "00ffff",
-                    "emote": "<:plat:1199048041706041445>"
-                },
-                "division": 1,
-                "lp": 59,
-                "wins": 21,
-                "losses": 14,
-                "winrate": 60.0,
-                "lastUpdate": 1706459711,
-                "profileIconId": 3373
-            }
-        ],
-        "481528251605581854": [
-            {
-                "accountId": "rL4xX-L2RqXsYlDKE5C4xjBYPY41EKfNIBE8EPukWdmKuXk2",
-                "puuid": "qzud39tAF2SQbDpACYHK0M8NLTJG1Fpyp1_42MEizUT5hKVj5lsot_dQonsB_NsPIrK9_z4pVsx3Bw",
-                "riotName": "lafougeredesbois",
+                "puuid": "ZvspX2W4MYtLFO18ZhNWemfKvjOQtE0SdgH5h76SKiFD1iyWXNiGLTvmSUKl5thc-Va_5r7vuYVCJg",
+                "accountId": "skJq7um_3n7PAcewVdnVQFrjGt_gBXDvCh9CEvMrmDzKuUui",
+                "riotName": "Jostophe13",
+                "tag": "EUW",
                 "rank": {
                     "value": 4,
                     "name": "Gold",
                     "color": "ffd700",
                     "emote": "<:gold:1199048043929030719>"
                 },
-                "division": 3,
+                "division": 4,
+                "lp": 42,
+                "wins": 16,
+                "losses": 23,
+                "winrate": 41.03,
+                "lastUpdate": 1733419612,
+                "profileIconId": 5634
+            }
+        ],
+        "420282154409394176": [
+            {
+                "puuid": "D7raX6erISMcIrar0K_5jJ0rcuB59sBVrhdGLFGukKawoy91VDQ1E6jxqV1fFzy3-LspnQOlPwzHGQ",
+                "accountId": "0noT36agON3xzAjFGGt_GYZmrE-b6WCmCkyP9dI5nH3SLwM445RlEOeo3w",
+                "riotName": "FCB Godofwoods",
+                "tag": "EUW",
+                "rank": {
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
+                },
+                "division": 1,
+                "lp": 18,
+                "wins": 9,
+                "losses": 6,
+                "winrate": 60.0,
+                "lastUpdate": 1733419611,
+                "profileIconId": 3373
+            },
+            {
+                "puuid": "x34ETpnpfpwmvPnngFCFd8owJKdAkS5A0pTPoRwaOTYfQnxZ08UxraIb0ZTwi6iLYpAOLwa2dmsypw",
+                "accountId": "xCWbqrxdzwKlPO04Aoc2aEleVkYOtVNey96yHofuGJOM-JA8DVgG67P9rQ",
+                "riotName": "Vzfir",
+                "tag": "EUW",
+                "rank": {
+                    "value": 3,
+                    "name": "Silver",
+                    "color": "c0c0c0",
+                    "emote": "<:silver:1199048053211005100>"
+                },
+                "division": 4,
                 "lp": 0,
-                "wins": 8,
-                "losses": 15,
-                "winrate": 34.78,
-                "lastUpdate": 1706038051,
+                "wins": 13,
+                "losses": 6,
+                "winrate": 68.42,
+                "lastUpdate": 1727020130,
+                "profileIconId": 3593
+            }
+        ],
+        "481528251605581854": [
+            {
+                "puuid": "qzud39tAF2SQbDpACYHK0M8NLTJG1Fpyp1_42MEizUT5hKVj5lsot_dQonsB_NsPIrK9_z4pVsx3Bw",
+                "accountId": "rL4xX-L2RqXsYlDKE5C4xjBYPY41EKfNIBE8EPukWdmKuXk2",
+                "riotName": "lafougeredesbois",
+                "tag": "EUW",
+                "rank": {
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
+                },
+                "division": 4,
+                "lp": 66,
+                "wins": 47,
+                "losses": 49,
+                "winrate": 48.96,
+                "lastUpdate": 1733419612,
                 "profileIconId": 5973
             }
         ],
         "639881842639765504": [
             {
-                "accountId": "9adVHWXAYdjJab7IV8uisfhJckVQ3eTw80t5XD1NNkCfU5wjBud1vUHNRA",
                 "puuid": "7gAVqMqzYajSfeASprL_Y_XRiKfKs7PY5OX1S3eW3b_sQiqQmDGyhnRbwqrpEL0pFIJGJ3SX3S2M-Q",
+                "accountId": "9adVHWXAYdjJab7IV8uisfhJckVQ3eTw80t5XD1NNkCfU5wjBud1vUHNRA",
                 "riotName": "novaterasu",
+                "tag": "EUW",
                 "rank": {
-                    "value": 4,
-                    "name": "Gold",
-                    "color": "ffd700",
-                    "emote": "<:gold:1199048043929030719>"
+                    "value": 1,
+                    "name": "Iron",
+                    "color": "434343",
+                    "emote": "<:iron:1199048061457023007>"
                 },
-                "division": 2,
-                "lp": 32,
-                "wins": 1,
-                "losses": 4,
-                "winrate": 20.0,
-                "lastUpdate": 1706207595,
+                "division": 1,
+                "lp": 19,
+                "wins": 2,
+                "losses": 3,
+                "winrate": 40.0,
+                "lastUpdate": 1726759190,
                 "profileIconId": 6362
             }
         ],
         "240100476945825793": [
             {
-                "accountId": "rj2XBb1V_Dp5BTcgLAHJidOHty2HpC7hndnZkMf4a-jxxEw",
                 "puuid": "Iyy4YeXZnx3lo2WHfuZiAF0n1TKppbJSXbG-kkxlcQMWNH21xfzPYJJ32wE23WT2XKWX6duBNWKRwg",
+                "accountId": "rj2XBb1V_Dp5BTcgLAHJidOHty2HpC7hndnZkMf4a-jxxEw",
                 "riotName": "SysY",
+                "tag": "EUW",
                 "rank": {
-                    "value": 5,
-                    "name": "Platinum",
-                    "color": "00ffff",
-                    "emote": "<:plat:1199048041706041445>"
+                    "value": 6,
+                    "name": "Emerald",
+                    "color": "69ff4f",
+                    "emote": "<:emerald:1201872170612166697>"
                 },
-                "division": 1,
-                "lp": 30,
-                "wins": 31,
-                "losses": 21,
-                "winrate": 59.62,
-                "lastUpdate": 1706543269,
+                "division": 4,
+                "lp": 13,
+                "wins": 45,
+                "losses": 39,
+                "winrate": 53.57,
+                "lastUpdate": 1733419611,
                 "profileIconId": 5953
             }
         ],
         "236853417681616906": [
             {
-                "accountId": "V7AxK3JcGvdOyPWnLalCbeGyt7s7HwGRDLfgoiSiXJ9lyT7X",
                 "puuid": "cHkxyU4PSJSd-NeGkRQGg-fWlPv_F762L0wV1ZzMu8zLTRXNljYy73NrRfgedGyhgwKD932XGilNWg",
+                "accountId": "V7AxK3JcGvdOyPWnLalCbeGyt7s7HwGRDLfgoiSiXJ9lyT7X",
                 "riotName": "kojhyy uwu weeb",
+                "tag": "EUW",
                 "rank": {
                     "value": 0,
                     "name": "Unranked",
@@ -159,34 +224,13 @@
                 "lastUpdate": 0,
                 "profileIconId": 6064
             }
-        ]
-    },
-    "950762513161654302": {
-        "240100476945825793": [
-            {
-                "accountId": "rj2XBb1V_Dp5BTcgLAHJidOHty2HpC7hndnZkMf4a-jxxEw",
-                "puuid": "Iyy4YeXZnx3lo2WHfuZiAF0n1TKppbJSXbG-kkxlcQMWNH21xfzPYJJ32wE23WT2XKWX6duBNWKRwg",
-                "riotName": "sysy",
-                "rank": {
-                    "value": 5,
-                    "name": "Platinum",
-                    "color": "00ffff",
-                    "emote": "<:plat:1199048041706041445>"
-                },
-                "division": 1,
-                "lp": 7,
-                "wins": 24,
-                "losses": 12,
-                "winrate": 66.67,
-                "lastUpdate": 1706018195,
-                "profileIconId": 5953
-            }
         ],
-        "428590945978810370": [
+        "331539587396796418": [
             {
-                "accountId": "qwA1a6RNUf1el8p0jG9RA-M7R_7Uf2OeSS_n4MGDPzSRDSiY",
-                "puuid": "u5iG_1A7vts-2tHUxFCobILvnjlTkQ-Eb3iU42iKcVSkCRFBBA8GKT30JrOzQHvUto78c7frJke23A",
-                "riotName": "G2 Senko",
+                "puuid": "uOBo6sXSmF9xO6QVpYnLzZj7dpOuWeiL_fM58M5hI-1RtV6E0OEYBl5sAZtGoj0pAHwjZkNLJz_iJg",
+                "accountId": "_i8zU0q5n2LVGnNXiNMsziKC_J--OrOJABIcodXqgsARJKQw",
+                "riotName": "SOLMaster",
+                "tag": "EUW",
                 "rank": {
                     "value": 3,
                     "name": "Silver",
@@ -194,19 +238,85 @@
                     "emote": "<:silver:1199048053211005100>"
                 },
                 "division": 4,
-                "lp": 68,
-                "wins": 16,
-                "losses": 3,
-                "winrate": 84.21,
-                "lastUpdate": 1706018233,
+                "lp": 0,
+                "wins": 23,
+                "losses": 22,
+                "winrate": 51.11,
+                "lastUpdate": 1715332376,
+                "profileIconId": 932
+            }
+        ],
+        "198379424079544320": [
+            {
+                "puuid": "nOY_z-eN68pB_LWXY-eWdiI8Fp2vVew8h9cQg_MTbZvM3vGCnB5zTGfnajxCq6cIdd0QSYNbxL3gKQ",
+                "accountId": "lyrect5Jd1AHL-7UydpuUpDFm4PMIDohXWKy7al9XQrHI4FG",
+                "riotName": "Godzilla",
+                "tag": "GODZL",
+                "rank": {
+                    "value": 6,
+                    "name": "Emerald",
+                    "color": "69ff4f",
+                    "emote": "<:emerald:1201872170612166697>"
+                },
+                "division": 3,
+                "lp": 11,
+                "wins": 26,
+                "losses": 23,
+                "winrate": 53.06,
+                "lastUpdate": 1726759187,
+                "profileIconId": 6331
+            }
+        ]
+    },
+    "950762513161654302": {
+        "240100476945825793": [
+            {
+                "puuid": "Iyy4YeXZnx3lo2WHfuZiAF0n1TKppbJSXbG-kkxlcQMWNH21xfzPYJJ32wE23WT2XKWX6duBNWKRwg",
+                "accountId": "rj2XBb1V_Dp5BTcgLAHJidOHty2HpC7hndnZkMf4a-jxxEw",
+                "riotName": "sysy",
+                "tag": "EUW",
+                "rank": {
+                    "value": 6,
+                    "name": "Emerald",
+                    "color": "69ff4f",
+                    "emote": "<:emerald:1201872170612166697>"
+                },
+                "division": 4,
+                "lp": 0,
+                "wins": 38,
+                "losses": 27,
+                "winrate": 58.46,
+                "lastUpdate": 1707732252,
+                "profileIconId": 5953
+            }
+        ],
+        "428590945978810370": [
+            {
+                "puuid": "u5iG_1A7vts-2tHUxFCobILvnjlTkQ-Eb3iU42iKcVSkCRFBBA8GKT30JrOzQHvUto78c7frJke23A",
+                "accountId": "qwA1a6RNUf1el8p0jG9RA-M7R_7Uf2OeSS_n4MGDPzSRDSiY",
+                "riotName": "G2 Senko",
+                "tag": "EUW",
+                "rank": {
+                    "value": 3,
+                    "name": "Silver",
+                    "color": "c0c0c0",
+                    "emote": "<:silver:1199048053211005100>"
+                },
+                "division": 1,
+                "lp": 36,
+                "wins": 28,
+                "losses": 11,
+                "winrate": 71.79,
+                "lastUpdate": 1707732254,
                 "profileIconId": 4658
             }
         ],
         "236853417681616906": [
             {
-                "accountId": "V7AxK3JcGvdOyPWnLalCbeGyt7s7HwGRDLfgoiSiXJ9lyT7X",
                 "puuid": "cHkxyU4PSJSd-NeGkRQGg-fWlPv_F762L0wV1ZzMu8zLTRXNljYy73NrRfgedGyhgwKD932XGilNWg",
+                "accountId": "V7AxK3JcGvdOyPWnLalCbeGyt7s7HwGRDLfgoiSiXJ9lyT7X",
                 "riotName": "kojhyy uwu weeb",
+                "tag": "EUW",
                 "rank": {
                     "value": 0,
                     "name": "Unranked",
@@ -224,29 +334,31 @@
         ],
         "191560011330224128": [
             {
-                "accountId": "ACPoTVfvidV82aClLKqCv-FhKZXNOVaK8w0um8Xsazd78sP7",
                 "puuid": "WVndnohGYSRl5C8nOxKNrhVfKvonH11Zrld_v77D7vVaBD63D7kpCLqOdjHgDeh6sAmHefxMynpo7g",
+                "accountId": "ACPoTVfvidV82aClLKqCv-FhKZXNOVaK8w0um8Xsazd78sP7",
                 "riotName": "NathanOnLoL",
+                "tag": "EUW",
                 "rank": {
                     "value": 4,
                     "name": "Gold",
                     "color": "ffd700",
                     "emote": "<:gold:1199048043929030719>"
                 },
-                "division": 2,
-                "lp": 36,
-                "wins": 9,
-                "losses": 3,
-                "winrate": 75.0,
-                "lastUpdate": 1706018430,
+                "division": 1,
+                "lp": 2,
+                "wins": 18,
+                "losses": 14,
+                "winrate": 56.25,
+                "lastUpdate": 1707732253,
                 "profileIconId": 5472
             }
         ],
         "659745911705960458": [
             {
-                "accountId": "0SyvOY7sLdIzqVG8K3dzR0rOHnCGlKFAQnAVWl0BRPGTH1kk1Hfr9BxY3A",
                 "puuid": "VZ5CTmIE1HGHsf0ng6kQtSkABD5viPesJrRzQSQ2vUDSpo8V0h2PHg73Hx3aLnxeSPPoAsp99-VVlQ",
+                "accountId": "0SyvOY7sLdIzqVG8K3dzR0rOHnCGlKFAQnAVWl0BRPGTH1kk1Hfr9BxY3A",
                 "riotName": "nakaeuna",
+                "tag": "EUW",
                 "rank": {
                     "value": 0,
                     "name": "Unranked",
@@ -260,6 +372,90 @@
                 "winrate": 0.0,
                 "lastUpdate": 0,
                 "profileIconId": 5687
+            }
+        ],
+        "329577769585606667": [
+            {
+                "puuid": "kSnyg9ahR-0WQUuC42XR3ePZQqe7Pz-1MNkhfj0JbDziAK3BeydWBzwlURdR1WNYOKuW0vQVC8oYSw",
+                "accountId": "E8FGKMfVR0PS2yqMGar5eXI1NsFah1sxcYVVxjM_TuKkUDah",
+                "riotName": "Guewen",
+                "tag": "00069",
+                "rank": {
+                    "value": 3,
+                    "name": "Silver",
+                    "color": "c0c0c0",
+                    "emote": "<:silver:1199048053211005100>"
+                },
+                "division": 2,
+                "lp": 4,
+                "wins": 3,
+                "losses": 5,
+                "winrate": 37.5,
+                "lastUpdate": 1707732254,
+                "profileIconId": 4960
+            }
+        ],
+        "561235500191449100": [
+            {
+                "puuid": "_B8LK5jguVaU-W_LL2lggEzTiGD_M9llo8YRTD9p3waFO3mH7_V1wwOY9N87Qnv8nKBwVgrQ3BkyVQ",
+                "accountId": "gOCO-0BmsFQmDTPRJtLHz3YxFvkDME9FGJ9nZ2RNR2rFZ5rZ",
+                "riotName": "Kartinlage",
+                "tag": "EUW",
+                "rank": {
+                    "value": 0,
+                    "name": "Unranked",
+                    "color": "000000",
+                    "emote": "<:unranked:1199048063692578876>"
+                },
+                "division": 0,
+                "lp": 0,
+                "wins": 0,
+                "losses": 0,
+                "winrate": 0.0,
+                "lastUpdate": 0,
+                "profileIconId": 5675
+            }
+        ],
+        "284728361606184971": [
+            {
+                "puuid": "Pky6Thsu2FbiJCqgBjL6h0SBoukF3Ox-AjRbZ3mfGQTk-WzLZDwDchoygVCRQv2M_TlnWym0niY2eQ",
+                "accountId": "PLrr1N7yvH5qMN-V7VnyDVTPeyY5UHS8lzhZ74Sdk9kz2tZ6Nfheg-sNMA",
+                "riotName": "DesakArnii",
+                "tag": "EUW",
+                "rank": {
+                    "value": 3,
+                    "name": "Silver",
+                    "color": "c0c0c0",
+                    "emote": "<:silver:1199048053211005100>"
+                },
+                "division": 3,
+                "lp": 62,
+                "wins": 3,
+                "losses": 3,
+                "winrate": 50.0,
+                "lastUpdate": 1707732255,
+                "profileIconId": 6468
+            }
+        ],
+        "639881842639765504": [
+            {
+                "puuid": "7gAVqMqzYajSfeASprL_Y_XRiKfKs7PY5OX1S3eW3b_sQiqQmDGyhnRbwqrpEL0pFIJGJ3SX3S2M-Q",
+                "accountId": "9adVHWXAYdjJab7IV8uisfhJckVQ3eTw80t5XD1NNkCfU5wjBud1vUHNRA",
+                "riotName": "Novaterasu",
+                "tag": "EUW",
+                "rank": {
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
+                },
+                "division": 2,
+                "lp": 32,
+                "wins": 1,
+                "losses": 4,
+                "winrate": 20.0,
+                "lastUpdate": 1707732253,
+                "profileIconId": 6362
             }
         ]
     }
