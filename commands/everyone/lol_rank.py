@@ -34,7 +34,6 @@ class LolRank(commands.Cog):
         embed.add_field(name="Winrate", value=f"{memberRankLol.winrate}%")
         embed.add_field(name="Wins", value=memberRankLol.wins)
         embed.add_field(name="Losses", value=memberRankLol.losses)
-        # embed.add_field(name="Last game", value=memberRankLol.lastGame)
         embed.set_thumbnail(url=self.riotService.get_icone_url(memberRankLol.profileIconId))
 
         return embed
@@ -67,9 +66,8 @@ class LolRank(commands.Cog):
 
     @app_commands.command(name="lol_leaderboard", description="affiche le leaderboard des joueurs du serveur")
     async def leaderboard(self, interaction: lib_discord.Interaction):
+        self.riotService.update_players_data(interaction.guild_id)
         membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
-
-        button, callback = self._get_update_button()
 
         viewPages = ViewPages(
             interaction,
@@ -78,7 +76,6 @@ class LolRank(commands.Cog):
             10,
             lambda
                 memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>",
-            buttons_and_callback=[(button, callback)]
         )
         await viewPages.start()
 
@@ -120,17 +117,6 @@ class LolRank(commands.Cog):
 
         await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte",
                                                 ephemeral=True)
-
-    def _get_update_button(self) -> Tuple[discord.ui.Button, Callable[[int, list[MemberRankLol]], list[MemberRankLol]]]:
-        callback = self.riotService.update_players_data
-
-        button = discord.ui.Button(
-            style=discord.ButtonStyle.primary,
-            custom_id="update",
-            emoji="🔄"
-        )
-
-        return button, callback
 
 
 async def setup(bot):
