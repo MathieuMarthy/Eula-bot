@@ -66,6 +66,8 @@ class LolRank(commands.Cog):
 
     @app_commands.command(name="lol_leaderboard", description="affiche le leaderboard des joueurs du serveur")
     async def leaderboard(self, interaction: lib_discord.Interaction):
+        await interaction.response.defer(ephemeral=False, thinking=True)
+
         self.riotService.update_players_data(interaction.guild_id)
         membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
 
@@ -76,6 +78,7 @@ class LolRank(commands.Cog):
             10,
             lambda
                 memberRankLol: f"{memberRankLol.riotName} - {memberRankLol.rank.emote} {memberRankLol.rank.name} {memberRankLol.get_division()} {memberRankLol.lp} LP - <@{memberRankLol.discordId}>",
+            defer_was_called_on_interaction=True
         )
         await viewPages.start()
 
