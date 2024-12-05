@@ -1,15 +1,12 @@
 <!-- Image -->
 <p align="center">
-  <img src="https://media.discordapp.net/attachments/836943322580516904/1060614756458840134/1159087.png" alt="Eula Bot" height="300">
+  <img src="https://media.discordapp.net/attachments/836943322580516904/1060614756458840134/1159087.png?ex=67528f37&is=67513db7&hm=a9e65ef465d752d2daa35f187bd7c1feed588acc3b97517df38d4e313aa26e03&=&quality=lossless" alt="Eula Bot" height="300">
 </p>
 <h1 align="center">Eula Bot</h1>
 <h3 align="center">Fun, Moderation et Utilitaires</h3>
 <p align="center">
-    <a href="https://discord.gg/s5hrMzGCb8">
-        <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592545415249/rejoindreleserveur.png" alt="rejoindre le serveur" height="40">
-    </a>
     <a href="https://discord.com/api/oauth2/authorize?client_id=914226393565499412&permissions=8&scope=applications.commands%20bot">
-        <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592356667422/inviterlebot.png" alt="inviter le bot" height="40">
+        <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592356667422/inviterlebot.png?ex=6752f9d3&is=6751a853&hm=f1f1bac9df7e572b03635c6f40a842dfd9959d5a44d4a7b9ebee7615e9fe6baa&=&quality=lossless" alt="inviter le bot" height="40">
     </a>
     <p align="center">version: 5.3.0</p>
 </p>
