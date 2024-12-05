@@ -15,7 +15,8 @@ class ViewPages:
                  nb_per_pages: int,
                  item_to_str: callable,
                  ephemeral: bool = False,
-                 buttons_and_callback: Optional[list[Tuple[discord.ui.Button, Callable[[int, list[Any]], list[MemberRankLol]]]]] = None
+                 buttons_and_callback: Optional[list[Tuple[discord.ui.Button, Callable[[int, list[Any]], list[MemberRankLol]]]]] = None,
+                 show_nav_button: bool = True
                  ) -> None:
 
         buttons = []
@@ -24,9 +25,6 @@ class ViewPages:
                 button.callback = lambda inte: self._custom_callback(self.interaction.guild_id, callback, inte)
                 buttons.append(button)
 
-        activeNavButton = buttons_and_callback is None or len(buttons_and_callback) not in [0, 1]
-        self.view = ViewPagesView(self._previous_page, self._next_page, buttons=buttons,
-                                  activeNavButton=activeNavButton, on_timeout_callback=self._update_msg)
         self.current_page = 0
 
         self.interaction = interaction
@@ -35,6 +33,10 @@ class ViewPages:
         self.nb_per_pages = nb_per_pages
         self.item_to_str = item_to_str
         self.ephemeral = ephemeral
+
+        activeNavButton = self._get_total_pages() > 1 and show_nav_button
+        self.view = ViewPagesView(self._previous_page, self._next_page, buttons=buttons,
+                                  activeNavButton=activeNavButton, on_timeout_callback=self._update_msg)
 
     async def _custom_callback(self,
                                guildId: int,
