@@ -15,8 +15,10 @@ class ViewPages:
                  nb_per_pages: int,
                  item_to_str: callable,
                  ephemeral: bool = False,
-                 buttons_and_callback: Optional[list[Tuple[discord.ui.Button, Callable[[int, list[Any]], list[MemberRankLol]]]]] = None,
-                 show_nav_button: bool = True
+                 buttons_and_callback: Optional[
+                     list[Tuple[discord.ui.Button, Callable[[int, list[Any]], list[MemberRankLol]]]]] = None,
+                 show_nav_button: bool = True,
+                 defer_was_called_on_interaction: bool = False
                  ) -> None:
 
         buttons = []
@@ -33,6 +35,7 @@ class ViewPages:
         self.nb_per_pages = nb_per_pages
         self.item_to_str = item_to_str
         self.ephemeral = ephemeral
+        self.defer_was_called_on_interaction = defer_was_called_on_interaction
 
         activeNavButton = self._get_total_pages() > 1 and show_nav_button
         self.view = ViewPagesView(self._previous_page, self._next_page, buttons=buttons,
@@ -55,31 +58,29 @@ class ViewPages:
         await self.interaction.followup.send(content=content, ephemeral=True)
 
     async def start(self):
+        send_message = (
+            self.interaction.followup.send
+            if self.defer_was_called_on_interaction
+            else self.interaction.response.send_message
+        )
+
         if len(self.collection) == 0:
             embed = discord.Embed(
                 title=self.title,
                 description="Aucun élément à afficher",
                 color=0x989eec
             )
-            await self.interaction.response.send_message(
+
+            await send_message(
                 embed=embed,
                 ephemeral=self.ephemeral
             )
-            return
-
-        if self._get_total_pages() == 1:
-            await self.interaction.response.send_message(
+        else:
+            await send_message(
                 embed=self._get_embed(),
-                ephemeral=self.ephemeral,
-                view=self.view
+                view=self.view,
+                ephemeral=self.ephemeral
             )
-            return
-
-        await self.interaction.response.send_message(
-            embed=self._get_embed(),
-            view=self.view,
-            ephemeral=self.ephemeral
-        )
 
     def _get_embed(self) -> discord.Embed:
         embed = discord.Embed(title=self.title, description=self._get_description(), color=0x989eec)
