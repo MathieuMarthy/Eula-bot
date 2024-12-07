@@ -6,10 +6,9 @@ from discord import app_commands
 from discord.ext import commands
 
 from models.riot.PlayerGameInfoLoL import PlayerGameInfoLoL, GameStatus
-from services.general.log.LogErrorIntoDM import LogErrorIntoDM
 from services.general.viewPages.ViewPages import ViewPages
 from services.riot.RiotRankService import RiotRankService
-from errors.api import ApiError, ApiNotFoundError
+from errors.api import ApiError
 from models.riot.memberRankLol import MemberRankLol
 
 
@@ -55,12 +54,11 @@ class LolRank(commands.Cog):
                 riot_name,
                 tag
             )
-        except ApiNotFoundError:
-            await interaction.response.send_message("Impossible de trouver votre compte LoL", ephemeral=True)
+        except ApiError as e:
+            await interaction.response.send_message(f"Erreur:\n{e}", ephemeral=True)
             return
         except Exception as e:
-            await LogErrorIntoDM.get_instance(self.client).log_error(e)
-            await interaction.response.send_message(f"Une erreur est survenue", ephemeral=True)
+            await interaction.response.send_message(f"Une erreur est survenue:\n{e}", ephemeral=True)
             return
 
         embed = self.create_player_embed(memberRankLol)

@@ -20,13 +20,13 @@ class RiotApi:
         res = requests.get(url, headers=self.headers)
 
         if res.status_code in [401, 403]:
-            raise ApiKeyError(f"Erreur de connexion à l'API Riot\n{res}")
+            raise ApiKeyError("Erreur de connexion à l'API Riot")
 
         elif res.status_code == 404:
             raise ApiNotFoundError("Impossible de trouver votre compte LoL")
 
         elif not res.ok:
-            raise ApiError(f"Erreur de connexion à l'API Riot\n{res}")
+            raise ApiError("Erreur de connexion à l'API Riot")
 
         return res
 
