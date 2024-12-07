@@ -2,6 +2,25 @@
     "624629955099230228": {
         "576122725785927690": [
             {
+                "puuid": "sQQcTlAdVMQV68QagxwE3lUAR_mruTbPmDunFWJ00D-8wuqg075uGpwQ43AoPrhLnwT35JNp0QaX6w",
+                "accountId": "IYoc1JYYM43uEwOjCLnmj1C8xSFAEoker_OVK0XM_G8kshXp_mnjJHwTEQ",
+                "riotName": "METAK RAQUE",
+                "tag": "EUW",
+                "rank": {
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
+                },
+                "division": 4,
+                "lp": 29,
+                "wins": 4,
+                "losses": 8,
+                "winrate": 33.33,
+                "lastUpdate": 1733519362,
+                "profileIconId": 5982
+            },
+            {
                 "puuid": "A_OgESTZ4vpGQuj-R6FZXWFYL1K9QluDQLvph9CxoyKEpYH_FI69IwLXRvre5n-DLErkQs7Jc54txw",
                 "accountId": "XBPKCBMEUnHu4FU8tfmhfj2KHetQ-gfJvw1MB7s0iIidpPG_nDXJw5uqWQ",
                 "riotName": "deJhinerate4",
@@ -19,25 +38,6 @@
                 "winrate": 0.0,
                 "lastUpdate": 0,
                 "profileIconId": 907
-            },
-            {
-                "puuid": "sQQcTlAdVMQV68QagxwE3lUAR_mruTbPmDunFWJ00D-8wuqg075uGpwQ43AoPrhLnwT35JNp0QaX6w",
-                "accountId": "IYoc1JYYM43uEwOjCLnmj1C8xSFAEoker_OVK0XM_G8kshXp_mnjJHwTEQ",
-                "riotName": "METAK RAQUE",
-                "tag": "EUW",
-                "rank": {
-                    "value": 4,
-                    "name": "Gold",
-                    "color": "ffd700",
-                    "emote": "<:gold:1199048043929030719>"
-                },
-                "division": 4,
-                "lp": 29,
-                "wins": 4,
-                "losses": 8,
-                "winrate": 33.33,
-                "lastUpdate": 1733419613,
-                "profileIconId": 5982
             }
         ],
         "519554418530713600": [
@@ -57,7 +57,7 @@
                 "wins": 27,
                 "losses": 24,
                 "winrate": 52.94,
-                "lastUpdate": 1733419613,
+                "lastUpdate": 1733519362,
                 "profileIconId": 5968
             }
         ],
@@ -97,7 +97,7 @@
                 "wins": 16,
                 "losses": 23,
                 "winrate": 41.03,
-                "lastUpdate": 1733419612,
+                "lastUpdate": 1733519361,
                 "profileIconId": 5634
             }
         ],
@@ -114,11 +114,11 @@
                     "emote": "<:gold:1199048043929030719>"
                 },
                 "division": 1,
-                "lp": 18,
+                "lp": 0,
                 "wins": 9,
-                "losses": 6,
-                "winrate": 60.0,
-                "lastUpdate": 1733419611,
+                "losses": 7,
+                "winrate": 56.25,
+                "lastUpdate": 1733519360,
                 "profileIconId": 3373
             },
             {
@@ -158,7 +158,7 @@
                 "wins": 47,
                 "losses": 49,
                 "winrate": 48.96,
-                "lastUpdate": 1733419612,
+                "lastUpdate": 1733519361,
                 "profileIconId": 5973
             }
         ],
@@ -200,7 +200,7 @@
                 "wins": 45,
                 "losses": 39,
                 "winrate": 53.57,
-                "lastUpdate": 1733419611,
+                "lastUpdate": 1733519359,
                 "profileIconId": 5953
             }
         ],
