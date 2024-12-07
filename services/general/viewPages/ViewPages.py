@@ -13,7 +13,8 @@ class ViewPages:
                  title: str,
                  collection: list,
                  nb_per_pages: int,
-                 item_to_str: callable,
+                 func_to_get_str_from_item: callable,
+                 description: Optional[str] = "",
                  ephemeral: bool = False,
                  buttons_and_callback: Optional[
                      list[Tuple[discord.ui.Button, Callable[[int, list[Any]], list[MemberRankLol]]]]] = None,
@@ -33,7 +34,8 @@ class ViewPages:
         self.title = title
         self.collection = collection
         self.nb_per_pages = nb_per_pages
-        self.item_to_str = item_to_str
+        self.func_to_get_str_from_item = func_to_get_str_from_item
+        self.description = description 
         self.ephemeral = ephemeral
         self.defer_was_called_on_interaction = defer_was_called_on_interaction
 
@@ -88,7 +90,7 @@ class ViewPages:
         return embed
 
     def _get_description(self) -> str:
-        return "\n".join([self.item_to_str(item) for item in self._get_page(self.current_page)])
+        return self.description + "\n".join([self.func_to_get_str_from_item(item) for item in self._get_page(self.current_page)])
 
     def _get_footer(self) -> str:
         return f"Page {self.current_page + 1}/{self._get_total_pages()}"

@@ -5,6 +5,7 @@ import discord.ui
 from discord import app_commands
 from discord.ext import commands
 
+from models.riot.PlayerGameInfoLoL import PlayerGameInfoLoL, GameStatus
 from services.general.viewPages.ViewPages import ViewPages
 from services.riot.RiotRankService import RiotRankService
 from errors.api import ApiError
@@ -120,6 +121,40 @@ class LolRank(commands.Cog):
 
         await interaction.response.send_message(f"Le compte **{riot_name}** n'est plus lié à votre compte",
                                                 ephemeral=True)
+
+    @app_commands.command(name="lol_ranked_history", description="affiche les 10 dernières parties classées")
+    @app_commands.describe(discord="compte discord du joueur, par défaut votre compte")
+    async def ranked_history(self, interaction: lib_discord.Interaction, discord: lib_discord.Member = None):
+        await interaction.response.defer(ephemeral=False, thinking=True)
+        discord_id = interaction.user.id if discord is None else discord.id
+
+        accounts = self.riotService.get_member_accounts(interaction.guild_id, discord_id)
+        if accounts is None:
+            await interaction.followup.send("Ce joueur n'est pas enregistré", ephemeral=True)
+            return
+        
+        account = accounts[0]
+
+        ranked_history = self.riotService.riot_api.get_ranked_history(account.puuid)
+        games_information = self.riotService.riot_api.get_matchs_data(ranked_history)
+        player_game_info = [PlayerGameInfoLoL(game, account.puuid) for game in games_information]
+        
+        number_of_wins = len([game for game in player_game_info if game.status == GameStatus.WIN.value])
+        number_of_games = len([game for game in player_game_info if game.status != GameStatus.REMAKE.value])
+        winrate = round((number_of_wins / number_of_games) * 100, 2) if number_of_games != 0 else 0
+        description = f"Winrate sur {number_of_games} games: {winrate}%\n\n"
+
+        view = ViewPages(
+            interaction,
+            f"Historique de {account.riotName}#{account.tag}",
+            player_game_info,
+            10,
+            lambda game: f"{game.status}: {game.championName} - {game.kills}/{game.deaths}/{game.assists} - {game.gameDuration // 60}m{game.gameDuration % 60}s",
+            description=description,
+            defer_was_called_on_interaction=True
+        )
+        
+        await view.start()
 
 
 async def setup(bot):
