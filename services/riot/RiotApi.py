@@ -3,6 +3,7 @@ import requests
 
 from data.config import riot_api_key, riot_api_url, riot_api_ddragon, riot_api_url_euw
 from errors.api import ApiError, ApiKeyError, ApiNotFoundError
+from models.riot.PlayerGameInfoLoL import PlayerGameInfoLoL
 
 
 class RiotApi:
@@ -59,3 +60,36 @@ class RiotApi:
 
     def get_profile_icon_url(self, icon_id: int) -> str:
         return f"{riot_api_ddragon}/img/profileicon/{icon_id}.png"
+    
+    def get_chapion_icon_url(self, champion_id: int) -> str:
+        return f"{riot_api_ddragon}/img/champion/{champion_id}.png"
+
+    def get_ranked_history(self, puuid: str, count: int = 10) -> Optional[list[str]]:
+        path = f"lol/match/v5/matches/by-puuid/{puuid}/ids?type=ranked&count={count}"
+
+        res = self.__make_request(self.__get_url(path, riot_api_url))
+
+        if res.status_code != 200:
+            return None
+
+        return res.json()
+
+    def get_match_data(self, match_id: str) -> Optional[PlayerGameInfoLoL]:
+        path = f"lol/match/v5/matches/{match_id}"
+
+        res = self.__make_request(self.__get_url(path, riot_api_url))
+
+        if res.status_code != 200:
+            return None
+
+        return res.json()
+
+    def get_matchs_data(self, match_ids: list[str]) -> list[PlayerGameInfoLoL]:
+        matchs = []
+
+        for match_id in match_ids:
+            match = self.get_match_data(match_id)
+            if match is not None:
+                matchs.append(match)
+
+        return matchs
