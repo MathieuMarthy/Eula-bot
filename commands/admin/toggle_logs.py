@@ -43,7 +43,7 @@ class ToggleLogs(commands.Cog):
                     self.utils.set_server_config(ctx.guild.id, "logs", "active", value=True)
                     return
 
-            await ctx.send("Veuillez mentionner le salon")
+            await ctx.send("Dans quel salon voulez-vous envoyer les logs ?\nVeuillez mentionner le salon")
 
             try:
                 msg = await self.client.wait_for(
@@ -66,7 +66,7 @@ class ToggleLogs(commands.Cog):
 
             self.utils.set_server_config(ctx.guild.id, "logs", "channel_id", value=channel.id)
             self.utils.set_server_config(ctx.guild.id, "logs", "active", value=True)
-            await ctx.send(f"Le salon des logs est maintenant **{channel.name}**")
+            await ctx.send(f"Le salon des logs est maintenant **{channel.mention}**")
 
 
     @commands.command()
