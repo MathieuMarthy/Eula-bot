@@ -37,6 +37,10 @@ class LogsMessage(commands.Cog):
         embed.set_author(name=f"Message supprimé de {message.author.name}", icon_url=message.author.avatar.url)
         embed.set_thumbnail(url=self.utils.get_img("trash"))
 
+        async for entry in message.guild.audit_logs(action=discord.AuditLogAction.message_delete, limit=3):
+            if entry.target.id == message.author.id:
+                embed.set_footer(text=f"Supprimé par {entry.user.name}", icon_url=entry.user.avatar.url)
+                break
 
         # si le message est vide, il y a seulement des fichiers
         if message.content != "":
