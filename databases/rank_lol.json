@@ -7,17 +7,17 @@
                 "riotName": "METAK RAQUE",
                 "tag": "EUW",
                 "rank": {
-                    "value": 3,
-                    "name": "Silver",
-                    "color": "c0c0c0",
-                    "emote": "<:silver:1199048053211005100>"
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
                 },
-                "division": 3,
-                "lp": 99,
-                "wins": 4,
-                "losses": 4,
-                "winrate": 50.0,
-                "lastUpdate": 1742395634,
+                "division": 4,
+                "lp": 61,
+                "wins": 16,
+                "losses": 19,
+                "winrate": 45.71,
+                "lastUpdate": 1749495423,
                 "profileIconId": 5982
             },
             {
@@ -47,17 +47,17 @@
                 "riotName": "ER4G0N",
                 "tag": "EUW",
                 "rank": {
-                    "value": 3,
-                    "name": "Silver",
-                    "color": "c0c0c0",
-                    "emote": "<:silver:1199048053211005100>"
+                    "value": 2,
+                    "name": "Bronze",
+                    "color": "cd7f32",
+                    "emote": "<:bronze:1199048058109956209>"
                 },
-                "division": 4,
-                "lp": 0,
-                "wins": 27,
-                "losses": 30,
-                "winrate": 47.37,
-                "lastUpdate": 1735647153,
+                "division": 1,
+                "lp": 1,
+                "wins": 13,
+                "losses": 8,
+                "winrate": 61.9,
+                "lastUpdate": 1749495424,
                 "profileIconId": 5968
             }
         ],
@@ -73,12 +73,12 @@
                     "color": "ffd700",
                     "emote": "<:gold:1199048043929030719>"
                 },
-                "division": 3,
-                "lp": 5,
-                "wins": 53,
-                "losses": 52,
-                "winrate": 50.48,
-                "lastUpdate": 1742395633,
+                "division": 2,
+                "lp": 12,
+                "wins": 93,
+                "losses": 93,
+                "winrate": 50.0,
+                "lastUpdate": 1749495422,
                 "profileIconId": 5634
             },
             {
@@ -113,12 +113,12 @@
                     "color": "ffd700",
                     "emote": "<:gold:1199048043929030719>"
                 },
-                "division": 3,
-                "lp": 25,
-                "wins": 18,
-                "losses": 34,
-                "winrate": 34.62,
-                "lastUpdate": 1742395632,
+                "division": 2,
+                "lp": 17,
+                "wins": 46,
+                "losses": 62,
+                "winrate": 42.59,
+                "lastUpdate": 1749495422,
                 "profileIconId": 3373
             },
             {
@@ -148,17 +148,17 @@
                 "riotName": "lafougeredesbois",
                 "tag": "EUW",
                 "rank": {
-                    "value": 4,
-                    "name": "Gold",
-                    "color": "ffd700",
-                    "emote": "<:gold:1199048043929030719>"
+                    "value": 3,
+                    "name": "Silver",
+                    "color": "c0c0c0",
+                    "emote": "<:silver:1199048053211005100>"
                 },
-                "division": 4,
-                "lp": 85,
-                "wins": 54,
-                "losses": 55,
-                "winrate": 49.54,
-                "lastUpdate": 1735647152,
+                "division": 2,
+                "lp": 39,
+                "wins": 4,
+                "losses": 2,
+                "winrate": 66.67,
+                "lastUpdate": 1749495424,
                 "profileIconId": 5973
             }
         ],
@@ -169,17 +169,17 @@
                 "riotName": "novaterasu",
                 "tag": "EUW",
                 "rank": {
-                    "value": 1,
-                    "name": "Iron",
-                    "color": "434343",
-                    "emote": "<:iron:1199048061457023007>"
+                    "value": 2,
+                    "name": "Bronze",
+                    "color": "cd7f32",
+                    "emote": "<:bronze:1199048058109956209>"
                 },
-                "division": 1,
-                "lp": 56,
-                "wins": 5,
-                "losses": 3,
+                "division": 3,
+                "lp": 16,
+                "wins": 10,
+                "losses": 6,
                 "winrate": 62.5,
-                "lastUpdate": 1735647155,
+                "lastUpdate": 1749495425,
                 "profileIconId": 6362
             }
         ],
@@ -190,17 +190,17 @@
                 "riotName": "SysY",
                 "tag": "EUW",
                 "rank": {
-                    "value": 5,
-                    "name": "Platinum",
-                    "color": "00ffff",
-                    "emote": "<:plat:1199048041706041445>"
+                    "value": 6,
+                    "name": "Emerald",
+                    "color": "69ff4f",
+                    "emote": "<:emerald:1201872170612166697>"
                 },
                 "division": 2,
-                "lp": 77,
-                "wins": 10,
-                "losses": 14,
-                "winrate": 41.67,
-                "lastUpdate": 1742395631,
+                "lp": 11,
+                "wins": 45,
+                "losses": 40,
+                "winrate": 52.94,
+                "lastUpdate": 1749495421,
                 "profileIconId": 5953
             }
         ],
@@ -232,17 +232,17 @@
                 "riotName": "SOLMaster",
                 "tag": "EUW",
                 "rank": {
-                    "value": 3,
-                    "name": "Silver",
-                    "color": "c0c0c0",
-                    "emote": "<:silver:1199048053211005100>"
+                    "value": 2,
+                    "name": "Bronze",
+                    "color": "cd7f32",
+                    "emote": "<:bronze:1199048058109956209>"
                 },
                 "division": 4,
-                "lp": 0,
-                "wins": 23,
-                "losses": 22,
-                "winrate": 51.11,
-                "lastUpdate": 1715332376,
+                "lp": 54,
+                "wins": 3,
+                "losses": 5,
+                "winrate": 37.5,
+                "lastUpdate": 1749495425,
                 "profileIconId": 932
             }
         ],
