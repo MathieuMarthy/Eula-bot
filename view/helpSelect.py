@@ -57,7 +57,6 @@ help_dict = {
             "pile_ou_face": "pile_ou_face",
             "randomizer_lol": "donne un champion, stuff et runes aléatoire",
             "image_sfw": "envoie une image d'animé aléatoire",
-            "image_nsfw": "envoie une d'animé image nsfw aléatoire",
             "remove_lol_account": "Supprime un compte LoL du serveur",
             "show_lol_rank": "Affiche les comptes LoL d'un utilisateur",
             "lol_leaderboard": "Affiche le classement des joueurs LoL du serveur"
