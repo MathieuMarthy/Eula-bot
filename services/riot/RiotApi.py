@@ -40,16 +40,16 @@ class RiotApi:
 
         return json["puuid"], json["gameName"]
 
-    def get_player_id_ppId(self, puuid: str) -> tuple[str, str]:
+    def get_player_ppId(self, puuid: str) -> tuple[str, str]:
         path = f"lol/summoner/v4/summoners/by-puuid/{puuid}"
 
         res = self.__make_request(self.__get_url(path, riot_api_url_euw))
         json = res.json()
 
-        return json["id"], json["profileIconId"]
+        return json["profileIconId"]
 
-    def get_rank_data(self, player_id: str) -> Optional[list[dict]]:
-        path = f"lol/league/v4/entries/by-summoner/{player_id}"
+    def get_rank_data(self, puuid: str) -> Optional[list[dict]]:
+        path = f"lol/league/v4/entries/by-summoner/{puuid}"
 
         res = self.__make_request(self.__get_url(path, riot_api_url_euw))
 
