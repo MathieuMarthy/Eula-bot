@@ -69,8 +69,15 @@ class LolRank(commands.Cog):
     async def leaderboard(self, interaction: lib_discord.Interaction):
         await interaction.response.defer(ephemeral=False, thinking=True)
 
-        self.riotService.update_players_data(interaction.guild_id)
-        membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
+        try:
+            self.riotService.update_players_data(interaction.guild_id)
+            membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
+        except ApiError as e:
+            await interaction.response.send_message(f"Erreur:\n{e}", ephemeral=True)
+            return
+        except Exception as e:
+            await interaction.response.send_message(f"Une erreur est survenue:\n{e}", ephemeral=True)
+            return
 
         viewPages = ViewPages(
             interaction,
@@ -132,13 +139,13 @@ class LolRank(commands.Cog):
         if accounts is None:
             await interaction.followup.send("Ce joueur n'est pas enregistré", ephemeral=True)
             return
-        
+
         account = accounts[0]
 
         ranked_history = self.riotService.riot_api.get_ranked_history(account.puuid)
         games_information = self.riotService.riot_api.get_matchs_data(ranked_history)
         player_game_info = [PlayerGameInfoLoL(game, account.puuid) for game in games_information]
-        
+
         number_of_wins = len([game for game in player_game_info if game.status == GameStatus.WIN.value])
         number_of_games = len([game for game in player_game_info if game.status != GameStatus.REMAKE.value])
         winrate = round((number_of_wins / number_of_games) * 100, 2) if number_of_games != 0 else 0
@@ -153,7 +160,7 @@ class LolRank(commands.Cog):
             description=description,
             defer_was_called_on_interaction=True
         )
-        
+
         await view.start()
 
 

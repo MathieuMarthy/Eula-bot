@@ -33,7 +33,7 @@ class ImageSfw(ImageNekos):
 
     async def command(self, ctx: commands.Context, tag: str, nb: str = "1"):
          for _ in range(nb):
-            text = self.get_image(tag, False)
+            text = self.get_image(tag)
             if "\n" in text:
                 break
 

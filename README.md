@@ -54,7 +54,6 @@ Si vous avez des propositions ou si vous trouver des bugs, contactez-moi @kojhyy
 - `pile_ou_face` : Pile ou face
 - `randomizer_lol` : Donne un champion, stuff et runes aléatoire
 - `image_sfw` : Envoie une image d'animé aléatoire
-- `image_nsfw` : Envoie une d'animé image nsfw aléatoire
 - `add_lol_account`: Enregistre un compte LoL sur le serveur
 - `remove_lol_account`: Supprime un compte LoL du serveur
 - `show_lol_rank`: Affiche les comptes LoL d'un utilisateur
