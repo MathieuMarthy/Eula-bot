@@ -47,8 +47,6 @@ class RiotApi:
         res = self.__make_request(self.__get_url(path, riot_api_url_euw))
         json = res.json()
 
-        print(json)
-
         return json["profileIconId"]
 
     def get_rank_data(self, puuid: str) -> Optional[list[dict]]:
@@ -62,7 +60,6 @@ class RiotApi:
         return res.json()
 
     def get_profile_icon_url(self, icon_id: int) -> str:
-        print(f"{riot_api_ddragon}/img/profileicon/{icon_id}.png")
         return f"{riot_api_ddragon}/img/profileicon/{icon_id}.png"
     
     def get_chapion_icon_url(self, champion_id: int) -> str:
