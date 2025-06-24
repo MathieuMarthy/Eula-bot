@@ -73,10 +73,12 @@ class LolRank(commands.Cog):
             self.riotService.update_players_data(interaction.guild_id)
             membersRank = self.riotService.get_server_leaderboard(interaction.guild_id)
         except ApiError as e:
-            await interaction.response.send_message(f"Erreur:\n{e}", ephemeral=True)
+            print(e)
+            await interaction.followup.send(f"Erreur:\n{e}", ephemeral=True)
             return
         except Exception as e:
-            await interaction.response.send_message(f"Une erreur est survenue:\n{e}", ephemeral=True)
+            print(e)
+            await interaction.followup.send(f"Une erreur est survenue:\n{e}", ephemeral=True)
             return
 
         viewPages = ViewPages(

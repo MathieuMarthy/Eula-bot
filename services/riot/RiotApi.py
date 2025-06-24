@@ -55,6 +55,7 @@ class RiotApi:
         res = self.__make_request(self.__get_url(path, riot_api_url_euw))
 
         if res.status_code != 200:
+            print(f"Riot API Error: {res.status_code} - {res.text}")
             return None
 
         return res.json()
