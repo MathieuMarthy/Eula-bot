@@ -26,22 +26,8 @@ class ImageNekos(commands.Cog):
             "cuddle",
         ]
 
-        self.nsfw_tags = [
-            "blowjob",
-            "boobs",
-            "cum",
-            "feet",
-            "hentai",
-            "spank",
-            "lesbian",
-            "lewd",
-            "pussy",
-        ]
-
-
-    def get_image(self, tag: str, nsfw: bool) -> str:
-        tags = self.nsfw_tags if (nsfw) else self.sfw_tags
-        if tag not in tags:
+    def get_image(self, tag: str) -> str:
+        if tag not in self.sfw_tags:
             return f"Le tag {tag} n'existe pas.\nListe de tags disponibles\n{self.error_msg}"
 
         # récupère le lien d'une image aléatoire

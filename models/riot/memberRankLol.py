@@ -4,11 +4,10 @@ from models.riot.rankData import Rank, RankEnum
 
 class MemberRankLol:
 
-    def __init__(self, discordId: int, puuid: str, playerId: str, riotName: str, tag: str) -> None:
+    def __init__(self, discordId: int, puuid: str, riotName: str, tag: str) -> None:
         # ids
         self.discordId = discordId
         self.puuid = puuid
-        self.playerId = playerId
         self.riotName = riotName
         self.tag = tag.upper()
 
@@ -73,7 +72,6 @@ class MemberRankLol:
     def to_json(self) -> dict:
         return {
             "puuid": self.puuid,
-            "accountId": self.playerId,
             "riotName": self.riotName,
             "tag": self.tag,
             "rank": self.rank.to_json(),
@@ -124,7 +122,7 @@ class MemberRankLol:
 
     @staticmethod
     def from_json(json: dict, discordId: int) -> "MemberRankLol":
-        member = MemberRankLol(discordId, json["puuid"], json["accountId"], json["riotName"], json.get("tag", "EUW"))
+        member = MemberRankLol(discordId, json["puuid"], json["riotName"], json.get("tag", "EUW"))
         member.rank = Rank.from_json(json.get("rank", None))
         member.division = json.get("division", 0)
         member.lp = json.get("lp", 0)

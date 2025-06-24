@@ -20,6 +20,7 @@ class RiotApi:
         res = requests.get(url, headers=self.headers)
 
         if res.status_code in [401, 403]:
+            print(f"Riot API Error: {res.status_code} - {res.text}")
             raise ApiKeyError("Erreur de connexion à l'API Riot")
 
         elif res.status_code == 404:
@@ -40,16 +41,18 @@ class RiotApi:
 
         return json["puuid"], json["gameName"]
 
-    def get_player_id_ppId(self, puuid: str) -> tuple[str, str]:
+    def get_player_ppId(self, puuid: str) -> tuple[str, str]:
         path = f"lol/summoner/v4/summoners/by-puuid/{puuid}"
 
         res = self.__make_request(self.__get_url(path, riot_api_url_euw))
         json = res.json()
 
-        return json["id"], json["profileIconId"]
+        print(json)
 
-    def get_rank_data(self, player_id: str) -> Optional[list[dict]]:
-        path = f"lol/league/v4/entries/by-summoner/{player_id}"
+        return json["profileIconId"]
+
+    def get_rank_data(self, puuid: str) -> Optional[list[dict]]:
+        path = f"lol/league/v4/entries/by-puuid/{puuid}"
 
         res = self.__make_request(self.__get_url(path, riot_api_url_euw))
 
@@ -59,6 +62,7 @@ class RiotApi:
         return res.json()
 
     def get_profile_icon_url(self, icon_id: int) -> str:
+        print(f"{riot_api_ddragon}/img/profileicon/{icon_id}.png")
         return f"{riot_api_ddragon}/img/profileicon/{icon_id}.png"
     
     def get_chapion_icon_url(self, champion_id: int) -> str:
