@@ -41,8 +41,8 @@
             "message": "Salut {user} !\nBienvenue sur le serveur de Kojhyy !\nhttps://media.discordapp.net/attachments/836943322580516904/1060984169779449916/maxresdefault.png"
         },
         "logs": {
-            "active": false,
-            "channel_id": 1020395649302274160
+            "active": true,
+            "channel_id": 1230751221862891541
         },
         "autorole": {
             "active": true,
@@ -288,6 +288,60 @@
         }
     },
     "950762513161654302": {
+        "welcome_message": {
+            "active": false,
+            "message": ""
+        },
+        "logs": {
+            "active": false,
+            "channel_id": 0
+        },
+        "autorole": {
+            "active": false,
+            "role_id": 0
+        },
+        "rolevocal": {
+            "active": false,
+            "role_id": 0
+        }
+    },
+    "1217531393383600259": {
+        "welcome_message": {
+            "active": false,
+            "message": ""
+        },
+        "logs": {
+            "active": false,
+            "channel_id": 0
+        },
+        "autorole": {
+            "active": false,
+            "role_id": 0
+        },
+        "rolevocal": {
+            "active": false,
+            "role_id": 0
+        }
+    },
+    "1301870125246447688": {
+        "welcome_message": {
+            "active": false,
+            "message": ""
+        },
+        "logs": {
+            "active": false,
+            "channel_id": 0
+        },
+        "autorole": {
+            "active": false,
+            "role_id": 0
+        },
+        "rolevocal": {
+            "active": false,
+            "role_id": 0
+        }
+    },
+    "1066516798326984704": {
         "welcome_message": {
             "active": false,
             "message": ""

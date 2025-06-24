@@ -11,6 +11,7 @@ class PlayerGameInfoLoL:
 
     def __init__(self, json: dict, puuid: str):
         self.gameDuration = json["info"]["gameDuration"]
+        self.endTime = json["info"]["gameEndTimestamp"]
 
         player_index = json["metadata"]["participants"].index(puuid)
 

@@ -156,8 +156,7 @@ class LolRank(commands.Cog):
             f"Historique de {account.riotName}#{account.tag}",
             player_game_info,
             10,
-            lambda
-                game: f"{game.status}: {game.championName} - {game.kills}/{game.deaths}/{game.assists} - {game.gameDuration // 60}m{game.gameDuration % 60}s - <t:{game.endTime // 1000}:R>",
+            lambda game: f"{game.status}: {game.championName} - {game.kills}/{game.deaths}/{game.assists} - {game.gameDuration // 60}m{game.gameDuration % 60}s - <t:{game.endTime // 1000}:R>",
             description=description,
             defer_was_called_on_interaction=True
         )
