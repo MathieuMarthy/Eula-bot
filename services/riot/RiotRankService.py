@@ -36,7 +36,7 @@ class RiotRankService:
         return self.riot_dao.get_member_accounts(guildId, discordId)
 
     def update_player_data(self, guildId: int, memberRankLol: MemberRankLol) -> Optional[MemberRankLol]:
-        rank_data = self.riot_api.get_rank_data(memberRankLol.playerId)
+        rank_data = self.riot_api.get_rank_data(memberRankLol.puuid)
 
         if rank_data is None:
             return

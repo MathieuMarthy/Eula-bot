@@ -26,5 +26,5 @@ timezone = "Europe/Paris"
 
 riot_api_url = "https://europe.api.riotgames.com"
 riot_api_url_euw = "https://euw1.api.riotgames.com"
-riot_api_ddragon = "https://ddragon.leagueoflegends.com/cdn/14.1.1"
+riot_api_ddragon = "https://ddragon.leagueoflegends.com/cdn/15.13.1"
 riot_api_key = os.environ.get("riot_api_key")
