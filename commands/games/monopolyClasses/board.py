@@ -98,6 +98,7 @@ class Board:
 
 
     def rollDice(self, player: Player, dice: int = None) -> int:
+        dice = 3
         if dice is None:
             dice = random.randint(1, 12)
 
@@ -132,12 +133,14 @@ class Board:
         owner = self.getOwner(square)
         rent = owner.getRentOfaProperty(square)
 
-        enoughMoney = player.money < rent
+        if player.money < rent:
+            owner.addMoney(player.money)
+            player.loseMoney(player.money)
+            return (False, rent)
 
-        owner.addMoney(rent)
         player.loseMoney(rent)
-
-        return (enoughMoney, rent)
+        owner.addMoney(rent)
+        return (True, rent)
 
 
     def updatePropertiesEmojisOnBoard(self):
@@ -415,6 +418,7 @@ class Board:
         elif num == 21:
             action = f"Tu gagnes le concours du plus gros mangeur, tu remportes **100 {CONST.MONEY_SYMBOL}** mais au prochain tour, tes dés sont dévisés par 2"
 
+            current_player.loseMoney(100)
             current_player.dice_multipler = 0.5
             chanceEffect = ChanceEffect(1)
             chanceEffect.function = lambda player: (
