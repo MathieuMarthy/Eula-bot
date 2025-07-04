@@ -98,7 +98,6 @@ class Board:
 
 
     def rollDice(self, player: Player, dice: int = None) -> int:
-        dice = 3
         if dice is None:
             dice = random.randint(1, 12)
 
