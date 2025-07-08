@@ -114,10 +114,11 @@ class LogsMember(commands.Cog):
 
 
         # création de la base de l'embed
+        avatar_url = before.avatar.url if before.avatar is not None else before.default_avatar.url
         embed = discord.Embed(
             color=self.utils.embed_color()
         )
-        embed.set_author(name=f"Un membre a été modifié", icon_url=before.avatar.url)
+        embed.set_author(name=f"Un membre a été modifié", icon_url=avatar_url)
         embed.set_thumbnail(url=self.utils.get_img("edit"))
 
         embed.add_field(name="Membre", value=before.mention, inline=True)
