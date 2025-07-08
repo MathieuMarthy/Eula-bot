@@ -422,7 +422,7 @@ class BoardView(View):
         total = self.board.sellProperties(player, properties)
 
         await self.deletePopup()
-        await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{String_tools.singular_or_plural(len(properties))} pour **{total} {CONST.MONEY_SYMBOL}** !")
+        await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{'s' if len(properties) > 1 else ''} pour **{total} {CONST.MONEY_SYMBOL}** !")
         await async_sleep(3)
         await self.showAction("...")
 
