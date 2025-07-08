@@ -209,7 +209,7 @@ class Board:
         try:
             self.board[new_index[0]][new_index[1]] = self.getEmojiOnSquare(player.position)
         except Exception as e:
-            logging.error(f"player.position: {player.position}, new_index: {new_index}, \nboard: {self.board}")
+            logging.error(f"old_position: {old_position} old index: {old_index} new position: {player.position} new index: {new_index}")
             logging.error(f"Error while moving player {player.discord.display_name} on board: {e}")
 
 
