@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from typing import Tuple
 
@@ -205,7 +206,12 @@ class Board:
         self.board[old_index[0]][old_index[1]] = self.getEmojiOnSquare(old_position)
 
         new_index = self.getIndexInBoard(player.position)
-        self.board[new_index[0]][new_index[1]] = self.getEmojiOnSquare(player.position)
+        try:
+            self.board[new_index[0]][new_index[1]] = self.getEmojiOnSquare(player.position)
+        except Exception as e:
+            logging.error(f"player.position: {player.position}, new_index: {new_index}, \nboard: {self.board}")
+            logging.error(f"Error while moving player {player.discord.display_name} on board: {e}")
+
 
 
     def currentPlayerWin(self) -> bool:
