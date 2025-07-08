@@ -1,5 +1,6 @@
 import os
 import datetime
+import logging
 
 import discord
 from discord.ext import commands, tasks
@@ -8,6 +9,13 @@ import data.config as config
 from functions import Utils
 from dao.pollDao import pollDao
 from dao.reminderDao import ReminderDao
+
+logging.basicConfig(
+    filename=os.path.join(config.path, "bot.log"),
+    level=logging.ERROR,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 # --- Setup ---
 default_intents = discord.Intents.default().all()
