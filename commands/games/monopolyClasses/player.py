@@ -63,11 +63,11 @@ class Player:
 
 
     def addMoney(self, amount: int):
-        self.money += amount
+        self.money = round(self.money + amount, 2)
 
 
     def loseMoney(self, amount: int):
-        self.money -= amount
+        self.money = round(self.money - amount, 2)
 
 
     def multiplyMoney(self, pourcentage: int) -> int:
@@ -80,8 +80,8 @@ class Player:
             int: the money earned or lost
         """
         old = self.money
-        self.money += round(self.money * pourcentage / 100)
-        return round(self.money - old)
+        self.money += round(self.money * pourcentage / 100, 2)
+        return round(self.money - old, 2)
 
 
     def addChanceEffect(self, effect: ChanceEffect):
