@@ -192,7 +192,7 @@ class BoardView(View):
         if square.type == SquareType.PROPERTY or square.type == SquareType.RAILROAD:
 
             owner = self.board.getOwner(square)
-            if owner != None:
+            if owner != None and owner != player:
                 # object
                 if player.immunity > 0:
                     await self.showAction("Vous êtes immunisé !")
@@ -211,6 +211,11 @@ class BoardView(View):
                         await self.showAction(f"Vous avez payé **{square_rent} {CONST.MONEY_SYMBOL}** de loyer à {owner.discord.display_name} !")
                         await async_sleep(2)
                         await self.showAction("...")
+
+            elif owner != None and owner == player:
+                await self.showAction("Vous êtes chez vous")
+                await async_sleep(2)
+                await self.showAction("...")
 
             elif player.money < square.price:
                 await self.showAction(f"Vous n'avez pas assez d'argent pour acheter **{square.name}** !")
@@ -422,7 +427,7 @@ class BoardView(View):
         total = self.board.sellProperties(player, properties)
 
         await self.deletePopup()
-        await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{String_tools.singular_or_plural(len(properties))} pour **{total} {CONST.MONEY_SYMBOL}** !")
+        await self.showAction(f"Vous avez vendu **{len(properties)}** propriété{'s' if len(properties) > 1 else ''} pour **{total} {CONST.MONEY_SYMBOL}** !")
         await async_sleep(3)
         await self.showAction("...")
 
