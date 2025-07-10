@@ -53,7 +53,7 @@ class Monopoly(commands.Cog):
         await self.command(ctx)
 
 
-    @app_commands.command(name="monopoly", description="monopoly jusqu'à 4 joueurs")
+    @app_commands.command(name="monopoly", description="monopoly jusqu'à 10 joueurs")
     async def monopolySlash(self, interaction: discord.Interaction):
         ctx = await commands.Context.from_interaction(interaction)
         await self.command(ctx)
