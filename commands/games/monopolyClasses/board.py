@@ -252,6 +252,7 @@ class Board:
 
     def getIndexInBoard(self, position: int) -> int:
         index = [12, 11]
+        position = round(position)
 
         if 1 <= position <= 9:
             index = [12, 11 - position]
