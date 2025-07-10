@@ -104,7 +104,7 @@ class Board:
 
         # == chance effects & objects ==
         if player.dice_multipler is not None:
-            dice = dice // player.dice_multipler
+            dice = dice * player.dice_multipler
             player.dice_multipler = None
         
         if player.doubleDice:
