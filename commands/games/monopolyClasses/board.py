@@ -111,6 +111,7 @@ class Board:
             dice *= 2
             player.doubleDice = False
 
+        dice = round(dice)
         currentPlayer = self.getCurrentPlayer()
         old_postion = currentPlayer.position
 
