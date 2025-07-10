@@ -330,28 +330,27 @@ class Board:
         elif num == 6:
             action = "Un investisseur chinois 😑 investit dans tes propriétés. Le prix de tes propriétés augmente de 10 %."
 
-            for property in current_player.properties:
-                property.upgrade(0.1)
+            current_player.upgradeProperties()
 
         elif num == 7:
-            action = f"Tu touches l'héritage de tonton jean-ma, gagne **200 {CONST.MONEY_SYMBOL}**."
-            current_player.addMoney(200)
+            action = f"Tu touches l'héritage de tonton jean-ma, gagne **150 {CONST.MONEY_SYMBOL}**."
+            current_player.addMoney(150)
 
         elif num == 8:
-            action = f"\"La terre, elle n'est pas verte, elle est bleue\" Jojo n'aime pas les écolos et te casse la gueule, tu dois payer les frais d'hopitaux  **-200 {CONST.MONEY_SYMBOL}.**"
-            current_player.loseMoney(200)
+            action = f"\"La terre, elle n'est pas verte, elle est bleue\" Jojo n'aime pas les écolos et te casse la gueule, tu dois payer les frais d'hopitaux  **-175 {CONST.MONEY_SYMBOL}.**"
+            current_player.loseMoney(175)
 
         elif num == 9:
-            action = f"Tu as commencé à jouer à League of Legends, tu achètes trop de skins ... **-300 {CONST.MONEY_SYMBOL}**."
-            current_player.loseMoney(300)
+            action = f"Tu as commencé à jouer à League of Legends, tu achètes trop de skins ... **-250 {CONST.MONEY_SYMBOL}**."
+            current_player.loseMoney(250)
 
         elif num == 10:
             action = f"Tu as laissé ta femme conduire ta voiture, elle a eu un accident, tu dois payer **300 {CONST.MONEY_SYMBOL}** de réparation."
             current_player.loseMoney(300)
 
         elif num == 11:
-            action = f"La police a regardé ton historique, tu dois payer **200 {CONST.MONEY_SYMBOL}** d'amende et tu **vas en prison**."
-            current_player.loseMoney(200)
+            action = f"La police a regardé ton historique, tu dois payer **175 {CONST.MONEY_SYMBOL}** d'amende et tu **vas en prison**."
+            current_player.loseMoney(175)
             self.playerGoToJail(current_player)
 
         elif num == 12:

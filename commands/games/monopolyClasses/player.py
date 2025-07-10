@@ -200,7 +200,7 @@ class Player:
             if self.hasAllPropertiesInColor(property.color):
                 return property.rent * CONST.MULTIPLIER_COLOR_GROUP * property.multiplier
 
-            return property.rent * property.multiplier
+            return round(property.rent * property.multiplier, 2)
 
         elif square.type == SquareType.RAILROAD:
             return CONST.RENT_RAILROAD * len([property for property in self.properties if property.type == SquareType.RAILROAD])
@@ -273,6 +273,7 @@ class Player:
         """Upgrade all the properties"""
 
         for property in self._getProperties():
-            property.upgrade()
+            if isinstance(property, Property):
+                property.upgrade()
 
         self.loseMoney(self.getPriceForUpgrade())
