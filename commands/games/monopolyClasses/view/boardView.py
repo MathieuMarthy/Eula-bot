@@ -256,6 +256,10 @@ class BoardView(View):
             view = ObjectsView(player, self.board.objects, self.buyObjectFunc, self.noFunc, True)
             self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
 
+        elif square.type == SquareType.START:
+            player.addMoney(200)
+            await self.showAction(f"Vous êtes sur la case départ. +200 {CONST.MONEY_SYMBOL}")
+            await async_sleep(2)
 
         if player.money < 0:
             await self.showAction(f"Vous n'avez plus d'argent !\n**Vous avez perdu !**")
