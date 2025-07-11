@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from typing import Tuple
+from typing import Optional, Tuple
 
 from discord import Member
 
@@ -98,9 +98,15 @@ class Board:
         self.privateJokes = privatesJokes
 
 
-    def rollDice(self, player: Player, dice: int = None) -> int:
+    def rollDice(self, player: Player, dice: int = None) -> Tuple[int, bool]:
+        double = False
+
         if dice is None:
-            dice = random.randint(1, 12)
+            dice1 = random.randint(1, 6)
+            dice2 = random.randint(1, 6)
+
+            double = dice1 == dice2
+            dice = dice1 + dice2
 
         # == chance effects & objects ==
         if player.dice_multipler is not None:
@@ -118,7 +124,7 @@ class Board:
         currentPlayer.addPosition(dice)
         self.movePlayerOnBoard(currentPlayer, old_postion)
 
-        return dice
+        return (dice, double)
 
 
     def playerPayRent(self, player: Player, square: Property) -> Tuple[bool, int]:
