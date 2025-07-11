@@ -430,7 +430,7 @@ class Board:
         elif num == 21:
             action = f"Tu gagnes le concours du plus gros mangeur, tu remportes **100 {CONST.MONEY_SYMBOL}** mais au prochain tour, tes dés sont dévisés par 2"
 
-            current_player.loseMoney(100)
+            current_player.addMoney(100)
             current_player.dice_multipler = 0.5
             chanceEffect = ChanceEffect(1)
             chanceEffect.function = lambda player: (
