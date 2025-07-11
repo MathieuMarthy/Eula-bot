@@ -65,7 +65,7 @@ class BoardView(View):
             await self.display_dice(self.board.rollDice(player))
 
 
-    async def display_dice(self, dice: int):
+    async def display_dice(self, dice: int, double: bool):
         player = self.board.getCurrentPlayer()
 
         # custom dice popup
@@ -74,7 +74,10 @@ class BoardView(View):
             self.board.rollDice(player, dice)
 
         square = self.board.getSquareUnderPlayer(player)
-        await self.showAction(f"<a:roll_dice:1162800533548056707> Vous avez obtenu {dice} !\n \
+
+        if double:
+            player.addMoney(CONST.MONEY_DICE_DOUBLE)
+        await self.showAction(f"<a:roll_dice:1162800533548056707> Vous avez obtenu {dice} {f'avec un double (+{CONST.MONEY_DICE_DOUBLE}$)' if double else ''} !\n \
             Vous êtes sur la case {square.name}")
         await async_sleep(3)
 

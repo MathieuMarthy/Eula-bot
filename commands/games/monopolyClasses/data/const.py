@@ -12,3 +12,4 @@ class CONST:
     JAIL_FEE = 50
     NB_TURNS_IN_JAIL = 2
     MONEY_SYMBOL = "$"
+    MONEY_DICE_DOUBLE = 100
