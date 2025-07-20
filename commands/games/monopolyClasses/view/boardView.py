@@ -62,7 +62,8 @@ class BoardView(View):
             view = CustomDiceView(player, self.display_dice)
             self.popup_msg = await self.game_msg.channel.send(embed=embed, view=view)
         else:
-            await self.display_dice(self.board.rollDice(player))
+            dice, double = self.board.rollDice(player)
+            await self.display_dice(dice, double)
 
 
     async def display_dice(self, dice: int, double: bool):
