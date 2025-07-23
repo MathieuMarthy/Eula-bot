@@ -1,4 +1,6 @@
+import logging
 from typing import Optional
+from errors.api import ApiError
 from services.riot.RiotApi import RiotApi
 from dao.rankLolDao import RankLolDao
 from models.riot.memberRankLol import MemberRankLol
@@ -51,7 +53,12 @@ class RiotRankService:
         members_to_update = self.get_server_leaderboard(guildId) if players is None else players
 
         for player in members_to_update:
-            member = self.update_player_data(guildId, player)
+            try:
+                member = self.update_player_data(guildId, player)
+            except ApiError as e:
+                logging.error(f"Erreur lors de la mise à jour des données du joueur {player.riotName}#{player.tag}: {e}")
+                continue
+            
             if member is not None:
                 members.append(member)
 
