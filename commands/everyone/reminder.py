@@ -25,6 +25,7 @@ class Reminder(commands.Cog):
         else:
             try:
                 date = datetime.strptime(date, "%d/%m/%Y %H:%M")
+                date = date.replace(tzinfo=config.my_timezone)
             except ValueError:
                 await interaction.response.send_message("Format de date invalide\nformat: dd/mm/yyyy hh:mm", ephemeral=True)
                 return
