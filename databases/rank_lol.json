@@ -6,17 +6,17 @@
                 "riotName": "METAK RAQUE",
                 "tag": "EUW",
                 "rank": {
-                    "value": 4,
-                    "name": "Gold",
-                    "color": "ffd700",
-                    "emote": "<:gold:1199048043929030719>"
+                    "value": 5,
+                    "name": "Platinum",
+                    "color": "00ffff",
+                    "emote": "<:plat:1199048041706041445>"
                 },
-                "division": 1,
-                "lp": 77,
-                "wins": 27,
+                "division": 4,
+                "lp": 7,
+                "wins": 28,
                 "losses": 22,
-                "winrate": 55.1,
-                "lastUpdate": 1753290545,
+                "winrate": 56.0,
+                "lastUpdate": 1757095133,
                 "profileIconId": 5982
             },
             {
@@ -44,17 +44,17 @@
                 "riotName": "ER4G0N",
                 "tag": "EUW",
                 "rank": {
-                    "value": 3,
-                    "name": "Silver",
-                    "color": "c0c0c0",
-                    "emote": "<:silver:1199048053211005100>"
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
                 },
-                "division": 2,
-                "lp": 20,
-                "wins": 26,
-                "losses": 19,
-                "winrate": 57.78,
-                "lastUpdate": 1753290546,
+                "division": 3,
+                "lp": 1,
+                "wins": 45,
+                "losses": 32,
+                "winrate": 58.44,
+                "lastUpdate": 1757095134,
                 "profileIconId": 5968
             }
         ],
@@ -64,17 +64,17 @@
                 "riotName": "Jostophe13",
                 "tag": "EUW",
                 "rank": {
-                    "value": 4,
-                    "name": "Gold",
-                    "color": "ffd700",
-                    "emote": "<:gold:1199048043929030719>"
+                    "value": 5,
+                    "name": "Platinum",
+                    "color": "00ffff",
+                    "emote": "<:plat:1199048041706041445>"
                 },
-                "division": 2,
-                "lp": 41,
-                "wins": 116,
-                "losses": 113,
-                "winrate": 50.66,
-                "lastUpdate": 1753290545,
+                "division": 4,
+                "lp": 0,
+                "wins": 138,
+                "losses": 129,
+                "winrate": 51.69,
+                "lastUpdate": 1757095134,
                 "profileIconId": 5634
             },
             {
@@ -98,6 +98,24 @@
         ],
         "420282154409394176": [
             {
+                "puuid": "lHvCWcoSiixc_EHt-V0ZVhO5iDAk0eW1_Thq0qZS-rW3706B46FbR0wJ95OiVtlLCMdNo860SGmoQw",
+                "riotName": "Godofwoods",
+                "tag": "AYA",
+                "rank": {
+                    "value": 4,
+                    "name": "Gold",
+                    "color": "ffd700",
+                    "emote": "<:gold:1199048043929030719>"
+                },
+                "division": 2,
+                "lp": 76,
+                "wins": 70,
+                "losses": 84,
+                "winrate": 45.45,
+                "lastUpdate": 1757095133,
+                "profileIconId": 6239
+            },
+            {
                 "puuid": "NAIUqHwPb2xtlpDQkZUmmXnAO5HaPuvq-yBCm5yAC4kEmpeVd5gDYZu-CYJLnmL4lREPLvtP-dD2SA",
                 "riotName": "Vzfir",
                 "tag": "EUW",
@@ -108,11 +126,11 @@
                     "emote": "<:silver:1199048053211005100>"
                 },
                 "division": 3,
-                "lp": 45,
-                "wins": 11,
-                "losses": 7,
-                "winrate": 61.11,
-                "lastUpdate": 1753290546,
+                "lp": 59,
+                "wins": 12,
+                "losses": 9,
+                "winrate": 57.14,
+                "lastUpdate": 1757095135,
                 "profileIconId": 3593
             }
         ],
@@ -128,11 +146,11 @@
                     "emote": "<:silver:1199048053211005100>"
                 },
                 "division": 1,
-                "lp": 21,
-                "wins": 9,
+                "lp": 59,
+                "wins": 10,
                 "losses": 11,
-                "winrate": 45.0,
-                "lastUpdate": 1753290546,
+                "winrate": 47.62,
+                "lastUpdate": 1757095135,
                 "profileIconId": 5973
             }
         ],
@@ -148,11 +166,11 @@
                     "emote": "<:bronze:1199048058109956209>"
                 },
                 "division": 2,
-                "lp": 55,
-                "wins": 19,
-                "losses": 23,
-                "winrate": 45.24,
-                "lastUpdate": 1753290547,
+                "lp": 16,
+                "wins": 20,
+                "losses": 30,
+                "winrate": 40.0,
+                "lastUpdate": 1757095136,
                 "profileIconId": 6362
             }
         ],
@@ -180,17 +198,17 @@
                 "riotName": "Lyping",
                 "tag": "EUW",
                 "rank": {
-                    "value": 0,
-                    "name": "Unranked",
-                    "color": "000000",
-                    "emote": "<:unranked:1199048063692578876>"
+                    "value": 5,
+                    "name": "Platinum",
+                    "color": "00ffff",
+                    "emote": "<:plat:1199048041706041445>"
                 },
-                "division": 0,
-                "lp": 0,
-                "wins": 0,
-                "losses": 0,
-                "winrate": 0.0,
-                "lastUpdate": 0,
+                "division": 4,
+                "lp": 39,
+                "wins": 9,
+                "losses": 8,
+                "winrate": 52.94,
+                "lastUpdate": 1757095133,
                 "profileIconId": 18
             }
         ],
@@ -231,7 +249,7 @@
                 "wins": 2,
                 "losses": 3,
                 "winrate": 40.0,
-                "lastUpdate": 1753290546,
+                "lastUpdate": 1757095135,
                 "profileIconId": 6331
             }
         ],
