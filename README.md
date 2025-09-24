@@ -1,64 +1,63 @@
-<!-- Image -->
-<p align="center">
-  <img src="https://media.discordapp.net/attachments/836943322580516904/1060614756458840134/1159087.png?ex=67528f37&is=67513db7&hm=a9e65ef465d752d2daa35f187bd7c1feed588acc3b97517df38d4e313aa26e03&=&quality=lossless" alt="Eula Bot" height="300">
-</p>
-<h1 align="center">Eula Bot</h1>
-<h3 align="center">Fun, Moderation et Utilitaires</h3>
-<p align="center">
-    <a href="https://discord.com/api/oauth2/authorize?client_id=914226393565499412&permissions=8&scope=applications.commands%20bot">
-        <img src="https://media.discordapp.net/attachments/836943322580516904/1079754592356667422/inviterlebot.png?ex=6752f9d3&is=6751a853&hm=f1f1bac9df7e572b03635c6f40a842dfd9959d5a44d4a7b9ebee7615e9fe6baa&=&quality=lossless" alt="inviter le bot" height="40">
-    </a>
-    <p align="center">version: 5.3.0</p>
-</p>
+<center>
+<img src="./documentation/decoration.png" alt="" height="200" />
+
+<h1>Eula Bot</h1>
+<h3>Fun, Moderation and Utilities</h3>
+
+<img src="./documentation/invite-Eula.png" alt="invite Eula-bot" width="150">
+</center>
 
 
 
-## Présentation
-Eula est un bot Discord qui a pour but de vous aider dans votre serveur. Il est capable de modérer votre serveur, de vous amuser et de vous aider dans votre quotidien.
+## Presentation
+Eula is a Discord bot designed to help you with your server. It can moderate your server, entertain you, and assist you in your daily tasks.
 
-Si vous avez des propositions ou si vous trouver des bugs, contactez-moi @kojhyy.
+If you have suggestions or find bugs, contact me @kojhyy.
 
-## Commandes
+## Commands
 
 ### 👑 Admin
-- `send` : Envoie un message dans un salon.
-- `send_embed` : Envoie un embed dans un salon.
-- `help_send_embed` : Envoie un message d'aide pour la commande send_embed.
-- `clear` : Supprime un nombre de messages ou jusqu'à un message donné.
-- `nuke` : Supprime un salon et le recrée avec les mêmes paramètres.
-- `reaction` : Met des réactions sur un message.
-- `timeout` : Timeout une personne pendant une durée.
-- `sondage`: Crée un sondage avec jusqu'à 5 choix.
-- `toggle_autorole` : Active ou désactive l'assignation d'un rôle quand on rentre dans le serveur.
-- `toggle_logs` : Active ou désactive les logs.
-- `toggle_logs_voice`: Active ou désactive l'assignation d'un rôle quand un utilisateur rejoint un salon vocal.
-- `toggle_welcome_message` : Active ou désactive le message de bienvenue en DM.
+- `send`: Sends a message to a channel.
+- `send_embed`: Sends an embed to a channel.
+- `help_send_embed`: Sends a help message for the send_embed command.
+- `clear`: Deletes a number of messages or up to a given message.
+- `nuke`: Deletes a channel and recreates it with the same settings.
+- `reaction`: Adds reactions to a message.
+- `timeout`: Times out a person for a duration.
+- `sondage`: Creates a poll with up to 5 choices.
+- `toggle_autorole`: Enables or disables role assignment when joining the server.
+- `toggle_logs`: Enables or disables logs.
+- `toggle_logs_voice`: Enables or disables role assignment when a user joins a voice channel.
+- `toggle_welcome_message`: Enables or disables the welcome message in DM.
 
 ### 💬 Chat
-- `bonjour` : Dit bonjour à quelqu'un !
-- `mord` : Mords quelqu'un !
-- `bisous` : Fait un bisous à quelqu'un !
-- `tapoter` : *pat pat*
-- `calin` : 🤗
-- `baka` : Ba...baka !
+- `bonjour`: Say hello to someone!
+- `mord`: Bite someone!
+- `bisous`: Give someone a kiss!
+- `tapoter`: *pat pat*
+- `calin`: 🤗
+- `baka`: Ba...baka!
 
-### 🔧 Utilitaire
-- `pp` : Envoie la pp d'une personne
-- `bannière` : Envoie la bannière d'une personne
-- `ping` : Ping le bot
-- `choisis` : Choisis entre plusieurs propositions (séparées par des virgules)
+### 🔧 Utility
+- `pp`: Sends someone's profile picture
+- `bannière`: Sends someone's banner
+- `ping`: Ping the bot
+- `choisis`: Choose between multiple options (separated by commas)
+- `help`: Interactive help menu
+- `rappel`: Create a reminder (format: dd/mm/yyyy hh:mm)
 
 ### 🌍 General
-- `reddit` : Envoie des images d'un subreddit
-- `8ball` : La boule magique répond à vos questions
-- `pile_ou_face` : Pile ou face
-- `randomizer_lol` : Donne un champion, stuff et runes aléatoire
-- `image_sfw` : Envoie une image d'animé aléatoire
-- `add_lol_account`: Enregistre un compte LoL sur le serveur
-- `remove_lol_account`: Supprime un compte LoL du serveur
-- `show_lol_rank`: Affiche les comptes LoL d'un utilisateur
-- `lol_leaderboard`: Affiche le classement des joueurs LoL du serveur
+- `reddit`: Sends images from a subreddit
+- `8ball`: The magic 8-ball answers your questions
+- `pile_ou_face`: Heads or tails
+- `randomizer_lol`: Gives a random champion, items and runes
+- `image_sfw`: Sends a random anime image
+- `add_lol_account`: Registers a LoL account on the server
+- `remove_lol_account`: Removes a LoL account from the server
+- `show_lol_rank`: Shows a user's LoL accounts
+- `lol_leaderboard`: Shows the LoL player leaderboard for the server
+- `lol_ranked_history`: Shows the last 10 ranked games
 
-### 🎮 Jeux
-- `10fastfingers` : Multijoueur : dans ce jeu, vous devez taper le plus de mots possible
-- `monopoly`: Multijoueur : jeu de monopoly avec des règles personnalisées, objets, ...
+### 🎮 Games
+- `10_fast_fingers`: Multiplayer: in this game, you must type as many words as possible
+- `monopoly`: Multiplayer: monopoly game with custom rules, items, ...
