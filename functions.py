@@ -1,7 +1,10 @@
 import json
+import logging
 import os
 import asyncio
 from datetime import datetime
+from json import JSONDecodeError
+
 from dateutil.relativedelta import relativedelta
 import pytz
 
@@ -26,6 +29,7 @@ def singular_or_plural(number: int) -> str:
 
 class Utils:
     __instance = None
+    server_config: dict
 
     @staticmethod
     def get_instance(client):
@@ -36,8 +40,8 @@ class Utils:
     def __init__(self, client: discord.Client):
         self.client = client
         self._color = 0x989eec
-        self.server_config = self.load_server_config()
         self.pollDao = pollDao.get_instance()
+        self.load_server_config()
 
     def invisible_string(self) -> str:
         return " "
@@ -76,13 +80,17 @@ class Utils:
             return config
 
     def load_server_config(self):
-        return json.load(open(os.path.join(project_path, "databases", "server_config.json"), "r", encoding="utf-8"))
+        try:
+            self.server_config = json.load(open(os.path.join(project_path, "databases", "server_config.json"), "r", encoding="utf-8"))
+        except (FileNotFoundError, JSONDecodeError) as e:
+            logging.error(f"Error loading server config: {e}\ncreating a new file...")
+            self.server_config = {}
+            self._save_server_config()
 
     def _save_server_config(self):
         json.dump(self.server_config,
                   open(os.path.join(self.bot_path(), "databases", "server_config.json"), "w", encoding="utf-8"),
                   indent=4)
-        self.server_config = self.load_server_config()
 
     def set_server_config(self, guild_id: int, *keys: str, value):
         config = self.server_config[str(guild_id)]
