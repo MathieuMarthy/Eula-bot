@@ -43,6 +43,8 @@ If you have suggestions or find bugs, contact me @kojhyy.
 - `bannière`: Sends someone's banner
 - `ping`: Ping the bot
 - `choisis`: Choose between multiple options (separated by commas)
+- `help`: Interactive help menu
+- `rappel`: Create a reminder (format: dd/mm/yyyy hh:mm)
 
 ### 🌍 General
 - `reddit`: Sends images from a subreddit
@@ -54,7 +56,8 @@ If you have suggestions or find bugs, contact me @kojhyy.
 - `remove_lol_account`: Removes a LoL account from the server
 - `show_lol_rank`: Shows a user's LoL accounts
 - `lol_leaderboard`: Shows the LoL player leaderboard for the server
+- `lol_ranked_history`: Shows the last 10 ranked games
 
 ### 🎮 Games
-- `10fastfingers`: Multiplayer: in this game, you must type as many words as possible
+- `10_fast_fingers`: Multiplayer: in this game, you must type as many words as possible
 - `monopoly`: Multiplayer: monopoly game with custom rules, items, ...
