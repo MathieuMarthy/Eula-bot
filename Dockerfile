@@ -20,8 +20,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all source code into the container
 COPY . .
 
-# Create non-root user for security
-RUN useradd -m -u 1000 botuser && chown -R botuser:botuser /app
+# Create non-root user for security and set up permissions
+RUN useradd -m -u 1000 botuser && \
+    mkdir -p /app/logs && \
+    chown -R botuser:botuser /app && \
+    chmod -R 755 /app/logs
 USER botuser
 
 # Default environment variables
