@@ -1,5 +1,7 @@
+import logging
 import os
 import json
+from json import JSONDecodeError
 
 from data.config import path
 from models.reminderModel import ReminderModel
@@ -21,7 +23,8 @@ class ReminderDao:
     def load(self):
         try:
             self.reminder = json.load(open(self.path, "r", encoding="utf-8"))
-        except FileNotFoundError:
+        except (FileNotFoundError, JSONDecodeError) as e:
+            logging.error(f"Error loading reminder database: {e}\ncreating a new file...")
             self.reminder = {}
             self.save()
 
