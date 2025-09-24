@@ -11,7 +11,7 @@ from dao.pollDao import pollDao
 from dao.reminderDao import ReminderDao
 
 logging.basicConfig(
-    filename=os.path.join(config.path, "bot.log"),
+    filename=os.path.join(config.path, "logs/bot.log"),
     level=logging.ERROR,
     format="%(asctime)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
