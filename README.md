@@ -1,11 +1,14 @@
-<center>
-<img src="./documentation/decoration.png" alt="" height="200" />
 
-<h1>Eula Bot</h1>
-<h3>Fun, Moderation and Utilities</h3>
+<p align="center">
+    <img src="./documentation/decoration.png" alt="" height="200" />
+</p>
 
-<img src="./documentation/invite-Eula.png" alt="invite Eula-bot" width="150">
-</center>
+<h1 align="center">Eula Bot</h1>
+<h3 align="center">Fun, Moderation and Utilities</h3>
+
+<p  align="center">
+    <img src="./documentation/invite-Eula.png" alt="invite Eula-bot" width="150">
+</p>
 
 
 
