@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from json import JSONDecodeError
 from typing import Optional
@@ -25,8 +26,10 @@ class RankLolDao:
     def load(self):
         try:
             data = json.load(open(self.path, "r", encoding="utf-8"))
-        except JSONDecodeError:
+        except (FileNotFoundError, JSONDecodeError) as e:
+            logging.error(f"Error loading rank database: {e}\ncreating a new file...")
             data = {}
+            self.save()
 
         for guildId, members in data.items():
             guildId = int(guildId)

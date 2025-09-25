@@ -1,5 +1,7 @@
 import json
+import logging
 import os
+from json import JSONDecodeError
 
 from models.memberPoll import MemberPoll
 
@@ -16,13 +18,18 @@ class pollDao:
         return pollDao.__instance
 
     def __init__(self) -> None:
-        self.poll_file = json.load(open(os.path.join(project_path, "databases", "poll.json"), "r", encoding="utf-8"))
+        try:
+            self.poll_file = json.load(open(os.path.join(project_path, "databases", "poll.json"), "r", encoding="utf-8"))
+        except FileNotFoundError:
+            self.poll_file = {}
+            self.save_poll_file()
 
 
     def save_poll_file(self):
         try:
             json.dump(self.poll_file, open(os.path.join(project_path, "databases", "poll.json"), "w", encoding="utf-8"), indent=4)
-        except FileNotFoundError:
+        except (FileNotFoundError, JSONDecodeError) as e:
+            logging.error(f"Error loading poll database: {e}\ncreating a new file...")
             self.poll_file = {}
             json.dump(self.poll_file, open(os.path.join(project_path, "databases", "poll.json"), "x", encoding="utf-8"), indent=4)
 
