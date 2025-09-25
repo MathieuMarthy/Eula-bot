@@ -24,7 +24,9 @@ COPY . .
 RUN useradd -m -u 1000 botuser && \
     mkdir -p /app/logs && \
     chown -R botuser:botuser /app && \
-    chmod -R 755 /app/logs
+    chmod -R 755 /app/logs && \
+    mkdir -p /app/tmp && \
+    chmod -R 777 /app/tmp
 USER botuser
 
 # Default environment variables
