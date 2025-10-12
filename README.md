@@ -7,7 +7,9 @@
 <h3 align="center">Fun, Moderation and Utilities</h3>
 
 <p  align="center">
-    <img src="./documentation/invite-Eula.png" alt="invite Eula-bot" width="150">
+    <a href="https://discord.com/api/oauth2/authorize?client_id=914226393565499412&permissions=8&scope=applications.commands%20bot">
+        <img src="./documentation/invite-Eula.png" alt="invite Eula-bot" width="150">
+    </a>
 </p>
 
 
