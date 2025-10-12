@@ -133,3 +133,7 @@ class MemberRankLol:
         member.lastGame = json.get("lastGame", 0)
         member.profileIconId = json.get("profileIconId", 0)
         return member
+
+
+    def getName(self) -> str:
+        return f"{self.riotName}#{self.tag}"
