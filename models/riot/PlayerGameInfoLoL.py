@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class GameStatus(Enum):
-    WIN = "WIN"
-    LOSE = "LOSE"
-    REMAKE = "REMAKE"
+    WIN = "<:up:1427005238455566458>"
+    LOSE = "<:down:1427005236848885891>"
+    REMAKE = "🔄️"
     
 
 class PlayerGameInfoLoL:
