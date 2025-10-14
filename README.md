@@ -11,15 +11,57 @@
         <img src="./documentation/invite-Eula.png" alt="invite Eula-bot" width="150">
     </a>
 </p>
-
-
+<br>
 
 ## Presentation
 Eula is a Discord bot designed to help you with your server. It can moderate your server, entertain you, and assist you in your daily tasks.
 
 If you have suggestions or find bugs, contact me @kojhyy.
 
-## Commands
+<br>
+
+## Installation
+
+### Use the docker image
+
+You can use the docker image attached to this repo
+
+Pull the image
+```bash
+docker pull ghcr.io/mathieumarthy/eula-bot:latest
+```
+
+The first time you run the container, you need to set the environment variables
+```bash
+docker run -d --name eula-bot \
+  -e token="YOUR_DISCORD_BOT_TOKEN" \
+  -e reddit_id="YOUR_REDDIT_APP_ID" \
+  -e reddit_secret="YOUR_REDDIT_APP_SECRET" \
+  -e riot_api_key="YOUR_RIOT_API_KEY" \
+  ghcr.io/mathieumarthy/eula-bot:latest
+```
+
+### Or clone the repo and setup python
+
+Clone the repo
+```bash
+git clone https://github.com/MathieuMarthy/Eula-bot.git
+```
+
+Create a venv and install requirements
+```bash
+python3 -m venv ./venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+run the project
+```bash
+python3 main.py
+```
+<br>
+
+## All Commands
 
 ### 👑 Admin
 - `send`: Sends a message to a channel.
